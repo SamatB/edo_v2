@@ -1,0 +1,34 @@
+spring:
+  flyway:
+    enabled: true
+    user: postgres
+    password: oog
+    url: jdbc:postgresql://localhost:5432/edo_db?currentSchema=${spring.flyway.default-schema}
+    default-schema: edo-2
+    locations: db/migration
+    out-of-order: true
+  jpa:
+    properties:
+      hibernate:
+        default_schema: edo
+  application:
+    name: edo-service
+server:
+  port: 0
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${spring.application.instance_id:${random.value}}
+  server:
+    enable-self-preservation: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info
+springdoc:
+  swagger-ui:
+    path: /swagger

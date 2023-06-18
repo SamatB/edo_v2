@@ -1,0 +1,24 @@
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository -Dmaven.artifact.threads=50 -DskipTests"
+
+cache:
+  paths:
+    - ./.m2/repository
+  key: project-cache
+
+stages:
+  - build_artifacts
+
+.build-module:
+  image: maven:3.6.3-openjdk-17-slim
+  stage: build_artifacts
+  tags:
+    - runner
+  script:
+    - mvn $MAVEN_OPTS clean package
+  artifacts:
+    expire_in: 10 min
+
+build_artifacts:
+  extends:
+    - .build-module
