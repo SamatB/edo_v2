@@ -9,12 +9,11 @@ eureka:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
   instance:
     preferIpAddress: true
-
 management:
   endpoints:
     web:
       exposure:
-        include: info\
+        include: info
 springdoc:
   swagger-ui:
     path: /swagger
