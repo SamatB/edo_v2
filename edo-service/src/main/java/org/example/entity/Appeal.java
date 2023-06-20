@@ -1,11 +1,16 @@
 package org.example.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
 
@@ -15,7 +20,7 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Appeal extends BaseEntity{
+public class Appeal extends BaseEntity {
 
 
     /**
@@ -23,12 +28,14 @@ public class Appeal extends BaseEntity{
      */
     @NotNull
     @Column(name = "creation_date")
+    @CreationTimestamp
     private ZonedDateTime creationDate;
 
     /**
      * Дата архивирования обращения
      */
     @Column(name = "archived_date")
+    @UpdateTimestamp
     private ZonedDateTime archivedDate;
 
     /**
