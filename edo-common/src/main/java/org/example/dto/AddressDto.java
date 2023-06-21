@@ -10,23 +10,23 @@ import lombok.Data;
 @Schema(description = "Адрес")
 public class AddressDto {
     @Schema(description = "Полный адрес")
-    String fullAddress;
+    private String fullAddress;
     @Schema(description = "Название улицы")
-    String street;
+    private String street;
     @Schema(description = "Номер дома")
-    String house;
+    private String house;
     @Schema(description = "Почтовый индекс")
-    String index;
+    private String index;
     @Schema(description = "Корпус здания")
-    String housing;
+    private String housing;
     @Schema(description = "Строение здания")
-    String building;
+    private String building;
     @Schema(description = "Город")
-    String city;
+    private String city;
     @Schema(description = "Регион или область")
-    String region;
+    private String region;
     @Schema(description = "Страна")
-    String country;
+    private String country;
     @Schema(description = "Номер квартиры")
-    String flat;
+    private String flat;
 }
