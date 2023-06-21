@@ -1,5 +1,4 @@
 CREATE SCHEMA IF NOT EXISTS edo;
-CREATE TYPE emp AS ENUM ('Безработный', 'Работник', 'Учащийся');
 CREATE TABLE IF NOT EXISTS  edo.author
 (id BIGSERIAL PRIMARY KEY,
  first_name VARCHAR(255) NOT NULL,
@@ -9,7 +8,7 @@ CREATE TABLE IF NOT EXISTS  edo.author
     snils VARCHAR(255) UNIQUE,
     mobile_phone VARCHAR(255),
     email VARCHAR(255) UNIQUE,
-    employment emp,
+    employment VARCHAR(255),
     fio_dative VARCHAR(255),
     fio_genitive VARCHAR(255),
     fio_nominative VARCHAR(255)
