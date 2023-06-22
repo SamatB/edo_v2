@@ -1,16 +1,22 @@
 package org.example.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Column;
+import jakarta.persistence.GenerationType;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
 /**
  * Класс хранимых файлов
- * @author Artishevskii Aleksey
- * @version 0.1
  * */
 @Entity
 @Table(name = "file_pool")
@@ -30,13 +36,13 @@ public class FilePool extends BaseEntity {
      * название фала
      * */
     @NotNull
-    @Column(name = "name")
+    @Column(name = "name", length = 255)
     private String name;
     /**
      * расширение файла
      * */
     @NotNull
-    @Column(name = "extension")
+    @Column(name = "extension", length = 4)
     private String extension;
     /**
      * размер файла
