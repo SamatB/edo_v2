@@ -6,9 +6,7 @@ CREATE TABLE IF NOT EXISTS department
     address              VARCHAR(50),
     phone                VARCHAR(11),
     creation_date        TIMESTAMP,
-    archived_date        TIMESTAMP,
-    parent_department_id VARCHAR(20),
-    FOREIGN KEY (parent_department_id) REFERENCES department (external_id)
+    archived_date        TIMESTAMP
 );
 
 COMMENT ON COLUMN department.external_id IS 'Идентификатор департамента';
@@ -18,6 +16,5 @@ COMMENT ON COLUMN department.address IS 'Адрес департамента';
 COMMENT ON COLUMN department.phone IS 'Номер телефона департамента';
 COMMENT ON COLUMN department.creation_date IS 'Дата создания';
 COMMENT ON COLUMN department.archived_date IS 'Дата архивации';
-COMMENT ON COLUMN department.parent_department_id IS 'Идентификатор родительского департамента';
 
 

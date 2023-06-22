@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Schema(description = "Департамент")
 @Getter
@@ -37,9 +35,6 @@ public class DepartmentDto {
 
     @Schema(description = "Вышестоящий департамента")
     private DepartmentDto department;
-
-    @Schema(description = "Подчиненный департаменты")
-    private Set<DepartmentDto> subordinateDepartments = new HashSet<>();
 
     @NotNull
     @Schema(description = "Дата создания")
