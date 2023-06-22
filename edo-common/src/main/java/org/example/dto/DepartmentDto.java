@@ -18,7 +18,7 @@ public class DepartmentDto {
 
     @NotNull
     @Schema(description = "Идентификатор департамента")
-    private String externalId;
+    private Long id;
 
     @NotNull
     @Schema(description = "Полное название департамента")
@@ -33,7 +33,11 @@ public class DepartmentDto {
     @Schema(description = "Номер телефона департамента")
     private String phone;
 
-    @Schema(description = "Вышестоящий департамента")
+    @NotNull
+    @Schema(description = "Идентификатор из внешнего хранилища")
+    private String externalId;
+
+    @Schema(description = "Вышестоящий департамент")
     private DepartmentDto department;
 
     @NotNull

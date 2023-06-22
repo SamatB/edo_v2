@@ -8,7 +8,6 @@ package org.example.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -29,14 +28,6 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Department extends BaseEntity {
-
-    /**
-     * Идентификатор департамента
-     */
-    @Id
-    @NotNull
-    @Column(name = "external_id")
-    private String externalId;
 
     /**
      * Полное название департамента
@@ -64,10 +55,16 @@ public class Department extends BaseEntity {
     private String phone;
 
     /**
+     * Идентификатор из внешнего хранилища
+     */
+    @Column(name = "external_id")
+    private String externalId;
+
+    /**
      * Вышестоящий департамент
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_department_id", referencedColumnName = "external_id")
+    @JoinColumn(name = "parent_department_id")
     private Department department;
 
     /**
@@ -84,4 +81,6 @@ public class Department extends BaseEntity {
     @Column(name = "archived_date")
     @UpdateTimestamp
     private ZonedDateTime archivedDate;
+
 }
+
