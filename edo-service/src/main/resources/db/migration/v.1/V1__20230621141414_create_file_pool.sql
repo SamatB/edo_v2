@@ -2,11 +2,11 @@ CREATE SCHEMA IF NOT EXISTS edo;
 
 CREATE TABLE IF NOT EXISTS edo.file_pool (
     storage_file_id serial8 primary key,
-    name VARCHAR(255),
-    extension VARCHAR(10),
-    size bigint,
-    page_count int,
-    upload_date timestamp,
+    name VARCHAR(255) not null ,
+    extension VARCHAR(10) not null ,
+    size bigint not null ,
+    page_count int not null ,
+    upload_date timestamp not null ,
     archived_date timestamp
 );
 
