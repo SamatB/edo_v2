@@ -1,7 +1,7 @@
 package org.example.utils;
 
 /**
- * Enum типов трудоустройства автора документа
+ * Enum типов трудоустройства
  */
 public enum Employment {
     UNEMPLOYED("Безработный"),
@@ -13,6 +13,9 @@ public enum Employment {
         this.rusEmployment = rusEmployment;
     }
 
+    /**
+     * Получение поля с русским названием статуса трудоустройства
+     */
     public String getRusEmployment() {
         return rusEmployment;
     }
