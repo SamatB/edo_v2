@@ -1,8 +1,6 @@
 package org.example.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "appeal")
@@ -49,4 +48,26 @@ public class Appeal extends BaseEntity {
      */
     @Column(name = "annotation")
     private String annotation;
+
+    /**
+     * свзязь один ко многим к таблице Employee
+     * исполнитель
+     * */
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "appeal_id")
+    private List<Employee> singers;
+    /**
+     * свзязь один ко многим к таблице Employee
+     * создатель
+     * */
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "appeal_id")
+    private Employee creator;
+    /**
+     * свзязь один ко многим к таблице Employee
+     * адресат
+     * */
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "appeal_id")
+    private List<Employee> addressee;
 }
