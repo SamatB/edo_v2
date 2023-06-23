@@ -1,6 +1,7 @@
+
 CREATE TABLE IF NOT EXISTS file_pool
 (
-    storage_file_id serial8 primary key,
+    storage_file_id uuid primary key,
     name            VARCHAR(255) not null,
     extension       VARCHAR(4)  not null,
     size            bigint       not null,

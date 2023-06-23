@@ -29,7 +29,6 @@ public class FilePool extends BaseEntity {
      *  id файла в таблице
      * */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "storage_file_id")
     private UUID storageFileId;
     /**
