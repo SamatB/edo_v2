@@ -78,6 +78,9 @@ public class GetFileStorageServiceImpl implements GetFileStorageService {
      */
     @Override
     public ResponseEntity<Resource> getFile(String uuid) {
+        InputStream inputStream = null;
+        ByteArrayOutputStream outputStream = null;
+        ByteArrayInputStream byteArrayInputStream = null;
         try {
             Optional<String> objectName = getObjectFromMinio(uuid);
             if (objectName.isPresent()) {
@@ -89,16 +92,16 @@ public class GetFileStorageServiceImpl implements GetFileStorageService {
                             .bucket(bucketName)
                             .object(fileName)
                             .build();
-                    InputStream inputStream = minioClient.getObject(getObjectArgs);
+                    inputStream = minioClient.getObject(getObjectArgs);
                     // Копируем InputStream в новый ByteArrayOutputStream
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    outputStream = new ByteArrayOutputStream();
                     byte[] buffer = new byte[4096];
                     int length;
                     while ((length = inputStream.read(buffer)) != -1) {
                         outputStream.write(buffer, 0, length);
                     }
                     // Создаем новый ByteArrayInputStream из ByteArrayOutputStream
-                    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(outputStream.toByteArray());
+                    byteArrayInputStream = new ByteArrayInputStream(outputStream.toByteArray());
                     // Создаем новый InputStreamResource из нового ByteArrayInputStream
                     InputStreamResource inputStreamResource = new InputStreamResource(byteArrayInputStream);
                     return ResponseEntity.ok()
@@ -113,6 +116,21 @@ public class GetFileStorageServiceImpl implements GetFileStorageService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             throw new RuntimeException(e);
+        } finally {
+            // Закрываем стримы
+            try {
+                if (byteArrayInputStream != null) {
+                    byteArrayInputStream.close();
+                }
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
