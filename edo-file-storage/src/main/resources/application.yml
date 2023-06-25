@@ -17,3 +17,8 @@ management:
 springdoc:
   swagger-ui:
     path: /swagger
+minio: # Конфигурация MinIO сервера
+  endpoint: http://localhost:9000  # Адрес MinIO сервера
+  accessKey: username  # Ключ доступа к MinIO (логин)
+  secretKey: password  # Секретный ключ MinIO (пароль)
+  bucketName: bucket  # Имя бакета, в котором будут храниться файлы
