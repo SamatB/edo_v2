@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS file_pool
     extension       VARCHAR(4)   not null,
     size            bigint       not null,
     page_count      int          not null,
-    upload_date     timestamp    not null,
-    archived_date   timestamp
+    upload_date     timestamptz    not null,
+    archived_date   timestamptz
 );
 
 comment on column file_pool.id is 'id файла в таблице';
