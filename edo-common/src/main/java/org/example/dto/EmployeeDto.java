@@ -30,6 +30,9 @@ public class EmployeeDto {
     @Schema(description = "Адрес сотрудника")
     private String address;
 
+    @Schema(description = "Подробная информация об адресе сотрудника")
+    private AddressDto addressDetails;
+
     @Schema(description = "URL фотографии сотрудника")
     private String photoUrl;
 
