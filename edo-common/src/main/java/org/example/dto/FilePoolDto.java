@@ -11,8 +11,10 @@ import java.util.UUID;
 @Schema(description = "Хранимые файлы")
 public class FilePoolDto {
 
+    @Schema(name = "id файла в таблице")
+    private Long id;
 
-    @Schema(name ="id файла в таблице")
+    @Schema(name ="uuid файла")
     private UUID storageFileId;
 
     @NotNull

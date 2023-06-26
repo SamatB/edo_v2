@@ -1,16 +1,17 @@
-
 CREATE TABLE IF NOT EXISTS file_pool
 (
-    storage_file_id uuid primary key,
+    id              serial8 primary key,
+    storage_file_id uuid,
     name            VARCHAR(255) not null,
-    extension       VARCHAR(4)  not null,
+    extension       VARCHAR(4)   not null,
     size            bigint       not null,
     page_count      int          not null,
     upload_date     timestamp    not null,
     archived_date   timestamp
 );
 
-comment on column file_pool.storage_file_id is 'id файла в таблице';
+comment on column file_pool.id is 'id файла в таблице';
+comment on column file_pool.storage_file_id is 'uuid файла';
 comment on column file_pool.name is 'Имя файла';
 comment on column file_pool.extension is 'Расширение файла';
 comment on column file_pool.size is 'размер файла';
