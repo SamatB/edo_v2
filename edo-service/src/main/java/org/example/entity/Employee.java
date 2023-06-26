@@ -1,6 +1,5 @@
 package org.example.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -65,7 +64,7 @@ public class Employee extends BaseEntity {
     /**
      * Подробная информация об адресе сотрудника.
      */
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private Address addressDetails;
 
