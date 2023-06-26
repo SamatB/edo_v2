@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
@@ -62,8 +63,8 @@ public class SaveFileStorageServiceImpl implements SaveFileStorageService {
     /**
      * Метод для сохранения файла в MinIO.
      * Он проверяет, существует ли бакет с указанным именем в MinIO, и если нет, то создает его.
-     * Затем он сохраняет файл в указанном бакете,
-     * генерирует уникальный идентификатор (UUID) для сохраненного файла и возвращает его в ответе.
+     * Затем он генерирует уникальный идентификатор (UUID) для сохраняемого файла,
+     * сохраняет файл в указанном бакете и возвращает UUID в ответе.
      * Если происходит ошибка в процессе сохранения файла,
      * возвращается ответ с HTTP статусом 500 (внутренняя ошибка сервера).
      *
@@ -73,7 +74,47 @@ public class SaveFileStorageServiceImpl implements SaveFileStorageService {
      */
     @Override
     public ResponseEntity<String> saveFile(MultipartFile file) {
+        // Проверка на null для параметра file
+        if (file == null) {
+            logger.warn("Ошибка при сохранении файла: file не может быть null");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         // Создание бакета в MinIO, если его не существует.
+        createBuketInMinioIfNotExist(bucketName);
+        // Сохранение файла в бакет MinIO
+        try (InputStream inputStream = file.getInputStream()) {
+            String filename = file.getOriginalFilename();
+            assert filename != null;
+            String extension = filename.substring(filename.lastIndexOf(".") + 1);
+            String uuid = UUID.randomUUID().toString();
+            String objectName = uuid + "." + extension;
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .stream(inputStream, file.getSize(), -1)
+                            .contentType(file.getContentType())
+                            .build()
+            );
+            logger.info("Файл успешно сохранен на сервере MinIO в бакет с именем " + bucketName + ". UUID сохранённого файла: " + uuid);
+            return ResponseEntity.ok(uuid);
+        } catch (MinioException | IOException e) {
+            logger.error("Ошибка при сохранении файла.");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            logger.error("Ошибка при сохранении файла.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Метод для создания бакета (контейнера) в MinIO, если его не существует.
+     * Он проверяет, существует ли бакет с указанным именем в MinIO, и если нет, то создает его.
+     *
+     * @param bucketName имя создаваемого бакета
+     */
+    public void createBuketInMinioIfNotExist(String bucketName) {
         try {
             if (!minioClient.bucketExists(
                     BucketExistsArgs.builder()
@@ -86,31 +127,8 @@ public class SaveFileStorageServiceImpl implements SaveFileStorageService {
                 logger.info("Бакет для хранения файлов с именем " + bucketName + " успешно создан на сервере MinIO");
             }
         } catch (Exception e) {
-            System.out.println("Ошибка при создании бакета.");
+            logger.error("Ошибка при создании бакета в MinIO.");
             e.printStackTrace();
-        }
-        // Сохранение файла в бакет MinIO
-        try {
-            String filename = file.getOriginalFilename();
-            assert filename != null;
-            String extension = filename.substring(filename.lastIndexOf(".") + 1);
-            String uuid = UUID.randomUUID().toString();
-            String objectName = uuid + "." + extension;
-            minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(objectName)
-                            .stream(file.getInputStream(), file.getSize(), -1)
-                            .contentType(file.getContentType())
-                            .build()
-            );
-            logger.info("Файл успешно сохранен на сервере MinIO в бакет с именем " + bucketName + ". UUID сохранённого файла: " + uuid);
-            return ResponseEntity.ok(uuid);
-        } catch (MinioException | IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new RuntimeException(e);
         }
     }
 }
