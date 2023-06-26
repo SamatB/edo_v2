@@ -85,13 +85,11 @@ public class SaveFileStorageServiceImpl implements SaveFileStorageService {
         try (InputStream inputStream = file.getInputStream()) {
             String filename = file.getOriginalFilename();
             assert filename != null;
-            String extension = filename.substring(filename.lastIndexOf(".") + 1);
             String uuid = UUID.randomUUID().toString();
-            String objectName = uuid + "." + extension;
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
-                            .object(objectName)
+                            .object(uuid)
                             .stream(inputStream, file.getSize(), -1)
                             .contentType(file.getContentType())
                             .build()

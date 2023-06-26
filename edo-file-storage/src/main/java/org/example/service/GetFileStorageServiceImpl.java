@@ -86,7 +86,7 @@ public class GetFileStorageServiceImpl implements GetFileStorageService {
             if (objectName.isPresent()) {
                 String fileName = objectName.get();
                 // Проверяем, соответствует ли имя файла формату UUID
-                boolean isUuidMatch = fileName.matches("^" + uuid + "\\..*");
+                boolean isUuidMatch = fileName.matches(uuid);
                 if (isUuidMatch) {
                     GetObjectArgs getObjectArgs = GetObjectArgs.builder()
                             .bucket(bucketName)
@@ -150,8 +150,7 @@ public class GetFileStorageServiceImpl implements GetFileStorageService {
                     .recursive(true)
                     .build();
             Iterable<Result<Item>> results = minioClient.listObjects(listObjectsArgs);
-            // Создаем регулярное выражение для поиска UUID в начале имени объекта
-            String pattern = "^" + Pattern.quote(uuid) + ".*$";
+            String pattern = Pattern.quote(uuid);
             Pattern regex = Pattern.compile(pattern);
             for (Result<Item> result : results) {
                 String objectName = result.get().objectName();
