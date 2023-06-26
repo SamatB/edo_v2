@@ -21,6 +21,10 @@ import org.example.utils.Employment;
 public class AuthorDto {
 
     @NotNull
+    @Schema(description = "идентификатор автора")
+    private Long id;
+
+    @NotNull
     @Schema(description = "Имя автора")
     private String firstName;
 

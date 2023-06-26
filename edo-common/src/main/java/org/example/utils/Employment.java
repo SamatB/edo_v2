@@ -1,5 +1,8 @@
 package org.example.utils;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 /**
  * Enum типов трудоустройства
  */
@@ -8,10 +11,6 @@ public enum Employment {
     WORKER("Работник"),
     STUDENT("Учащийся");
     private final String rusEmployment;
-
-    Employment(String rusEmployment) {
-        this.rusEmployment = rusEmployment;
-    }
 
     /**
      * Получение поля с русским названием статуса трудоустройства

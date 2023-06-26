@@ -1,9 +1,10 @@
 package org.example.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import jakarta.persistence.EnumType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.example.utils.Employment;
-import org.example.utils.EmploymentConverter;
 
 @Entity
 @Table(name = "author")
@@ -64,7 +64,7 @@ public class Author extends BaseEntity {
      * Трудоустройство
      */
     @Column(name = "employment")
-    @Convert(converter = EmploymentConverter.class)
+    @Enumerated(EnumType.STRING)
     private Employment employment;
     /**
      * ФИО автора в дательном падеже
