@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS department
     creation_date        TIMESTAMP NOT NULL,
     archived_date        TIMESTAMP,
     external_id          VARCHAR(20),
-    parent_department_id BIGSERIAL,
+    parent_department_id BIGINT,
     FOREIGN KEY (parent_department_id) REFERENCES department(id)
 );
 
