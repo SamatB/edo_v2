@@ -78,9 +78,6 @@ public class GetFileStorageServiceImpl implements GetFileStorageService {
      */
     @Override
     public ResponseEntity<Resource> getFile(String uuid) {
-        InputStream inputStream = null;
-        ByteArrayOutputStream outputStream = null;
-        ByteArrayInputStream byteArrayInputStream = null;
         try {
             Optional<String> objectName = getObjectFromMinio(uuid);
             if (objectName.isPresent()) {
@@ -92,22 +89,24 @@ public class GetFileStorageServiceImpl implements GetFileStorageService {
                             .bucket(bucketName)
                             .object(fileName)
                             .build();
-                    inputStream = minioClient.getObject(getObjectArgs);
-                    // Копируем InputStream в новый ByteArrayOutputStream
-                    outputStream = new ByteArrayOutputStream();
-                    byte[] buffer = new byte[4096];
-                    int length;
-                    while ((length = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, length);
+                    try (InputStream inputStream = minioClient.getObject(getObjectArgs);
+                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+                        // Копируем InputStream в новый ByteArrayOutputStream
+                        byte[] buffer = new byte[4096];
+                        int length;
+                        while ((length = inputStream.read(buffer)) != -1) {
+                            byteArrayOutputStream.write(buffer, 0, length);
+                        }
+                        // Создаем новый ByteArrayInputStream из ByteArrayOutputStream
+                        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray())) {
+                            // Создаем новый InputStreamResource из нового ByteArrayInputStream
+                            InputStreamResource inputStreamResource = new InputStreamResource(byteArrayInputStream);
+                            return ResponseEntity.ok()
+                                    .contentLength(byteArrayOutputStream.size())
+                                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                                    .body(inputStreamResource);
+                        }
                     }
-                    // Создаем новый ByteArrayInputStream из ByteArrayOutputStream
-                    byteArrayInputStream = new ByteArrayInputStream(outputStream.toByteArray());
-                    // Создаем новый InputStreamResource из нового ByteArrayInputStream
-                    InputStreamResource inputStreamResource = new InputStreamResource(byteArrayInputStream);
-                    return ResponseEntity.ok()
-                            .contentLength(outputStream.size())
-                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                            .body(inputStreamResource);
                 }
             }
             return ResponseEntity.notFound().build();
@@ -116,21 +115,6 @@ public class GetFileStorageServiceImpl implements GetFileStorageService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             throw new RuntimeException(e);
-        } finally {
-            // Закрываем стримы
-            try {
-                if (byteArrayInputStream != null) {
-                    byteArrayInputStream.close();
-                }
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
