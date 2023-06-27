@@ -1,6 +1,13 @@
 package org.example.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.CascadeType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -132,4 +139,18 @@ public class Employee extends BaseEntity {
     @Column(name = "archived_date")
     @UpdateTimestamp
     private ZonedDateTime archivedDate;
+
+    /**
+     * связь один к одному с Appeal
+     * */
+    @OneToOne()
+    @JoinColumn(name = "appeal_id")
+    private Appeal appeal;
+    /**
+     * связь Многие к одному к Appeal
+     * */
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "appeals_id")
+    private Appeal appeals;
+
 }
