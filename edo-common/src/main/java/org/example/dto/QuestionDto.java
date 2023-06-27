@@ -2,7 +2,7 @@ package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.NonNull;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.ZonedDateTime;
 
@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 @Data
 @Schema(description = "Вопрос")
 public class QuestionDto {
-    @NonNull
+    @NotNull
     @Schema(description = "Дата создания вопроса")
     private ZonedDateTime creationDate;
 

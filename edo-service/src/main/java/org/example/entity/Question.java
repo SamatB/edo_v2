@@ -3,7 +3,11 @@ package org.example.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,7 +26,7 @@ public class Question extends BaseEntity {
     /**
      * Дата создания вопроса
      */
-    @NonNull
+    @NotNull
     @Column(name = "creation_date")
     @CreationTimestamp
     ZonedDateTime creationDate;
