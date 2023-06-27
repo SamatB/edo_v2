@@ -41,6 +41,6 @@ public class Question extends BaseEntity {
     /**
      * Содержание вопроса
      */
-    @Column(name = "summary")
+    @Column(name = "summary", length = 1000)
     String summary;
 }
