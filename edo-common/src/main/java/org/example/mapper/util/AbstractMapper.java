@@ -6,39 +6,41 @@
 
 package org.example.mapper.util;
 
-import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.MapperConfig;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
 @MapperConfig(componentModel = "spring")
-public abstract class AbstractMapper<S, T> {
+public abstract class AbstractMapper<Entity, Dto> {
 
     /**
      * Метод преобразует сущность JPA в DTO объект
      */
-    @InheritInverseConfiguration
-    public abstract T EntityToDto(S entity);
+
+    public abstract Dto EntityToDto(Entity entity);
 
     /**
      * Метод преобразует DTO объект в сущность JPA
      */
-    public abstract S DtoToEntity(T dto);
+    @InheritConfiguration(name = "EntityToDto")
+    public abstract Dto DtoToEntity(Entity dto);
 
     /**
      * Метод обновляет поля сущности JPA на основе переданного DTO объекта
      */
-    public abstract void updateEntity(T dto, @MappingTarget S entity);
+    public abstract void updateEntity(Dto dto, @MappingTarget Entity entity);
 
     /**
      * Метод преобразует список сущностей JPA в список сущностей DTO
      */
-    @InheritInverseConfiguration
-    public abstract List<T> EntityListtoDtoList(List<S> entities);
+
+    public abstract List<Dto> EntityListToDtoList(List<Entity> entities);
 
     /**
      * Метод преобразует список объектов DTO в список сущностей JPA
      */
-    public abstract List<S> DtoListtoEntityList(List<T> dtos);
+    @InheritConfiguration(name = "EntityListToDtoList")
+    public abstract List<Entity> DtoListToEntityList(List<Dto> dtos);
 }
