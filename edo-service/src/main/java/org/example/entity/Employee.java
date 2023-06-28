@@ -2,6 +2,9 @@ package org.example.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -57,6 +60,13 @@ public class Employee extends BaseEntity {
     @Size(max = 200)
     @Column(name = "address")
     private String address;
+
+    /**
+     * Подробная информация об адресе сотрудника.
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address addressDetails;
 
     /**
      * URL фотографии сотрудника.
