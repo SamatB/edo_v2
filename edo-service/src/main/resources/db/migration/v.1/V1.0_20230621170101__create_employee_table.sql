@@ -15,10 +15,12 @@ CREATE TABLE IF NOT EXISTS employee (
                                         username TEXT,
                                         creation_date TIMESTAMP WITH TIME ZONE,
                                         archived_date TIMESTAMP WITH TIME ZONE,
-                                        appeal_id BIGSERIAL,
-                                        appeals_id BIGSERIAL,
-                                        FOREIGN KEY (appeal_id) REFERENCES edo_db."edo-2".appeal(id),
-                                        FOREIGN KEY (appeals_id) REFERENCES edo_db."edo-2".appeal(id)
+                                        creator_id BIGSERIAL,
+                                        singers_id BIGSERIAL,
+                                        addressee_id BIGSERIAL,
+                                        FOREIGN KEY (creator_id) REFERENCES edo_db."edo-2".appeal(id),
+                                        FOREIGN KEY (singers_id) REFERENCES edo_db."edo-2".appeal(id),
+                                        FOREIGN KEY (addressee_id) REFERENCES edo_db."edo-2".appeal(id)
 );
 
 COMMENT ON COLUMN employee.first_name IS 'Имя сотрудника';
@@ -36,5 +38,6 @@ COMMENT ON COLUMN employee.birth_date IS 'Дата рождения сотруд
 COMMENT ON COLUMN employee.username IS 'Имя пользователя сотрудника';
 COMMENT ON COLUMN employee.creation_date IS 'Дата создания сотрудника';
 COMMENT ON COLUMN employee.archived_date IS 'Дата архивации сотрудника';
-COMMENT ON COLUMN employee.appeal_id IS 'Внешний ключ на таблицу appeal для связи одни к одному';
-COMMENT ON COLUMN employee.appeal_id IS 'Внешний ключ на таблицу appeal для связи один ко многим';
+COMMENT ON COLUMN employee.creator_id IS 'Внешний ключ на таблицу appeal для связи одни к одному для поля creator';
+COMMENT ON COLUMN employee.singers_id IS 'Внешний ключ на таблицу appeal для связи один ко многим для поля singers';
+COMMENT ON COLUMN employee.addressee_id IS 'Внешний ключ на таблицу appeal для связи один ко многим для поля addressee';

@@ -60,19 +60,21 @@ public class Appeal extends BaseEntity {
      * свзязь один ко многим к таблице Employee
      * исполнитель
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "appeals")
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH},
+            fetch = FetchType.LAZY, mappedBy = "singers")
     private List<Employee> singers;
     /**
      * свзязь один к одному к таблице Employee
      * создатель
      */
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "appeal")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creator")
     private Employee creator;
     /**
      * свзязь один ко многим к таблице Employee
      * адресат
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "appeals")
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH},
+            fetch = FetchType.LAZY, mappedBy = "addressee")
     private List<Employee> addressee;
 
     /**
@@ -85,7 +87,7 @@ public class Appeal extends BaseEntity {
             singers = new ArrayList<>();
         }
         singers.add(employee);
-        employee.setAppeals(this);
+        employee.setSingersAppeal(this);
     }
 
     /**
@@ -98,6 +100,6 @@ public class Appeal extends BaseEntity {
             addressee = new ArrayList<>();
         }
         addressee.add(employee);
-        employee.setAppeals(this);
+        employee.setAddresseeAppeal(this);
     }
 }
