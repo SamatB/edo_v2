@@ -15,4 +15,12 @@ public interface SaveFileStorageService {
      * либо ответ с HTTP статусом 500 в случае ошибки
      */
     ResponseEntity<String> saveFile(MultipartFile file);
+
+    /**
+     * Метод для создания бакета (контейнера) в MinIO, если его не существует.
+     * Он проверяет, существует ли бакет с указанным именем в MinIO, и если нет, то создает его.
+     *
+     * @param bucketName имя создаваемого бакета
+     */
+    void createBuketInMinioIfNotExist(String bucketName);
 }
