@@ -25,7 +25,7 @@ public abstract class AbstractMapper<Entity, Dto> {
      * Метод преобразует DTO объект в сущность JPA
      */
     @InheritConfiguration(name = "EntityToDto")
-    public abstract Dto DtoToEntity(Entity dto);
+    public abstract Entity DtoToEntity(Dto dto);
 
     /**
      * Метод обновляет поля сущности JPA на основе переданного DTO объекта
