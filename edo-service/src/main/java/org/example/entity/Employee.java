@@ -1,11 +1,6 @@
 package org.example.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -144,4 +139,12 @@ public class Employee extends BaseEntity {
     @Column(name = "archived_date")
     @UpdateTimestamp
     private ZonedDateTime archivedDate;
+
+    /**
+     * Связь/принадлежность работника департаменту
+     */
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 }

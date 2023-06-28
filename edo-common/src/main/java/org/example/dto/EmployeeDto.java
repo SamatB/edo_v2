@@ -65,4 +65,7 @@ public class EmployeeDto {
 
     @Schema(description = "Дата архивации сотрудника")
     private ZonedDateTime archivedDate;
+
+    @Schema(description = "Департамент сотрудника")
+    private DepartmentDto department;
 }
