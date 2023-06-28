@@ -1,6 +1,10 @@
 spring:
   application:
     name: edo-file-storage
+  servlet:
+    multipart:
+      max-file-size: 20MB # Максимальный размер каждого файла, который может быть загружен в мультипартном запросе
+      max-request-size: 20MB # Максимальный размер всего мультипартного запроса, включая все его файлы и другие данные
 server:
   port: 0
 eureka:
