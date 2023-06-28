@@ -25,7 +25,7 @@ public class FilePool extends BaseEntity {
     /**
      * uuid файла
      * */
-    @Column(name = "storage_file_uuid")
+    @Column(name = "storage_file_id")
     private UUID storageFileId;
     /**
      * название фала
