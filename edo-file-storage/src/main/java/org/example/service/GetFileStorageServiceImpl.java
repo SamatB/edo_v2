@@ -82,9 +82,8 @@ public class GetFileStorageServiceImpl implements GetFileStorageService {
             Optional<String> objectName = getObjectFromMinio(uuid);
             if (objectName.isPresent()) {
                 String fileName = objectName.get();
-                // Проверяем, соответствует ли имя файла формату UUID
-                boolean isUuidMatch = fileName.matches(uuid);
-                if (isUuidMatch) {
+                // Проверяем, соответствует ли имя файла UUID
+                if (fileName.matches(uuid)) {
                     GetObjectArgs getObjectArgs = GetObjectArgs.builder()
                             .bucket(bucketName)
                             .object(fileName)
@@ -119,11 +118,12 @@ public class GetFileStorageServiceImpl implements GetFileStorageService {
     }
 
     /**
-     * Метод для получения объекта из хранилища MinIO по UUID.
-     * Возвращает имя объекта или пустое значение, если объект не найден.
+     * Метод для получения имени объекта (файла) из хранилища MinIO по UUID.
+     * Если объект с указанным UUID найден, возвращается Optional с именем объекта.
+     * Если объект не найден или возникла ошибка при взаимодействии с MinIO, возвращается пустой Optional.
      *
-     * @param uuid UUID объекта
-     * @return имя объекта или пустое значение, если объект не найден
+     * @param uuid UUID объекта (файла)
+     * @return Optional с именем объекта или пустой Optional, если объект не найден или возникла ошибка
      */
     private Optional<String> getObjectFromMinio(String uuid) {
         try {
@@ -141,9 +141,11 @@ public class GetFileStorageServiceImpl implements GetFileStorageService {
                     return Optional.of(objectName);
                 }
             }
+            // Если объект не найден, возвращаем пустой Optional
             return Optional.empty();
         } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
             e.printStackTrace();
+            // В случае возникновения ошибки Minio, IO или других ошибок, возвращаем пустой Optional
             return Optional.empty();
         }
     }
