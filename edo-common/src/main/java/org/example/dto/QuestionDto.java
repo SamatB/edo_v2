@@ -13,6 +13,10 @@ import java.time.ZonedDateTime;
 @Schema(description = "Вопрос")
 public class QuestionDto {
     @NotNull
+    @Schema(description = "Идентификатор вопроса")
+    private Long id;
+
+    @NotNull
     @Schema(description = "Дата создания вопроса")
     private ZonedDateTime creationDate;
 
