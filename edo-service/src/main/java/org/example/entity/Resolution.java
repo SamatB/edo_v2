@@ -6,8 +6,9 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -67,7 +68,7 @@ public class Resolution extends BaseEntity {
      * Создатель резолюции (связь с сущностью Employee).
      */
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
     private Employee creator;
 
@@ -75,7 +76,7 @@ public class Resolution extends BaseEntity {
      * Подписывающий резолюцию (связь с сущностью Employee).
      */
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "signer_id")
     private Employee signer;
 
@@ -84,13 +85,18 @@ public class Resolution extends BaseEntity {
      */
     @NotNull
     @OneToMany
+    @JoinTable(
+            name = "resolution_executor",
+            joinColumns = @JoinColumn(name = "resolution_id"),
+            inverseJoinColumns = @JoinColumn(name = "employee_id")
+    )
     private Set<Employee> executor;
 
     /**
      * Куратор резолюции (связь с сущностью Employee).
      */
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curator_id")
     private Employee curator;
 
