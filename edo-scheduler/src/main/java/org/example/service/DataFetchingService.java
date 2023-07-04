@@ -18,9 +18,9 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.slf4j.Logger;
 
@@ -58,7 +58,7 @@ public class DataFetchingService {
      * Вызывается по расписанию, заданному в свойстве application.yml "job.schedule.cron".
      */
     @Scheduled(cron = "${job.schedule.cron}")
-    public void fetchDataAndTransform() {
+    public void fetchDataAndConvert() {
         String externalApiUrl = "http://xn--d1ab2a.space/mock/employees";
         ResponseEntity<String> response = restTemplate.exchange(externalApiUrl, HttpMethod.GET, null, String.class);
         if (response.getStatusCode().is2xxSuccessful()) {
@@ -102,40 +102,42 @@ public class DataFetchingService {
      * @return Список объектов EmployeeDto.
      */
     private List<EmployeeDto> mapToEmployeeDto(List<ExternalData> externalDataList) {
-        List<EmployeeDto> employeeDtoList = new ArrayList<>();
-        List<AddressDto> addressDtoList = new ArrayList<>();
-        Set<String> uniqueIds = new HashSet<>();
+        Map<String, EmployeeDto> employeeDtoMap = new HashMap<>();
+        Map<String, AddressDto> addressDtoMap = new HashMap<>();
         for (ExternalData externalData : externalDataList) {
-            String externalId = externalData.getId().toString();
-            if (uniqueIds.contains(externalId)) {
-                continue; // Пропускаем, если externalId уже присутствует
+            ExternalData.Location location = externalData.getLocation();
+            ExternalData.Name name = externalData.getName();
+            String externalId = String.valueOf(externalData.getId());
+            EmployeeDto employeeDto = employeeDtoMap.get(externalId);
+            AddressDto addressDto = addressDtoMap.get(externalId);
+            if (addressDto == null) {
+                addressDto = new AddressDto();
+                addressDto.setFullAddress(location.toString());
+                addressDto.setStreet(location.getStreet().getName());
+                addressDto.setHouse(location.getStreet().getNumber());
+                addressDto.setIndex(location.getPostcode());
+                addressDto.setCity(location.getCity());
+                addressDto.setRegion(location.getState());
+                addressDto.setCountry(location.getCountry());
             }
-            EmployeeDto employeeDto = new EmployeeDto();
-            AddressDto addressDto = new AddressDto();
-            addressDto.setFullAddress(externalData.getLocation().toString());
-            addressDto.setStreet(externalData.getLocation().getStreet().getName());
-            addressDto.setHouse(externalData.getLocation().getStreet().getNumber());
-            addressDto.setIndex(externalData.getLocation().getPostcode());
-            addressDto.setCity(externalData.getLocation().getCity());
-            addressDto.setRegion(externalData.getLocation().getState());
-            addressDto.setCountry(externalData.getLocation().getCountry());
-            addressDtoList.add(addressDto);
-            employeeDto.setFirstName(externalData.getName().getFirst());
-            employeeDto.setLastName(externalData.getName().getLast());
-            employeeDto.setMiddleName(externalData.getName().getMiddle());
-            employeeDto.setAddress(externalData.getLocation().toString());
-            employeeDto.setAddressDetails(addressDto);
-            employeeDto.setPhotoUrl(externalData.getPicture().toString());
-            employeeDto.setExternalId(externalData.getId().toString());
-            employeeDto.setPhone(externalData.getPhone());
-            employeeDto.setWorkPhone(externalData.getCell());
-            employeeDto.setBirthDate(LocalDate.parse(externalData.getDob().getDate()));
-            employeeDto.setUsername(externalData.getLogin().getUsername());
-            employeeDto.setCreationDate(ZonedDateTime.parse(externalData.getRegistered().getDate()));
-            employeeDtoList.add(employeeDto);
-            uniqueIds.add(externalId);
+            if (employeeDto == null) {
+                employeeDto = new EmployeeDto();
+                employeeDto.setExternalId(externalId);
+                employeeDto.setFirstName(name.getFirst());
+                employeeDto.setLastName(name.getLast());
+                employeeDto.setMiddleName(name.getMiddle());
+                employeeDto.setAddress(addressDto.getFullAddress());
+                employeeDto.setAddressDetails(addressDto);
+                employeeDto.setPhotoUrl(externalData.getPicture().toString());
+                employeeDto.setPhone(externalData.getPhone());
+                employeeDto.setWorkPhone(externalData.getCell());
+                employeeDto.setBirthDate(LocalDate.parse(externalData.getDob().getDate()));
+                employeeDto.setUsername(externalData.getLogin().getUsername());
+                employeeDto.setCreationDate(ZonedDateTime.parse(externalData.getRegistered().getDate()));
+                employeeDtoMap.put(externalId, employeeDto);
+            }
         }
-        return employeeDtoList;
+        return new ArrayList<>(employeeDtoMap.values());
     }
 
     /**
@@ -145,20 +147,19 @@ public class DataFetchingService {
      * @return Список объектов DepartmentDto.
      */
     private List<DepartmentDto> mapToDepartmentDto(List<ExternalData> externalDataList) {
-        List<DepartmentDto> departmentDtoList = new ArrayList<>();
-        Set<String> uniqueIds = new HashSet<>();
+        Map<String, DepartmentDto> departmentDtoMap = new HashMap<>();
         for (ExternalData externalData : externalDataList) {
-            String externalId = externalData.getCompany().getId().toString();
-            if (uniqueIds.contains(externalId)) {
-                continue; // Пропускаем, если externalId уже присутствует
+            ExternalData.Company company = externalData.getCompany();
+            String externalId = String.valueOf(company.getId());
+            DepartmentDto departmentDto = departmentDtoMap.get(externalId);
+            if (departmentDto == null) {
+                departmentDto = new DepartmentDto();
+                departmentDto.setExternalId(externalId);
+                departmentDto.setFullName(company.getName());
+                departmentDto.setAddress(company.getLocation().toString());
+                departmentDtoMap.put(externalId, departmentDto);
             }
-            DepartmentDto departmentDto = new DepartmentDto();
-            departmentDto.setExternalId(externalData.getCompany().getId().toString());
-            departmentDto.setFullName(externalData.getCompany().getName());
-            departmentDto.setAddress((externalData.getCompany().getLocation().toString()));
-            departmentDtoList.add(departmentDto);
-            uniqueIds.add(externalId);
         }
-        return departmentDtoList;
+        return new ArrayList<>(departmentDtoMap.values());
     }
 }
