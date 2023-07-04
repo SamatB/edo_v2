@@ -1,9 +1,7 @@
 package org.example;
 
-import org.example.controller.GetFileController;
-import org.example.controller.SaveFileController;
-import org.example.service.GetFileStorageService;
-import org.example.service.SaveFileStorageService;
+import org.example.controller.FileController;
+import org.example.service.FileStorageService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
@@ -25,7 +23,7 @@ import static org.mockito.Mockito.when;
 /**
  * Тестирование классов SaveFileController и GetFileController.
  * Данный код представляет тестовый класс для проверки функциональности классов SaveFileController и GetFileController.
- * В тестах используется заглушка (mock) для SaveFileStorageService и GetFileStorageService
+ * В тестах используется заглушка (mock) для FileStorageService
  * и проверяется успешное сохранение файла (saveFile_Success),
  * обработка ошибки при сохранении файла (saveFile_Error),
  * успешное получение файла (getFile_Success)
@@ -41,14 +39,14 @@ public class EdoFileStorageApplicationTests {
      */
     @Test
     void saveFile_Success() {
-        // Создаем заглушку для SaveFileStorageService
-        SaveFileStorageService saveFileStorageService = mock(SaveFileStorageService.class);
+        // Создаем заглушку для FileStorageService
+        FileStorageService FileStorageService = mock(FileStorageService.class);
         // Создаем экземпляр контроллера и передаем заглушку в конструктор
-        SaveFileController controller = new SaveFileController(saveFileStorageService);
+        FileController controller = new FileController(FileStorageService);
         // Создаем тестовый файл
         MultipartFile file = new MockMultipartFile("testFile.txt", "Hello, World!".getBytes());
         // Устанавливаем поведение заглушки
-        when(saveFileStorageService.saveFile(file)).thenReturn(ResponseEntity.ok("file-uuid"));
+        when(FileStorageService.saveFile(file)).thenReturn(ResponseEntity.ok("file-uuid"));
         // Вызываем метод контроллера
         ResponseEntity<String> response = controller.saveFile(file);
         // Проверяем, что полученный ответ содержит ожидаемый UUID и статус 200 OK
@@ -61,14 +59,14 @@ public class EdoFileStorageApplicationTests {
      */
     @Test
     void saveFile_Error() {
-        // Создаем заглушку для SaveFileStorageService
-        SaveFileStorageService saveFileStorageService = mock(SaveFileStorageService.class);
+        // Создаем заглушку для FileStorageService
+        FileStorageService fileStorageService = mock(FileStorageService.class);
         // Создаем экземпляр контроллера и передаем заглушку в конструктор
-        SaveFileController controller = new SaveFileController(saveFileStorageService);
+        FileController controller = new FileController(fileStorageService);
         // Создаем тестовый файл
         MultipartFile file = new MockMultipartFile("testFile.txt", "Hello, World!".getBytes());
         // Устанавливаем поведение заглушки
-        when(saveFileStorageService.saveFile(file)).thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+        when(fileStorageService.saveFile(file)).thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
         // Вызываем метод контроллера
         ResponseEntity<String> response = controller.saveFile(file);
         // Проверяем, что полученный ответ имеет статус 500 Internal Server Error
@@ -83,17 +81,17 @@ public class EdoFileStorageApplicationTests {
      */
     @Test
     void getFile_Success() {
-        // Создаем заглушку для GetFileStorageService
-        GetFileStorageService getFileStorageService = mock(GetFileStorageService.class);
+        // Создаем заглушку для FileStorageService
+        FileStorageService fileStorageService = mock(FileStorageService.class);
         // Создаем экземпляр контроллера и передаем заглушку в конструктор
-        GetFileController controller = new GetFileController(getFileStorageService);
+        FileController controller = new FileController(fileStorageService);
         // Задаем UUID файла для теста
         String uuid = "file-uuid";
         // Создаем тестовый ресурс (файл)
         byte[] fileContent = "Hello, World!".getBytes();
         Resource fileResource = new ByteArrayResource(fileContent);
         // Устанавливаем поведение заглушки
-        when(getFileStorageService.getFile(uuid)).thenReturn(ResponseEntity.ok(fileResource));
+        when(fileStorageService.getFile(uuid)).thenReturn(ResponseEntity.ok(fileResource));
         // Вызываем метод контроллера
         ResponseEntity<Resource> response = controller.getFile(uuid);
         // Проверяем, что полученный ответ содержит ожидаемый ресурс (файл) и статус 200 OK
@@ -111,14 +109,14 @@ public class EdoFileStorageApplicationTests {
      */
     @Test
     void getFile_NotFound() {
-        // Создаем заглушку для GetFileStorageService
-        GetFileStorageService getFileStorageService = mock(GetFileStorageService.class);
+        // Создаем заглушку для FileStorageService
+        FileStorageService fileStorageService = mock(FileStorageService.class);
         // Создаем экземпляр контроллера и передаем заглушку в конструктор
-        GetFileController controller = new GetFileController(getFileStorageService);
+        FileController controller = new FileController(fileStorageService);
         // Задаем UUID файла для теста
         String uuid = "non-existing-file-uuid";
         // Устанавливаем поведение заглушки
-        when(getFileStorageService.getFile(uuid)).thenReturn(ResponseEntity.notFound().build());
+        when(fileStorageService.getFile(uuid)).thenReturn(ResponseEntity.notFound().build());
         // Вызываем метод контроллера
         ResponseEntity<Resource> response = controller.getFile(uuid);
         // Проверяем, что полученный ответ имеет статус 404 Not Found

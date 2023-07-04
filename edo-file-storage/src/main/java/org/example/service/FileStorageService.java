@@ -1,12 +1,13 @@
 package org.example.service;
 
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Сервис для сохранения файлов.
+ * Сервис для сохранения файлов в хранилище и получения файлов из хранилища.
  */
-public interface SaveFileStorageService {
+public interface FileStorageService {
     /**
      * Метод для сохранения файла в MinIO.
      *
@@ -23,4 +24,12 @@ public interface SaveFileStorageService {
      * @param bucketName имя создаваемого бакета
      */
     void createBuketInMinioIfNotExist(String bucketName);
+
+    /**
+     * Метод для получения файла по-заданному UUID.
+     *
+     * @param uuid UUID файла
+     * @return ответ с файлом или статусом "Not Found", если файл не найден
+     */
+    ResponseEntity<Resource> getFile(String uuid);
 }
