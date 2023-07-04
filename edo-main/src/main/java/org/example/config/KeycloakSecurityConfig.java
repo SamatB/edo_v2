@@ -6,18 +6,24 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
+/**
+ * KeyCloak + security конфигурация.
+ * с парсером ролей и логаут реализацией.
+ */
+
 @Configuration
 @EnableWebSecurity
 public class KeycloakSecurityConfig {
+    private final JwtAuthConverter jwtAuthConverter;
     private final KeycloakLogoutHandler keycloakLogoutHandler;
 
-    public KeycloakSecurityConfig(KeycloakLogoutHandler keycloakLogoutHandler) {
+    public KeycloakSecurityConfig(JwtAuthConverter jwtAuthConverter, KeycloakLogoutHandler keycloakLogoutHandler) {
+        this.jwtAuthConverter = jwtAuthConverter;
         this.keycloakLogoutHandler = keycloakLogoutHandler;
     }
 
@@ -28,17 +34,16 @@ public class KeycloakSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests()
-                .requestMatchers("/")
-                .hasAnyRole("USER", "ADMIN", "app_admin", "admin", "api_admin", "user", "app_user")
-                .anyRequest()
-                .permitAll();
+        http.authorizeHttpRequests(c -> c.requestMatchers("/error").permitAll()
+                .anyRequest().authenticated());
         http.oauth2Login()
                 .and()
                 .logout()
                 .addLogoutHandler(keycloakLogoutHandler)
                 .logoutSuccessUrl("/");
-        http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+        http.oauth2ResourceServer()
+                .jwt()
+                .jwtAuthenticationConverter(jwtAuthConverter);
         return http.build();
     }
 

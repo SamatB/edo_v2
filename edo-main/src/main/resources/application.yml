@@ -19,6 +19,13 @@ spring:
             issuer-uri: http://xn--d1ab2a.space/auth/realms/edo-project-realm
             user-name-attribute: preferred_username
 
+jwt:
+  auth:
+    converter:
+      resource-id: edo-project-client
+      principle-attribute: preferred_username
+
+
 eureka:
   client:
     registerWithEureka: false

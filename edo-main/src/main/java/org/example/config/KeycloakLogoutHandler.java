@@ -15,6 +15,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Реализация /logout.
+ */
 
 @Component
 public class KeycloakLogoutHandler implements LogoutHandler {
