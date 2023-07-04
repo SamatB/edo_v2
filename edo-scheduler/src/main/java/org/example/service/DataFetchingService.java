@@ -41,13 +41,16 @@ public class DataFetchingService {
      * Объект Logger для логирования информации.
      */
     private final Logger logger;
-    @Value("${external.storage.url}")
-    private String externalApiUrl;
+    /**
+     * URL адрес внешнего хранилища данных.
+     */
+    private final String externalStorageUrl;
 
     /**
      * Конструктор класса DataFetchingService.
      */
-    public DataFetchingService() {
+    public DataFetchingService(@Value("${external.storage.url}") String externalStorageUrl) {
+        this.externalStorageUrl = externalStorageUrl;
         this.restTemplate = new RestTemplate();
         this.objectMapper = new ObjectMapper();
         this.logger = LoggerFactory.getLogger(DataFetchingService.class);
@@ -59,8 +62,7 @@ public class DataFetchingService {
      */
     @Scheduled(cron = "${job.schedule.cron}")
     public void fetchDataAndConvert() {
-        String externalApiUrl = "http://xn--d1ab2a.space/mock/employees";
-        ResponseEntity<String> response = restTemplate.exchange(externalApiUrl, HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(externalStorageUrl, HttpMethod.GET, null, String.class);
         if (response.getStatusCode().is2xxSuccessful()) {
             String json = response.getBody();
             try {
