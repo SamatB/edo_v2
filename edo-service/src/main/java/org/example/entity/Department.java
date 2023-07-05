@@ -88,7 +88,7 @@ public class Department extends BaseEntity {
     /**
      * метод добавления работника в департамент
      */
-    public void addEmployeeSingers(Employee employee) {
+    public void addEmployeeToDepartment(Employee employee) {
         if (employeeList == null) {
             employeeList = new ArrayList<>();
         }
