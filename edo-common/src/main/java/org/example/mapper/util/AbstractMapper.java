@@ -10,7 +10,7 @@ import org.mapstruct.InheritConfiguration;
 import org.mapstruct.MapperConfig;
 import org.mapstruct.MappingTarget;
 
-import java.util.List;
+import java.util.Collection;
 
 @MapperConfig(componentModel = "spring")
 public interface AbstractMapper<Entity, Dto> {
@@ -19,13 +19,13 @@ public interface AbstractMapper<Entity, Dto> {
      * Метод преобразует сущность JPA в DTO объект
      */
 
-    Dto EntityToDto(Entity entity);
+    Dto entityToDto(Entity entity);
 
     /**
      * Метод преобразует DTO объект в сущность JPA
      */
     @InheritConfiguration(name = "EntityToDto")
-    Entity DtoToEntity(Dto dto);
+    Entity dtoToEntity(Dto dto);
 
     /**
      * Метод обновляет поля сущности JPA на основе переданного DTO объекта
@@ -33,14 +33,14 @@ public interface AbstractMapper<Entity, Dto> {
     void updateEntity(Dto dto, @MappingTarget Entity entity);
 
     /**
-     * Метод преобразует список сущностей JPA в список сущностей DTO
+     * Метод преобразует коллекцию сущностей JPA в колеекцию сущностей DTO
      */
 
-    List<Dto> EntityListToDtoList(List<Entity> entities);
+    Collection<Dto> entityListToDtoList(Collection<Entity> entities);
 
     /**
-     * Метод преобразует список объектов DTO в список сущностей JPA
+     * Метод преобразует коллекцию объектов DTO в колллекцию сущностей JPA
      */
     @InheritConfiguration(name = "EntityListToDtoList")
-    List<Entity> DtoListToEntityList(List<Dto> dtos);
+    Collection<Entity> dtoListToEntityList(Collection<Dto> dtos);
 }
