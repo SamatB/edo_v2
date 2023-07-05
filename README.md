@@ -337,3 +337,12 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.12-ma
     "something": "something"
 	}
 5. Класс сообщений пока нереализован, временно он представлен в сендлере в виде абстрактной Map<String,String>
+
+### Keycloak
+1. Сервер
+- <a href="http://www.xn--d1ab2a.space/auth/"> Ссылка на сервер</a>.</li>
+- credentials: admin/admin
+- основной realm: edo-project-realm
+- client: edo-project-client
+2. Конфигурация в edo-main > config > KeycloakSecurityConfig.java
+3. Креды тестовых пользователей: user1/user1, user2/user2.

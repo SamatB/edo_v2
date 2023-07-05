@@ -1,6 +1,22 @@
 server:
   port: 8761
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://xn--d1ab2a.space/auth/realms/edo-project-realm
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+      client:
+        registration:
+          keycloak:
+            client-id: edo-project-client
+            authorization-grant-type: authorization_code
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: http://xn--d1ab2a.space/auth/realms/edo-project-realm
+            user-name-attribute: preferred_username
   main:
     allow-bean-definition-overriding: true
   rabbitmq:
