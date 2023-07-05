@@ -30,6 +30,9 @@ public class DepartmentDto {
     @Schema(description = "Адрес департамента")
     private String address;
 
+    @Schema(description = "Подробная информации об адресе департамента")
+    private AddressDto addressDetails;
+
     @Schema(description = "Номер телефона департамента")
     private String phone;
 
