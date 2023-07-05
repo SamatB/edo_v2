@@ -30,6 +30,7 @@ spring:
       routing-key: "common"
       default-receive-queue: "common"
       reply-timeout: 10000
+
 jwt:
   auth:
     converter:
