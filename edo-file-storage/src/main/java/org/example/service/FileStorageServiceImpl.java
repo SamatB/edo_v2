@@ -5,16 +5,14 @@ import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.GetObjectArgs;
-import io.minio.ListObjectsArgs;
-import io.minio.Result;
+import io.minio.errors.ErrorResponseException;
 import io.minio.errors.MinioException;
-import io.minio.messages.Item;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,10 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Сервис для сохранения файлов в хранилище MinIO и для получения файлов из хранилища MinIO.
@@ -147,86 +142,51 @@ public class FileStorageServiceImpl implements FileStorageService {
 
     /**
      * Метод для получения файла из хранилища MinIO по-заданному UUID.
-     * Возвращает ответ с файлом в виде ResponseEntity<Resource>.
-     * Если файл не найден, возвращается статус "Not Found".
-     * В методе выполняется поиск файла по UUID
-     * и копирование содержимого файла в ByteArrayOutputStream,
-     * который затем используется для создания InputStreamResource, возвращаемого в ответе.
      *
-     * @param uuid UUID файла
-     * @return ответ с файлом или статусом "Not Found", если файл не найден
+     * @param uuid UUID файла на сервере MinIO
+     * @return ResponseEntity.ok() с содержимым файла в случае успешного получения,
+     * либо ResponseEntity.notFound() в случае отсутствия файла на сервере MInIO с указанным UUID,
+     * либо ответ с HTTP статусом 500 в случае ошибки
      */
     @Override
     public ResponseEntity<Resource> getFile(String uuid) {
         try {
-            Optional<String> objectName = getObjectFromMinio(uuid);
-            if (objectName.isPresent()) {
-                String fileName = objectName.get();
-                // Проверяем, соответствует ли имя файла UUID
-                if (fileName.matches(uuid)) {
-                    GetObjectArgs getObjectArgs = GetObjectArgs.builder()
+            // Получение объекта (файла) из MinIO
+            try (InputStream inputStream = minioClient.getObject(
+                    GetObjectArgs.builder()
                             .bucket(bucketName)
-                            .object(fileName)
-                            .build();
-                    try (InputStream inputStream = minioClient.getObject(getObjectArgs);
-                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-                        // Копируем InputStream в новый ByteArrayOutputStream
-                        byte[] buffer = new byte[4096];
-                        int length;
-                        while ((length = inputStream.read(buffer)) != -1) {
-                            byteArrayOutputStream.write(buffer, 0, length);
-                        }
-                        // Создаем новый ByteArrayInputStream из ByteArrayOutputStream
-                        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray())) {
-                            // Создаем новый InputStreamResource из нового ByteArrayInputStream
-                            InputStreamResource inputStreamResource = new InputStreamResource(byteArrayInputStream);
-                            return ResponseEntity.ok()
-                                    .contentLength(byteArrayOutputStream.size())
-                                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                                    .body(inputStreamResource);
-                        }
-                    }
+                            .object(uuid)
+                            .build()
+            )) {
+                // Чтение содержимого файла в массив байтов
+                try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                    IOUtils.copy(inputStream, outputStream);
+                    // Создание ресурса с содержимым файла
+                    byte[] fileBytes = outputStream.toByteArray();
+                    Resource resource = new InputStreamResource(new ByteArrayInputStream(fileBytes));
+                    // Возвращение ResponseEntity с содержимым файла
+                    return ResponseEntity.ok()
+                            .header("Content-Name", "UUID = \"" + uuid + "\"")
+                            .contentLength(fileBytes.length)
+                            .body(resource);
                 }
             }
-            return ResponseEntity.notFound().build();
+        } catch (ErrorResponseException e) {
+            if (e.getMessage().equals("The specified key does not exist.")) {
+                log.warn("Файла на сервере MinIO не существует по UUID: " + uuid);
+                return ResponseEntity.notFound().build();
+            } else {
+                log.error("Ошибка при получении файла из сервера MinIO.");
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
         } catch (MinioException | IOException e) {
+            log.error("Ошибка при получении файла из сервера MinIO.");
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            log.error("Ошибка при получении файла из сервера MinIO.");
             throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Метод для получения имени объекта (файла) из хранилища MinIO по UUID.
-     * Если объект с указанным UUID найден, возвращается Optional с именем объекта.
-     * Если объект не найден или возникла ошибка при взаимодействии с MinIO, возвращается пустой Optional.
-     *
-     * @param uuid UUID объекта (файла)
-     * @return Optional с именем объекта или пустой Optional, если объект не найден или возникла ошибка
-     */
-    private Optional<String> getObjectFromMinio(String uuid) {
-        try {
-            ListObjectsArgs listObjectsArgs = ListObjectsArgs.builder()
-                    .bucket(bucketName)
-                    .recursive(true)
-                    .build();
-            Iterable<Result<Item>> results = minioClient.listObjects(listObjectsArgs);
-            String pattern = Pattern.quote(uuid);
-            Pattern regex = Pattern.compile(pattern);
-            for (Result<Item> result : results) {
-                String objectName = result.get().objectName();
-                Matcher matcher = regex.matcher(objectName);
-                if (matcher.matches()) {
-                    return Optional.of(objectName);
-                }
-            }
-            // Если объект не найден, возвращаем пустой Optional
-            return Optional.empty();
-        } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
-            e.printStackTrace();
-            // В случае возникновения ошибки Minio, IO или других ошибок, возвращаем пустой Optional
-            return Optional.empty();
         }
     }
 }
