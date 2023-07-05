@@ -46,6 +46,13 @@ public class Department extends BaseEntity {
     private String address;
 
     /**
+     *  Связь с сущностью Address
+     * */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address addressDetails;
+
+    /**
      * Номер телефона департамента
      */
     @Column(name = "phone")
