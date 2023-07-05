@@ -9,8 +9,7 @@ import io.minio.ListObjectsArgs;
 import io.minio.Result;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -35,6 +34,7 @@ import java.util.regex.Pattern;
  * Сервис для сохранения файлов в хранилище MinIO и для получения файлов из хранилища MinIO.
  * Реализует интерфейс FileStorageService.
  */
+@Log4j2
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
     /**
@@ -45,10 +45,6 @@ public class FileStorageServiceImpl implements FileStorageService {
      * Имя бакета (контейнера) MinIO, для файлов.
      */
     private final String bucketName;
-    /**
-     * Объект Logger для логирования информации.
-     */
-    private final Logger logger;
 
     /**
      * Конструктор FileStorageServiceImpl.
@@ -74,7 +70,6 @@ public class FileStorageServiceImpl implements FileStorageService {
         } catch (Exception e) {
             throw new InvalidKeyException("Произошла ошибка при инициализации MinioClient" + e);
         }
-        this.logger = LoggerFactory.getLogger(FileStorageServiceImpl.class);
     }
 
     /**
@@ -93,7 +88,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     public ResponseEntity<String> saveFile(MultipartFile file) {
         // Проверка на null для параметра file
         if (file == null) {
-            logger.warn("Ошибка при сохранении файла: file не может быть null");
+            log.error("Ошибка при сохранении файла: file не может быть null");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         // Создание бакета в MinIO, если его не существует.
@@ -101,7 +96,10 @@ public class FileStorageServiceImpl implements FileStorageService {
         // Сохранение файла в бакет MinIO
         try (InputStream inputStream = file.getInputStream()) {
             String filename = file.getOriginalFilename();
-            assert filename != null;
+            if (filename == null) {
+                log.error("Ошибка при сохранении файла: имя файла не может быть null");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
             String uuid = UUID.randomUUID().toString();
             minioClient.putObject(
                     PutObjectArgs.builder()
@@ -111,14 +109,14 @@ public class FileStorageServiceImpl implements FileStorageService {
                             .contentType(file.getContentType())
                             .build()
             );
-            logger.info("Файл успешно сохранен на сервер MinIO в бакет с именем " + bucketName + ". UUID сохранённого файла: " + uuid);
+            log.info("Файл успешно сохранен на сервер MinIO в бакет с именем " + bucketName + ". UUID сохранённого файла: " + uuid);
             return ResponseEntity.ok(uuid);
         } catch (MinioException | IOException e) {
-            logger.error("Ошибка при сохранении файла на сервер MinIO.");
+            log.error("Ошибка при сохранении файла на сервер MinIO.");
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            logger.error("Ошибка при сохранении файла на сервер MinIO.");
+            log.error("Ошибка при сохранении файла на сервер MinIO.");
             throw new RuntimeException(e);
         }
     }
@@ -139,10 +137,10 @@ public class FileStorageServiceImpl implements FileStorageService {
                         MakeBucketArgs.builder()
                                 .bucket(bucketName).build()
                 );
-                logger.info("Бакет для хранения файлов с именем " + bucketName + " успешно создан на сервере MinIO");
+                log.info("Бакет для хранения файлов с именем " + bucketName + " успешно создан на сервере MinIO");
             }
         } catch (Exception e) {
-            logger.error("Ошибка при создании бакета на сервере MinIO.");
+            log.error("Ошибка при создании бакета на сервере MinIO.");
             e.printStackTrace();
         }
     }
