@@ -18,13 +18,24 @@ spring:
           keycloak:
             issuer-uri: http://xn--d1ab2a.space/auth/realms/edo-project-realm
             user-name-attribute: preferred_username
+  main:
+    allow-bean-definition-overriding: true
+  rabbitmq:
+    username: "guest"
+    password: "guest"
+    host: "localhost"
+    virtual-host: "/"
+    port: "5672"
+    template:
+      routing-key: "common"
+      default-receive-queue: "common"
+      reply-timeout: 10000
 
 jwt:
   auth:
     converter:
       resource-id: edo-project-client
       principle-attribute: preferred_username
-
 
 eureka:
   client:
