@@ -3,11 +3,11 @@ package org.example.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j2;
 import org.example.dto.AddressDto;
 import org.example.dto.DepartmentDto;
 import org.example.dto.EmployeeDto;
 import org.example.utils.ExternalData;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-
 /**
  * Сервис для получения данных и преобразования их в объекты DTO.
  */
+@Log4j2
 @Service
 public class DataFetchingService {
     /**
@@ -37,10 +36,6 @@ public class DataFetchingService {
      * Объект ObjectMapper для преобразования JSON-строк в объекты Java и наоборот.
      */
     private final ObjectMapper objectMapper;
-    /**
-     * Объект Logger для логирования информации.
-     */
-    private final Logger logger;
     /**
      * URL адрес внешнего хранилища данных.
      */
@@ -53,7 +48,6 @@ public class DataFetchingService {
         this.externalStorageUrl = externalStorageUrl;
         this.restTemplate = new RestTemplate();
         this.objectMapper = new ObjectMapper();
-        this.logger = LoggerFactory.getLogger(DataFetchingService.class);
     }
 
     /**
@@ -71,15 +65,15 @@ public class DataFetchingService {
                 // Преобразование списка объектов ExternalData в список объектов DTO
                 List<EmployeeDto> employeeDto = mapToEmployeeDto(externalData);
                 List<DepartmentDto> departmentDto = mapToDepartmentDto(externalData);
-                logger.info("Данные из внешнего хранилища успешно получены и преобразованы в DTO.");
+                log.info("Данные из внешнего хранилища успешно получены и преобразованы в DTO.");
             } catch (Exception e) {
                 // Обработка ошибки преобразования данных
-                logger.error("Ошибка преобразования данных.");
+                log.error("Ошибка преобразования данных.");
                 e.printStackTrace();
             }
         } else {
             // Обработка ошибки получения данных
-            logger.warn("Ошибка получения данных.");
+            log.warn("Ошибка получения данных.");
         }
     }
 
