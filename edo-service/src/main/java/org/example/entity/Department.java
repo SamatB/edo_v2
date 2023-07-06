@@ -78,22 +78,4 @@ public class Department extends BaseEntity {
     @Column(name = "archived_date")
     @UpdateTimestamp
     private ZonedDateTime archivedDate;
-
-    /**
-     * связь/принадлежность работников департаменту
-     */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "department")
-    private List<Employee> employeeList;
-
-    /**
-     * метод добавления работника в департамент
-     */
-    public void addEmployeeToDepartment(Employee employee) {
-        if (employeeList == null) {
-            employeeList = new ArrayList<>();
-        }
-        employeeList.add(employee);
-        employee.setDepartment(this);
-    }
 }
-
