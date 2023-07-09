@@ -5,7 +5,13 @@
 
 package org.example.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,8 +21,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "department")
@@ -46,8 +50,8 @@ public class Department extends BaseEntity {
     private String address;
 
     /**
-     *  Связь с сущностью Address
-     * */
+     * Связь с сущностью Address
+     */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private Address addressDetails;
