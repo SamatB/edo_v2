@@ -40,6 +40,10 @@ public class DataFetchingService {
      * URL адрес внешнего хранилища данных.
      */
     private final String externalStorageUrl;
+    /**
+     * Флаг успешного получения данныих из внешнего хранилища и преобразования их в DTO.
+     */
+    private boolean dataConversionSuccessful = false;
 
     /**
      * Конструктор класса DataFetchingService.
@@ -66,10 +70,12 @@ public class DataFetchingService {
                 List<EmployeeDto> employeeDto = mapToEmployeeDto(externalData);
                 List<DepartmentDto> departmentDto = mapToDepartmentDto(externalData);
                 log.info("Данные из внешнего хранилища успешно получены и преобразованы в DTO.");
+                dataConversionSuccessful = true; // Установка флага успешного преобразования данных
             } catch (Exception e) {
                 // Обработка ошибки преобразования данных
                 log.error("Ошибка преобразования данных.");
                 e.printStackTrace();
+                dataConversionSuccessful = false; // Установка флага провала преобразования данных
             }
         } else {
             // Обработка ошибки получения данных
@@ -157,5 +163,14 @@ public class DataFetchingService {
             }
         }
         return new ArrayList<>(departmentDtoMap.values());
+    }
+
+    /**
+     * Метод, который возвращает boolean флаг успешного преобразования данных.
+     *
+     * @return boolean флаг успешного преобразования данных.
+     */
+    public boolean isDataConversionSuccessful() {
+        return dataConversionSuccessful;
     }
 }
