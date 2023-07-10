@@ -6,7 +6,6 @@
 
 package org.example.mapper.util;
 
-import org.mapstruct.InheritConfiguration;
 import org.mapstruct.MapperConfig;
 import org.mapstruct.MappingTarget;
 
@@ -24,7 +23,6 @@ public interface AbstractMapper<Entity, Dto> {
     /**
      * Метод преобразует DTO объект в сущность JPA
      */
-    @InheritConfiguration(name = "EntityToDto")
     Entity dtoToEntity(Dto dto);
 
     /**
@@ -41,6 +39,5 @@ public interface AbstractMapper<Entity, Dto> {
     /**
      * Метод преобразует коллекцию объектов DTO в колллекцию сущностей JPA
      */
-    @InheritConfiguration(name = "EntityListToDtoList")
     Collection<Entity> dtoListToEntityList(Collection<Dto> dtos);
 }
