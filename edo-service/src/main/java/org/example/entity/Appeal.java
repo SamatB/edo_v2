@@ -1,12 +1,6 @@
 package org.example.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -60,46 +54,19 @@ public class Appeal extends BaseEntity {
      * свзязь один ко многим к таблице Employee
      * исполнитель
      */
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH},
-            fetch = FetchType.LAZY, mappedBy = "singersAppeal")
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Employee> singers;
     /**
      * свзязь один к одному к таблице Employee
      * создатель
      */
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creatorAppeal")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id")
     private Employee creator;
     /**
      * свзязь один ко многим к таблице Employee
      * адресат
      */
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH},
-            fetch = FetchType.LAZY, mappedBy = "addresseeAppeal")
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Employee> addressee;
-
-    /**
-     * метод для добавления взаимосвязи для поля исполнитель(singers)
-     * принимает работника(employee)
-     * ничего не возвращает
-     */
-    public void addEmployeeSingers(Employee employee) {
-        if (singers == null) {
-            singers = new ArrayList<>();
-        }
-        singers.add(employee);
-        employee.setSingersAppeal(this);
-    }
-
-    /**
-     * метод для добавления взаимосвязи для поля адрессат (addressee)
-     * принимает работника(employee)
-     * ничего не возвращает
-     */
-    public void addEmployeeAddressee(Employee employee) {
-        if (addressee == null) {
-            addressee = new ArrayList<>();
-        }
-        addressee.add(employee);
-        employee.setAddresseeAppeal(this);
-    }
 }

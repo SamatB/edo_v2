@@ -139,29 +139,4 @@ public class Employee extends BaseEntity {
     @Column(name = "archived_date")
     @UpdateTimestamp
     private ZonedDateTime archivedDate;
-
-    /**
-     * поле для связи один к одному с таблицей Appeal для поля Appeal.creator
-     * обращение от создателя
-     * */
-    @OneToOne(cascade =CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id")
-    private Appeal creatorAppeal;
-    /**
-     * поле для связи Многие к одному с таблицей Appeal дял поля Appeal.singers
-     * обращение закрепленное за исполнителем
-     * */
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.DETACH,CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
-    @JoinColumn(name = "singers_id")
-    private Appeal singersAppeal;
-    /**
-     * поле для связи Многие к одному с таблицей Appeal для поля Appeal.addressee
-     * обращение к адрессату
-     * */
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.DETACH,CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
-    @JoinColumn(name = "addressee_id")
-    private Appeal addresseeAppeal;
-
 }
