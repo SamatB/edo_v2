@@ -1,6 +1,18 @@
 spring:
   application:
     name: edo-file-storage
+  main:
+    allow-bean-definition-overriding: true
+  rabbitmq:
+    username: "guest"
+    password: "guest"
+    host: "localhost"
+    virtual-host: "/"
+    port: "5672"
+    template:
+      routing-key: "storage"
+      default-receive-queue: "storage"
+      reply-timeout: 10000
 server:
   port: 0
 eureka:
