@@ -17,7 +17,9 @@
 - [Дополнительные материалы](#дополнительные-материалы)
   - [Spring Boot Dev Tools](#Spring-Boot-Dev-Tools)
   - [Flyway](#flyway)
+  - [RabbitMQ](#rabbitmq)
   - [Keycloak](#keycloak)
+  - [MinIO](#minio)
 
 [//]: # (    - [Аутентификация]&#40;#аутентификация&#41;)
 
@@ -340,6 +342,7 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.12-ma
 5. Класс сообщений пока нереализован, временно он представлен в сендлере в виде абстрактной Map<String,String>
 
 ### Keycloak
+
 1. Сервер
 - <a href="http://www.xn--d1ab2a.space/auth/"> Ссылка на сервер</a>.</li>
 - credentials: admin/admin
@@ -347,3 +350,34 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.12-ma
 - client: edo-project-client
 2. Конфигурация в edo-main > config > KeycloakSecurityConfig.java
 3. Креды тестовых пользователей: user1/user1, user2/user2.
+
+### MinIO
+
+### Установка и разворачивание MinIO на локальном компьютере
+
+1. Установите Docker на вашем компьютере, если он ещё не установлен.
+
+2. Откройте терминал (можно прямо в IntelliJ IDEA) и выполните следующую команду, чтобы скачать образ MinIO из Docker
+   Hub:
+
+docker pull minio/minio:latest
+
+3. Создайте Docker контейнер с помощью следующей команды:
+
+docker run \
+-p 9000:9000 \
+-p 9090:9090 \
+--name MinIOContainer \
+-e "MINIO_ROOT_USER=username" \
+-e "MINIO_ROOT_PASSWORD=password" \
+minio/minio:latest server /data --console-address ":9090"
+
+4. MinIO сервер должен быть успешно развёрнут и запущен на порту 9000 вашего локального компьютера.
+   Вы можете получить доступ к административной панели MinIO, открыв веб-браузер и перейдя по адресу:
+   http://localhost:9000
+   Логин - username;
+   Пароль - password.
+
+5. Конфигурация MinIO описана в edo-file-storage > src > main > application.yml
+   Обратите внимание, что бакет для хранения файлов (если его ещё не существует) создаётся автоматически при добавлении
+   нового файла.

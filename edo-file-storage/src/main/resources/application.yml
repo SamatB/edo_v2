@@ -13,6 +13,15 @@ spring:
       routing-key: "storage"
       default-receive-queue: "storage"
       reply-timeout: 10000
+  servlet:
+    multipart:
+      max-file-size: 20MB # Максимальный размер каждого файла, который может быть загружен в мультипартном запросе
+      max-request-size: 20MB # Максимальный размер всего мультипартного запроса, включая все его файлы и другие данные
+minio: # Конфигурация MinIO сервера
+  endpoint: http://localhost:9000  # Адрес MinIO сервера
+  accessKey: username  # Ключ доступа к MinIO (логин)
+  secretKey: password  # Секретный ключ MinIO (пароль)
+  bucketName: bucket  # Имя бакета, в котором будут храниться файлы
 server:
   port: 0
 eureka:
