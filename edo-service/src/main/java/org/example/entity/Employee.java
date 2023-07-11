@@ -1,8 +1,6 @@
 package org.example.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -57,6 +55,13 @@ public class Employee extends BaseEntity {
     @Size(max = 200)
     @Column(name = "address")
     private String address;
+
+    /**
+     * Подробная информация об адресе сотрудника.
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address addressDetails;
 
     /**
      * URL фотографии сотрудника.
@@ -134,4 +139,11 @@ public class Employee extends BaseEntity {
     @Column(name = "archived_date")
     @UpdateTimestamp
     private ZonedDateTime archivedDate;
+
+    /**
+     * Связь/принадлежность работника департаменту
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 }

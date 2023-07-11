@@ -13,6 +13,18 @@ spring:
         default_schema: edo
   application:
     name: edo-service
+  main:
+    allow-bean-definition-overriding: true
+  rabbitmq:
+    username: "guest"
+    password: "guest"
+    host: "localhost"
+    virtual-host: "/"
+    port: "5672"
+    template:
+      routing-key: "service"
+      default-receive-queue: "service"
+      reply-timeout: 10000
 server:
   port: 0
 eureka:
