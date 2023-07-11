@@ -8,8 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
 
@@ -19,6 +19,7 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
+@SuperBuilder
 public class Appeal extends BaseEntity {
 
 
@@ -34,7 +35,6 @@ public class Appeal extends BaseEntity {
      * Дата архивирования обращения
      */
     @Column(name = "archived_date")
-    @UpdateTimestamp
     private ZonedDateTime archivedDate;
 
     /**
