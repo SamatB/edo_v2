@@ -50,8 +50,8 @@ public class Department extends BaseEntity {
     private String address;
 
     /**
-     *  Связь с сущностью Address
-     * */
+     * Связь с сущностью Address
+     */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private Address addressDetails;
@@ -90,4 +90,3 @@ public class Department extends BaseEntity {
     @UpdateTimestamp
     private ZonedDateTime archivedDate;
 }
-
