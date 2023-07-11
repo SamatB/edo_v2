@@ -105,23 +105,19 @@ public class DataFetchingService {
      */
     private List<EmployeeDto> mapToEmployeeDto(List<ExternalData> externalDataList) {
         Map<String, EmployeeDto> employeeDtoMap = new HashMap<>();
-        Map<String, AddressDto> addressDtoMap = new HashMap<>();
         for (ExternalData externalData : externalDataList) {
             ExternalData.Location location = externalData.getLocation();
             ExternalData.Name name = externalData.getName();
             String externalId = String.valueOf(externalData.getId());
             EmployeeDto employeeDto = employeeDtoMap.get(externalId);
-            AddressDto addressDto = addressDtoMap.get(externalId);
-            if (addressDto == null) {
-                addressDto = new AddressDto();
-                addressDto.setFullAddress(location.toString());
-                addressDto.setStreet(location.getStreet().getName());
-                addressDto.setHouse(location.getStreet().getNumber());
-                addressDto.setIndex(location.getPostcode());
-                addressDto.setCity(location.getCity());
-                addressDto.setRegion(location.getState());
-                addressDto.setCountry(location.getCountry());
-            }
+            AddressDto addressDto = new AddressDto();
+            addressDto.setFullAddress(location.toString());
+            addressDto.setStreet(location.getStreet().getName());
+            addressDto.setHouse(location.getStreet().getNumber());
+            addressDto.setIndex(location.getPostcode());
+            addressDto.setCity(location.getCity());
+            addressDto.setRegion(location.getState());
+            addressDto.setCountry(location.getCountry());
             if (employeeDto == null) {
                 employeeDto = new EmployeeDto();
                 employeeDto.setExternalId(externalId);
