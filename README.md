@@ -35,7 +35,7 @@
 
 Все контроллеры и их методы нужно сразу описывать
 аннотациями [Swagger](https://docs.swagger.io/swagger-core/v1.5.0/apidocs/allclasses-noframe.html).
-Swagger UI при запущенном приложении крутится [здесь](http://localhost:8080/swagger-ui.html).
+Swagger UI при запущенном приложении крутится [здесь](http://localhost:8761/swagger-ui/index.html).
 
 Таск-борд находится прямо на [Gitlab](https://gitlab.com/__-__/edo_v2/-/boards).
 
