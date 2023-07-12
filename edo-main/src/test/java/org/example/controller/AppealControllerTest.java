@@ -69,7 +69,7 @@ public class AppealControllerTest {
     }
 
     /**
-     * Тест для метода saveAppeal с несуществующим обращением.
+     * Тест для метода saveAppeal с нулевым обращением.
      */
     @Test
     public void testSaveAppealBadRequest() {

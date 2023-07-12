@@ -9,6 +9,7 @@ import org.example.repository.AppealRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,6 @@ public class AppealService {
      */
     public AppealDto saveAppeal(AppealDto appealDto) {
         Appeal appeal = appealMapper.dtoToEntity(appealDto);
-
         try {
             Appeal savedAppeal = appealRepository.save(appeal);
             return appealMapper.entityToDto(savedAppeal);
@@ -43,10 +43,11 @@ public class AppealService {
      * @return объект DTO обращения.
      */
     public AppealDto getAppeal(Long id) {
-        try {
-            Appeal appeal = appealRepository.getReferenceById(id);
-            return appealMapper.entityToDto(appeal);
-        } catch (EntityNotFoundException e) {
+        Optional<Appeal> appealOptional = appealRepository.findById(id);
+        if (appealOptional.isPresent()) {
+            Appeal appeal = appealOptional.get();
+            return  appealMapper.entityToDto(appeal);
+        } else {
             throw new EntityNotFoundException("Ошибка получечния обращения: " +
                     "обращение с указанным идентификатором не найдено");
         }
@@ -60,12 +61,13 @@ public class AppealService {
      * @return объект DTO обращения.
      */
     public AppealDto archiveAppeal(Long id) {
-        try {
-            Appeal archivedAppeal = appealRepository.getReferenceById(id);
-            archivedAppeal.setArchivedDate(ZonedDateTime.now());
-            archivedAppeal = appealRepository.save(archivedAppeal);
+        Optional<Appeal> appealOptional = appealRepository.findById(id);
+        if (appealOptional.isPresent()) {
+            Appeal appeal = appealOptional.get();
+            appeal.setArchivedDate(ZonedDateTime.now());
+            Appeal archivedAppeal = appealRepository.save(appeal);
             return appealMapper.entityToDto(archivedAppeal);
-        } catch (EntityNotFoundException e) {
+        } else {
             throw new EntityNotFoundException("Ошибка архивации: обращение с id: " + id + "не найдено");
         }
     }
