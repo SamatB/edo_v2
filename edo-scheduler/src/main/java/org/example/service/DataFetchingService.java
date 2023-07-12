@@ -103,7 +103,7 @@ public class DataFetchingService {
      * @return Список объектов EmployeeDto.
      */
     private List<EmployeeDto> mapToEmployeeDto(List<ExternalData> externalDataList) {
-        Map<String, EmployeeDto> employeeDtoMap = new HashMap<>();
+        List<EmployeeDto> employeeDtoList = new ArrayList<>();
         for (ExternalData externalData : externalDataList) {
             ExternalData.Location location = externalData.getLocation();
             ExternalData.Name name = externalData.getName();
@@ -129,9 +129,9 @@ public class DataFetchingService {
             employeeDto.setBirthDate(LocalDate.parse(externalData.getDob().getDate()));
             employeeDto.setUsername(externalData.getLogin().getUsername());
             employeeDto.setCreationDate(ZonedDateTime.parse(externalData.getRegistered().getDate()));
-            employeeDtoMap.put(externalId, employeeDto);
+            employeeDtoList.add(employeeDto);
         }
-        return new ArrayList<>(employeeDtoMap.values());
+        return employeeDtoList;
     }
 
     /**
