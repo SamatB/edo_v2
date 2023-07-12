@@ -75,7 +75,6 @@ public class DataFetchingService {
                 // Обработка ошибки преобразования данных
                 log.error("Ошибка преобразования данных.");
                 e.printStackTrace();
-                dataConversionSuccessful = false; // Установка флага провала преобразования данных
             }
         } else {
             // Обработка ошибки получения данных
