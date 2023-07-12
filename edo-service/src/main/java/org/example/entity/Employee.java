@@ -1,13 +1,6 @@
 package org.example.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -139,4 +132,28 @@ public class Employee extends BaseEntity {
     @Column(name = "archived_date")
     @UpdateTimestamp
     private ZonedDateTime archivedDate;
+
+    /**
+     * связь Многие к одному к Appeal
+     * поле для связи Многие к одному с таблицей Appeal через таблицу для связи appeal_employee_singers
+     * обращение закрепленное за исполнителем
+     * */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "appeal_employee_singers"
+            , joinColumns = @JoinColumn(name = "id_employee")
+            , inverseJoinColumns = @JoinColumn(name = "id_appeal")
+    )
+    private Appeal singersAppeal;
+    /**
+     * поле для связи Многие к одному с таблицей Appeal для поля appeal_employee_singers
+     * обращение к адрессату
+     * */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "appeal_employee_addressee"
+            , joinColumns = @JoinColumn(name = "id_employee")
+            , inverseJoinColumns = @JoinColumn(name = "id_appeal")
+    )
+    private Appeal addresseeAppeal;
 }

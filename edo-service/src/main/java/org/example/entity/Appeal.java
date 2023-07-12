@@ -1,6 +1,13 @@
 package org.example.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +17,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -55,6 +61,11 @@ public class Appeal extends BaseEntity {
      * исполнитель
      */
     @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "appeal_employee_singers"
+            , joinColumns = @JoinColumn(name = "id_appeal")
+            , inverseJoinColumns = @JoinColumn(name = "id_employee")
+    )
     private List<Employee> singers;
     /**
      * свзязь один к одному к таблице Employee
@@ -68,5 +79,10 @@ public class Appeal extends BaseEntity {
      * адресат
      */
     @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "appeal_employee_addressee"
+            , joinColumns = @JoinColumn(name = "id_appeal")
+            , inverseJoinColumns = @JoinColumn(name = "id_employee")
+    )
     private List<Employee> addressee;
 }
