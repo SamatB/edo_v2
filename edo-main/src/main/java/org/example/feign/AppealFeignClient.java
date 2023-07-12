@@ -1,5 +1,5 @@
 /**
- * Класс для передачи данных из сервиса edo-main в edo-service
+ * Класс для работы с классами, связанными с Appeal в сервисе edo-service.
  */
 package org.example.feign;
 

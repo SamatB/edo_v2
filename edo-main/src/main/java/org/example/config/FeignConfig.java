@@ -1,3 +1,7 @@
+/**
+ * Класс конфигурации Feign-клиентов
+ * */
+
 package org.example.config;
 
 import feign.Logger;

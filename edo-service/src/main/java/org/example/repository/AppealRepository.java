@@ -1,3 +1,7 @@
+/**
+ * Репозиторий для работы с сущностью Appeal.
+ */
+
 package org.example.repository;
 
 import org.example.entity.Appeal;

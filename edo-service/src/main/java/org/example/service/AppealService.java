@@ -1,3 +1,7 @@
+/**
+ * Сервис для работы с сущностью Appeal.
+ */
+
 package org.example.service;
 
 import jakarta.persistence.EntityNotFoundException;
