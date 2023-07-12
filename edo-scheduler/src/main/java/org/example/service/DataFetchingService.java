@@ -109,7 +109,6 @@ public class DataFetchingService {
             ExternalData.Location location = externalData.getLocation();
             ExternalData.Name name = externalData.getName();
             String externalId = String.valueOf(externalData.getId());
-            EmployeeDto employeeDto = employeeDtoMap.get(externalId);
             AddressDto addressDto = new AddressDto();
             addressDto.setFullAddress(location.toString());
             addressDto.setStreet(location.getStreet().getName());
@@ -118,22 +117,20 @@ public class DataFetchingService {
             addressDto.setCity(location.getCity());
             addressDto.setRegion(location.getState());
             addressDto.setCountry(location.getCountry());
-            if (employeeDto == null) {
-                employeeDto = new EmployeeDto();
-                employeeDto.setExternalId(externalId);
-                employeeDto.setFirstName(name.getFirst());
-                employeeDto.setLastName(name.getLast());
-                employeeDto.setMiddleName(name.getMiddle());
-                employeeDto.setAddress(addressDto.getFullAddress());
-                employeeDto.setAddressDetails(addressDto);
-                employeeDto.setPhotoUrl(externalData.getPicture().toString());
-                employeeDto.setPhone(externalData.getPhone());
-                employeeDto.setWorkPhone(externalData.getCell());
-                employeeDto.setBirthDate(LocalDate.parse(externalData.getDob().getDate()));
-                employeeDto.setUsername(externalData.getLogin().getUsername());
-                employeeDto.setCreationDate(ZonedDateTime.parse(externalData.getRegistered().getDate()));
-                employeeDtoMap.put(externalId, employeeDto);
-            }
+            EmployeeDto employeeDto = new EmployeeDto();
+            employeeDto.setExternalId(externalId);
+            employeeDto.setFirstName(name.getFirst());
+            employeeDto.setLastName(name.getLast());
+            employeeDto.setMiddleName(name.getMiddle());
+            employeeDto.setAddress(addressDto.getFullAddress());
+            employeeDto.setAddressDetails(addressDto);
+            employeeDto.setPhotoUrl(externalData.getPicture().toString());
+            employeeDto.setPhone(externalData.getPhone());
+            employeeDto.setWorkPhone(externalData.getCell());
+            employeeDto.setBirthDate(LocalDate.parse(externalData.getDob().getDate()));
+            employeeDto.setUsername(externalData.getLogin().getUsername());
+            employeeDto.setCreationDate(ZonedDateTime.parse(externalData.getRegistered().getDate()));
+            employeeDtoMap.put(externalId, employeeDto);
         }
         return new ArrayList<>(employeeDtoMap.values());
     }
@@ -149,14 +146,11 @@ public class DataFetchingService {
         for (ExternalData externalData : externalDataList) {
             ExternalData.Company company = externalData.getCompany();
             String externalId = String.valueOf(company.getId());
-            DepartmentDto departmentDto = departmentDtoMap.get(externalId);
-            if (departmentDto == null) {
-                departmentDto = new DepartmentDto();
-                departmentDto.setExternalId(externalId);
-                departmentDto.setFullName(company.getName());
-                departmentDto.setAddress(company.getLocation().toString());
-                departmentDtoMap.put(externalId, departmentDto);
-            }
+            DepartmentDto departmentDto = new DepartmentDto();
+            departmentDto.setExternalId(externalId);
+            departmentDto.setFullName(company.getName());
+            departmentDto.setAddress(company.getLocation().toString());
+            departmentDtoMap.put(externalId, departmentDto);
         }
         return new ArrayList<>(departmentDtoMap.values());
     }
