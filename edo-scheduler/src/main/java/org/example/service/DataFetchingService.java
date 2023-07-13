@@ -145,10 +145,19 @@ public class DataFetchingService {
         for (ExternalData externalData : externalDataList) {
             ExternalData.Company company = externalData.getCompany();
             String externalId = String.valueOf(company.getId());
+            AddressDto addressDto = new AddressDto();
+            addressDto.setFullAddress(company.getLocation().toString());
+            addressDto.setStreet(company.getLocation().getStreet().getName());
+            addressDto.setHouse(company.getLocation().getStreet().getNumber());
+            addressDto.setIndex(company.getLocation().getPostcode());
+            addressDto.setCity(company.getLocation().getCity());
+            addressDto.setRegion(company.getLocation().getState());
+            addressDto.setCountry(company.getLocation().getCountry());
             DepartmentDto departmentDto = new DepartmentDto();
             departmentDto.setExternalId(externalId);
             departmentDto.setFullName(company.getName());
-            departmentDto.setAddress(company.getLocation().toString());
+            departmentDto.setAddress(addressDto.getFullAddress());
+            departmentDto.setAddressDetails(addressDto);
             departmentDtoSet.add(departmentDto);
         }
         return new ArrayList<>(departmentDtoSet);
