@@ -18,9 +18,9 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Сервис для получения данных и преобразования их в объекты DTO.
@@ -141,17 +141,17 @@ public class DataFetchingService {
      * @return Список объектов DepartmentDto.
      */
     private List<DepartmentDto> mapToDepartmentDto(List<ExternalData> externalDataList) {
-        Map<String, DepartmentDto> departmentDtoMap = new HashMap<>();
+        Set<DepartmentDto> departmentDtoSet = new HashSet<>();
         for (ExternalData externalData : externalDataList) {
             ExternalData.Company company = externalData.getCompany();
-            String externalId = String.valueOf(company.getId());
+            String externalId = company.getId().toString();
             DepartmentDto departmentDto = new DepartmentDto();
             departmentDto.setExternalId(externalId);
             departmentDto.setFullName(company.getName());
             departmentDto.setAddress(company.getLocation().toString());
-            departmentDtoMap.put(externalId, departmentDto);
+            departmentDtoSet.add(departmentDto);
         }
-        return new ArrayList<>(departmentDtoMap.values());
+        return new ArrayList<>(departmentDtoSet);
     }
 
     /**
