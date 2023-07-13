@@ -6,14 +6,13 @@ import org.example.dto.DepartmentDto;
 import org.example.dto.EmployeeDto;
 import org.example.dto.ExternalDataDto;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,24 +49,20 @@ public class DataFetchingService {
      */
     @Scheduled(cron = "${job.schedule.cron}")
     public void fetchDataAndConvert() {
-        ResponseEntity<String> response = restTemplate.exchange(externalStorageUrl, HttpMethod.GET, null, String.class);
-        if (response.getStatusCode().is2xxSuccessful()) {
-            try {
-                // Преобразование данных из внешнего хранилища в список ExternalData
-                List<ExternalDataDto> externalDataDtoList = ExternalDataDto.mapToExternalData(response.getBody());
-                // Преобразование списка объектов ExternalData в списки объектов DTO
+        try {
+            ExternalDataDto[] externalDataDtoArray = restTemplate.getForObject(externalStorageUrl, ExternalDataDto[].class);
+            if (externalDataDtoArray != null) {
+                List<ExternalDataDto> externalDataDtoList = Arrays.asList(externalDataDtoArray);
                 List<EmployeeDto> employeeDto = mapToEmployeeDto(externalDataDtoList);
                 List<DepartmentDto> departmentDto = mapToDepartmentDto(externalDataDtoList);
                 log.info("Данные из внешнего хранилища успешно получены и преобразованы в DTO.");
                 dataConversionSuccessful = true; // Установка флага успешного преобразования данных
-            } catch (Exception e) {
-                // Обработка ошибки преобразования данных
-                log.error("Ошибка преобразования данных.");
-                e.printStackTrace();
+            } else {
+                log.warn("Ошибка получения данных.");
             }
-        } else {
-            // Обработка ошибки получения данных
-            log.warn("Ошибка получения данных.");
+        } catch (Exception e) {
+            log.error("Ошибка преобразования данных.");
+            e.printStackTrace();
         }
     }
 
