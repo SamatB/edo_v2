@@ -1,4 +1,4 @@
-package org.example.utils;
+package org.example.dto;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -12,7 +12,7 @@ import java.util.List;
  * Класс, представляющий преобразованные JSON данные из удаленного хранилища.
  */
 @Data
-public class ExternalData {
+public class ExternalDataDto {
     private String gender;
     private Name name;
     private Location location;
@@ -161,8 +161,8 @@ public class ExternalData {
      * @return Список объектов ExternalData, полученных из JSON.
      * @throws IOException Если возникла ошибка при чтении или преобразовании JSON.
      */
-    public static List<ExternalData> mapToExternalData(String json) throws IOException {
-        return objectMapper.readValue(json, new TypeReference<List<ExternalData>>() {
+    public static List<ExternalDataDto> mapToExternalData(String json) throws IOException {
+        return objectMapper.readValue(json, new TypeReference<List<ExternalDataDto>>() {
         });
     }
 }

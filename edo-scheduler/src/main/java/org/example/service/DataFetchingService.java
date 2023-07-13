@@ -4,7 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.example.dto.AddressDto;
 import org.example.dto.DepartmentDto;
 import org.example.dto.EmployeeDto;
-import org.example.utils.ExternalData;
+import org.example.dto.ExternalDataDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -55,10 +55,10 @@ public class DataFetchingService {
             String json = response.getBody();
             try {
                 // Преобразование данных из внешнего хранилища в список ExternalData
-                List<ExternalData> externalDataList = ExternalData.mapToExternalData(json);
+                List<ExternalDataDto> externalDataDtoList = ExternalDataDto.mapToExternalData(json);
                 // Преобразование списка объектов ExternalData в списки объектов DTO
-                List<EmployeeDto> employeeDto = mapToEmployeeDto(externalDataList);
-                List<DepartmentDto> departmentDto = mapToDepartmentDto(externalDataList);
+                List<EmployeeDto> employeeDto = mapToEmployeeDto(externalDataDtoList);
+                List<DepartmentDto> departmentDto = mapToDepartmentDto(externalDataDtoList);
                 log.info("Данные из внешнего хранилища успешно получены и преобразованы в DTO.");
                 dataConversionSuccessful = true; // Установка флага успешного преобразования данных
                 System.out.println(employeeDto);
@@ -80,7 +80,7 @@ public class DataFetchingService {
      * @param location Объект Location.
      * @return Объект AddressDto.
      */
-    private AddressDto mapToAddressDto(ExternalData.Location location) {
+    private AddressDto mapToAddressDto(ExternalDataDto.Location location) {
         AddressDto addressDto = new AddressDto();
         addressDto.setFullAddress(location.toString());
         addressDto.setStreet(location.getStreet().getName());
@@ -95,15 +95,15 @@ public class DataFetchingService {
     /**
      * Метод для преобразования списка объектов ExternalData в список объектов EmployeeDto.
      *
-     * @param externalDataList Список объектов ExternalData.
+     * @param externalDataDtoList Список объектов ExternalData.
      * @return Список объектов EmployeeDto.
      */
-    private List<EmployeeDto> mapToEmployeeDto(List<ExternalData> externalDataList) {
-        return externalDataList.stream()
-                .map(externalData -> {
-                    ExternalData.Location location = externalData.getLocation();
-                    ExternalData.Name name = externalData.getName();
-                    String externalId = String.valueOf(externalData.getId());
+    private List<EmployeeDto> mapToEmployeeDto(List<ExternalDataDto> externalDataDtoList) {
+        return externalDataDtoList.stream()
+                .map(externalDataDto -> {
+                    ExternalDataDto.Location location = externalDataDto.getLocation();
+                    ExternalDataDto.Name name = externalDataDto.getName();
+                    String externalId = String.valueOf(externalDataDto.getId());
                     AddressDto addressDto = mapToAddressDto(location);
                     EmployeeDto employeeDto = new EmployeeDto();
                     employeeDto.setExternalId(externalId);
@@ -112,12 +112,12 @@ public class DataFetchingService {
                     employeeDto.setMiddleName(name.getMiddle());
                     employeeDto.setAddress(addressDto.getFullAddress());
                     employeeDto.setAddressDetails(addressDto);
-                    employeeDto.setPhotoUrl(externalData.getPicture().toString());
-                    employeeDto.setPhone(externalData.getPhone());
-                    employeeDto.setWorkPhone(externalData.getCell());
-                    employeeDto.setBirthDate(LocalDate.parse(externalData.getDob().getDate()));
-                    employeeDto.setUsername(externalData.getLogin().getUsername());
-                    employeeDto.setCreationDate(ZonedDateTime.parse(externalData.getRegistered().getDate()));
+                    employeeDto.setPhotoUrl(externalDataDto.getPicture().toString());
+                    employeeDto.setPhone(externalDataDto.getPhone());
+                    employeeDto.setWorkPhone(externalDataDto.getCell());
+                    employeeDto.setBirthDate(LocalDate.parse(externalDataDto.getDob().getDate()));
+                    employeeDto.setUsername(externalDataDto.getLogin().getUsername());
+                    employeeDto.setCreationDate(ZonedDateTime.parse(externalDataDto.getRegistered().getDate()));
                     return employeeDto;
                 })
                 .collect(Collectors.toList());
@@ -126,13 +126,13 @@ public class DataFetchingService {
     /**
      * Метод для преобразования списка объектов ExternalData в список объектов DepartmentDto.
      *
-     * @param externalDataList Список объектов ExternalData.
+     * @param externalDataDtoList Список объектов ExternalData.
      * @return Список объектов DepartmentDto.
      */
-    private List<DepartmentDto> mapToDepartmentDto(List<ExternalData> externalDataList) {
-        return externalDataList.stream()
-                .map(externalData -> {
-                    ExternalData.Company company = externalData.getCompany();
+    private List<DepartmentDto> mapToDepartmentDto(List<ExternalDataDto> externalDataDtoList) {
+        return externalDataDtoList.stream()
+                .map(externalDataDto -> {
+                    ExternalDataDto.Company company = externalDataDto.getCompany();
                     String externalId = String.valueOf(company.getId());
                     AddressDto addressDto = mapToAddressDto(company.getLocation());
                     DepartmentDto departmentDto = new DepartmentDto();
