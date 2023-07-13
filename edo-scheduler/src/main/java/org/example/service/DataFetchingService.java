@@ -52,17 +52,14 @@ public class DataFetchingService {
     public void fetchDataAndConvert() {
         ResponseEntity<String> response = restTemplate.exchange(externalStorageUrl, HttpMethod.GET, null, String.class);
         if (response.getStatusCode().is2xxSuccessful()) {
-            String json = response.getBody();
             try {
                 // Преобразование данных из внешнего хранилища в список ExternalData
-                List<ExternalDataDto> externalDataDtoList = ExternalDataDto.mapToExternalData(json);
+                List<ExternalDataDto> externalDataDtoList = ExternalDataDto.mapToExternalData(response.getBody());
                 // Преобразование списка объектов ExternalData в списки объектов DTO
                 List<EmployeeDto> employeeDto = mapToEmployeeDto(externalDataDtoList);
                 List<DepartmentDto> departmentDto = mapToDepartmentDto(externalDataDtoList);
                 log.info("Данные из внешнего хранилища успешно получены и преобразованы в DTO.");
                 dataConversionSuccessful = true; // Установка флага успешного преобразования данных
-                System.out.println(employeeDto);
-                System.out.println(departmentDto);
             } catch (Exception e) {
                 // Обработка ошибки преобразования данных
                 log.error("Ошибка преобразования данных.");
