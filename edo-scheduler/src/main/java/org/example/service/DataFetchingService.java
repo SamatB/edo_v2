@@ -1,7 +1,5 @@
 package org.example.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.example.dto.AddressDto;
@@ -65,10 +63,10 @@ public class DataFetchingService {
             String json = response.getBody();
             try {
                 // Преобразование данных из внешнего хранилища в список ExternalData
-                List<ExternalData> externalData = mapToExternalData(json);
-                // Преобразование списка объектов ExternalData в список объектов DTO
-                List<EmployeeDto> employeeDto = mapToEmployeeDto(externalData);
-                List<DepartmentDto> departmentDto = mapToDepartmentDto(externalData);
+                List<ExternalData> externalDataList = ExternalData.mapToExternalData(json);
+                // Преобразование списка объектов ExternalData в списки объектов DTO
+                List<EmployeeDto> employeeDto = mapToEmployeeDto(externalDataList);
+                List<DepartmentDto> departmentDto = mapToDepartmentDto(externalDataList);
                 log.info("Данные из внешнего хранилища успешно получены и преобразованы в DTO.");
                 dataConversionSuccessful = true; // Установка флага успешного преобразования данных
             } catch (Exception e) {
@@ -80,20 +78,6 @@ public class DataFetchingService {
             // Обработка ошибки получения данных
             log.warn("Ошибка получения данных.");
         }
-    }
-
-    /**
-     * Метод для преобразования JSON в список объектов ExternalData.
-     *
-     * @param json JSON-строка, содержащая данные из внешнего хранилища.
-     * @return Список объектов ExternalData.
-     * @throws Exception В случае ошибки при преобразовании JSON.
-     */
-    private List<ExternalData> mapToExternalData(String json) throws Exception {
-        // Используется jackson ObjectMapper для маппинга JSON в объекты ExternalData
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return objectMapper.readValue(json, new TypeReference<List<ExternalData>>() {
-        });
     }
 
     /**

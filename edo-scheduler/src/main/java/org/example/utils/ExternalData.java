@@ -1,6 +1,12 @@
 package org.example.utils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Класс, представляющий преобразованные JSON данные из удаленного хранилища.
@@ -133,5 +139,30 @@ public class ExternalData {
         private String large;
         private String medium;
         private String thumbnail;
+    }
+
+    /**
+     * ObjectMapper, используемый для маппинга JSON в объекты ExternalData.
+     */
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * Настройка ObjectMapper для игнорирования неизвестных свойств при маппинге.
+     * Если свойство неизвестно, оно будет проигнорировано без выбрасывания исключения.
+     */
+    static {
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    /**
+     * Метод mapToExternalData выполняет маппинг JSON в список объектов ExternalData.
+     *
+     * @param json JSON-строка, которую необходимо преобразовать.
+     * @return Список объектов ExternalData, полученных из JSON.
+     * @throws IOException Если возникла ошибка при чтении или преобразовании JSON.
+     */
+    public static List<ExternalData> mapToExternalData(String json) throws IOException {
+        return objectMapper.readValue(json, new TypeReference<List<ExternalData>>() {
+        });
     }
 }
