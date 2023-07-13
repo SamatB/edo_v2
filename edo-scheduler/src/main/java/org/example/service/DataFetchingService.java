@@ -61,6 +61,8 @@ public class DataFetchingService {
                 List<DepartmentDto> departmentDto = mapToDepartmentDto(externalDataList);
                 log.info("Данные из внешнего хранилища успешно получены и преобразованы в DTO.");
                 dataConversionSuccessful = true; // Установка флага успешного преобразования данных
+                System.out.println(employeeDto);
+                System.out.println(departmentDto);
             } catch (Exception e) {
                 // Обработка ошибки преобразования данных
                 log.error("Ошибка преобразования данных.");
@@ -70,6 +72,24 @@ public class DataFetchingService {
             // Обработка ошибки получения данных
             log.warn("Ошибка получения данных.");
         }
+    }
+
+    /**
+     * Метод для преобразования объекта Location в объект AddressDto.
+     *
+     * @param location Объект Location.
+     * @return Объект AddressDto.
+     */
+    private AddressDto mapToAddressDto(ExternalData.Location location) {
+        AddressDto addressDto = new AddressDto();
+        addressDto.setFullAddress(location.toString());
+        addressDto.setStreet(location.getStreet().getName());
+        addressDto.setHouse(location.getStreet().getNumber());
+        addressDto.setIndex(location.getPostcode());
+        addressDto.setCity(location.getCity());
+        addressDto.setRegion(location.getState());
+        addressDto.setCountry(location.getCountry());
+        return addressDto;
     }
 
     /**
@@ -84,14 +104,7 @@ public class DataFetchingService {
                     ExternalData.Location location = externalData.getLocation();
                     ExternalData.Name name = externalData.getName();
                     String externalId = String.valueOf(externalData.getId());
-                    AddressDto addressDto = new AddressDto();
-                    addressDto.setFullAddress(location.toString());
-                    addressDto.setStreet(location.getStreet().getName());
-                    addressDto.setHouse(location.getStreet().getNumber());
-                    addressDto.setIndex(location.getPostcode());
-                    addressDto.setCity(location.getCity());
-                    addressDto.setRegion(location.getState());
-                    addressDto.setCountry(location.getCountry());
+                    AddressDto addressDto = mapToAddressDto(location);
                     EmployeeDto employeeDto = new EmployeeDto();
                     employeeDto.setExternalId(externalId);
                     employeeDto.setFirstName(name.getFirst());
@@ -121,14 +134,7 @@ public class DataFetchingService {
                 .map(externalData -> {
                     ExternalData.Company company = externalData.getCompany();
                     String externalId = String.valueOf(company.getId());
-                    AddressDto addressDto = new AddressDto();
-                    addressDto.setFullAddress(company.getLocation().toString());
-                    addressDto.setStreet(company.getLocation().getStreet().getName());
-                    addressDto.setHouse(company.getLocation().getStreet().getNumber());
-                    addressDto.setIndex(company.getLocation().getPostcode());
-                    addressDto.setCity(company.getLocation().getCity());
-                    addressDto.setRegion(company.getLocation().getState());
-                    addressDto.setCountry(company.getLocation().getCountry());
+                    AddressDto addressDto = mapToAddressDto(company.getLocation());
                     DepartmentDto departmentDto = new DepartmentDto();
                     departmentDto.setExternalId(externalId);
                     departmentDto.setFullName(company.getName());
