@@ -144,7 +144,7 @@ public class DataFetchingService {
         Set<DepartmentDto> departmentDtoSet = new HashSet<>();
         for (ExternalData externalData : externalDataList) {
             ExternalData.Company company = externalData.getCompany();
-            String externalId = company.getId().toString();
+            String externalId = String.valueOf(company.getId());
             DepartmentDto departmentDto = new DepartmentDto();
             departmentDto.setExternalId(externalId);
             departmentDto.setFullName(company.getName());
