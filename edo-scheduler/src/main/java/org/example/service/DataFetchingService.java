@@ -32,7 +32,7 @@ public class DataFetchingService {
      */
     private final String externalStorageUrl;
     /**
-     * Флаг успешного получения данныих из внешнего хранилища и преобразования их в DTO.
+     * Флаг успешного получения данных из внешнего хранилища и преобразования их в DTO.
      */
     private boolean fetchDataAndConvertSuccessful = false;
 
@@ -56,7 +56,7 @@ public class DataFetchingService {
                 List<EmployeeDto> employeeDto = mapToEmployeeDto(externalDataDtoList);
                 List<DepartmentDto> departmentDto = mapToDepartmentDto(externalDataDtoList);
                 log.info("Данные из внешнего хранилища успешно получены и преобразованы в DTO.");
-                fetchDataAndConvertSuccessful = true; // Установка флага успешного преобразования данных
+                fetchDataAndConvertSuccessful = true;
             } else {
                 log.warn("Данные из внешнего хранилища отсутствуют или пусты!");
             }
