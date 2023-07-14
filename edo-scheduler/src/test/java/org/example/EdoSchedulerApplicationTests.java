@@ -14,8 +14,17 @@ public class EdoSchedulerApplicationTests {
     /**
      * Сервис для извлечения данных.
      */
+    private final DataFetchingService dataFetchingService;
+
+    /**
+     * Конструктор тестового класса для внедрения зависимостей.
+     *
+     * @param dataFetchingService Сервис для извлечения данных.
+     */
     @Autowired
-    private DataFetchingService dataFetchingService;
+    public EdoSchedulerApplicationTests(DataFetchingService dataFetchingService) {
+        this.dataFetchingService = dataFetchingService;
+    }
 
     /**
      * Тестирование метода fetchDataAndConvert() класса DataFetchingService.
@@ -26,7 +35,6 @@ public class EdoSchedulerApplicationTests {
     @Test
     public void testFetchDataAndConvert() {
         dataFetchingService.fetchDataAndConvert();
-        boolean isDataConversionSuccessful = dataFetchingService.isDataConversionSuccessful();
-        Assertions.assertTrue(isDataConversionSuccessful, "Получение данных из внешнего хранилища и преобразование их в DTO с помощью метода fetchDataAndConvert() класса DataFetchingService завершено неуспешно!");
+        Assertions.assertTrue(dataFetchingService.isFetchDataAndConvertSuccessful(), "Получение данных из внешнего хранилища и преобразование их в DTO с помощью метода fetchDataAndConvert() класса DataFetchingService завершено неуспешно!");
     }
 }

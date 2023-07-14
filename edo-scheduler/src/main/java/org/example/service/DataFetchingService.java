@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +34,7 @@ public class DataFetchingService {
     /**
      * Флаг успешного получения данныих из внешнего хранилища и преобразования их в DTO.
      */
-    private boolean dataConversionSuccessful = false;
+    private boolean fetchDataAndConvertSuccessful = false;
 
     /**
      * Конструктор класса DataFetchingService.
@@ -50,19 +51,17 @@ public class DataFetchingService {
     @Scheduled(cron = "${job.schedule.cron}")
     public void fetchDataAndConvert() {
         try {
-            ExternalDataDto[] externalDataDtoArray = restTemplate.getForObject(externalStorageUrl, ExternalDataDto[].class);
-            if (externalDataDtoArray != null) {
-                List<ExternalDataDto> externalDataDtoList = Arrays.asList(externalDataDtoArray);
+            List<ExternalDataDto> externalDataDtoList = Arrays.asList(Objects.requireNonNull(restTemplate.getForObject(externalStorageUrl, ExternalDataDto[].class)));
+            if (!externalDataDtoList.isEmpty()) {
                 List<EmployeeDto> employeeDto = mapToEmployeeDto(externalDataDtoList);
                 List<DepartmentDto> departmentDto = mapToDepartmentDto(externalDataDtoList);
                 log.info("Данные из внешнего хранилища успешно получены и преобразованы в DTO.");
-                dataConversionSuccessful = true; // Установка флага успешного преобразования данных
+                fetchDataAndConvertSuccessful = true; // Установка флага успешного преобразования данных
             } else {
-                log.warn("Ошибка получения данных.");
+                log.warn("Данные из внешнего хранилища отсутствуют или пусты!");
             }
         } catch (Exception e) {
-            log.error("Ошибка преобразования данных.");
-            e.printStackTrace();
+            log.error("Ошибка при получении и преобразовании данных из внешнего хранилища:", e);
         }
     }
 
@@ -143,7 +142,7 @@ public class DataFetchingService {
      *
      * @return boolean флаг успешного преобразования данных.
      */
-    public boolean isDataConversionSuccessful() {
-        return dataConversionSuccessful;
+    public boolean isFetchDataAndConvertSuccessful() {
+        return fetchDataAndConvertSuccessful;
     }
 }
