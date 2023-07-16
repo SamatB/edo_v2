@@ -29,7 +29,7 @@ public class KeycloakService {
             // Проверяем, есть ли KeycloakPrincipal в сессии
             KeycloakPrincipal<KeycloakSecurityContext> keycloakPrincipal =
                     (KeycloakPrincipal<KeycloakSecurityContext>) session
-                            .getAttribute(KeycloakSecurityContext.class.getName() + ".TOKEN");
+                            .getAttribute(KeycloakSecurityContext.class.getName());
             if (keycloakPrincipal != null) {
                 // Получаем access token из KeycloakPrincipal
                 IDToken idToken = keycloakPrincipal.getKeycloakSecurityContext().getIdToken();
