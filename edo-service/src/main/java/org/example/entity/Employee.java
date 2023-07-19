@@ -141,6 +141,30 @@ public class Employee extends BaseEntity {
     private ZonedDateTime archivedDate;
 
     /**
+     * связь Многие к одному к Appeal
+     * поле для связи Многие к одному с таблицей Appeal через таблицу для связи appeal_employee_singers
+     * обращение закрепленное за исполнителем
+     * */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "appeal_employee_singers"
+            , joinColumns = @JoinColumn(name = "id_employee")
+            , inverseJoinColumns = @JoinColumn(name = "id_appeal")
+    )
+    private Appeal singersAppeal;
+    /**
+     * поле для связи Многие к одному с таблицей Appeal для поля appeal_employee_singers
+     * обращение к адрессату
+     * */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "appeal_employee_addressee"
+            , joinColumns = @JoinColumn(name = "id_employee")
+            , inverseJoinColumns = @JoinColumn(name = "id_appeal")
+    )
+    private Appeal addresseeAppeal;
+
+    /**
      * Связь/принадлежность работника департаменту
      */
     @ManyToOne(fetch = FetchType.LAZY)
