@@ -75,6 +75,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-adapter-core</artifactId>
+            <version>22.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.aleksandy</groupId>
             <artifactId>petrovich</artifactId>
             <version>1.2.1</version>
