@@ -57,6 +57,13 @@ public class Employee extends BaseEntity {
     private String address;
 
     /**
+     * Подробная информация об адресе сотрудника.
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address addressDetails;
+
+    /**
      * URL фотографии сотрудника.
      */
     @Size(max = 200)
@@ -156,4 +163,11 @@ public class Employee extends BaseEntity {
             , inverseJoinColumns = @JoinColumn(name = "id_appeal")
     )
     private Appeal addresseeAppeal;
+
+    /**
+     * Связь/принадлежность работника департаменту
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 }

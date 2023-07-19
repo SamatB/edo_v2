@@ -1,3 +1,7 @@
+yandex:
+  geo:
+    url: https://geocode-maps.yandex.ru/1.x/?format=json&results=1&sco=longlat&apikey=9fdbb2aa-5f75-43e0-ae21-491b46864d11&geocode=
+
 spring:
   flyway:
     enabled: true
@@ -13,6 +17,18 @@ spring:
         default_schema: edo
   application:
     name: edo-service
+  main:
+    allow-bean-definition-overriding: true
+  rabbitmq:
+    username: "guest"
+    password: "guest"
+    host: "localhost"
+    virtual-host: "/"
+    port: "5672"
+    template:
+      routing-key: "service"
+      default-receive-queue: "service"
+      reply-timeout: 10000
 server:
   port: 0
 eureka:
