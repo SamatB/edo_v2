@@ -22,3 +22,10 @@ eureka:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
   instance:
     preferIpAddress: true
+# Конфигурация для получения данных из внешнего хранилища
+job:
+  schedule:
+    cron: "0 0 * * * *" # Расписание выполнения задачи (каждый час)
+external:
+  storage:
+    url: "http://xn--d1ab2a.space/mock/employees" # Адрес внешнего хранилища данных

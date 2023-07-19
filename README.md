@@ -344,7 +344,7 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.12-ma
 ### Keycloak
 
 1. Сервер
-- <a href="http://www.xn--d1ab2a.space/auth/"> Ссылка на сервер</a>.</li>
+- <a href="http://www.xn--d1ab2a.space/auth/"> Ссылка на сервер</a>
 - credentials: admin/admin
 - основной realm: edo-project-realm
 - client: edo-project-client
@@ -355,14 +355,20 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.12-ma
 
 ### Установка и разворачивание MinIO на локальном компьютере
 
-1. Установите Docker на вашем компьютере, если он ещё не установлен.
+1. Установите и запустите Docker на вашем компьютере, если он ещё не установлен.
 
-2. Откройте терминал (можно прямо в IntelliJ IDEA) и выполните следующую команду, чтобы скачать образ MinIO из Docker
-   Hub:
+   https://www.docker.com
+
+2. Запустите сервер MinIO в докере. Возможно 2 варианта:
+
+   2.1. (предпочтительно) Запустите файл docker-compose.yml в корневой папке проекта.
+
+   2.2.1. Откройте терминал (можно прямо в IntelliJ IDEA) и выполните следующую команду, чтобы скачать образ MinIO из
+          Docker Hub:
 
 docker pull minio/minio:latest
 
-3. Создайте Docker контейнер с помощью следующей команды:
+   2.2.2. Создайте Docker контейнер с помощью следующей команды:
 
 docker run \
 -p 9000:9000 \
@@ -372,12 +378,13 @@ docker run \
 -e "MINIO_ROOT_PASSWORD=password" \
 minio/minio:latest server /data --console-address ":9090"
 
-4. MinIO сервер должен быть успешно развёрнут и запущен на порту 9000 вашего локального компьютера.
+3. MinIO сервер должен быть успешно развёрнут и запущен на порту 9000 вашего локального компьютера.
    Вы можете получить доступ к административной панели MinIO, открыв веб-браузер и перейдя по адресу:
-   http://localhost:9000
-   Логин - username;
-   Пароль - password.
 
-5. Конфигурация MinIO описана в edo-file-storage > src > main > application.yml
+   http://localhost:9000
+   Username - username;
+   Password - password.
+
+4. Конфигурация MinIO описана в edo-file-storage > src > main > application.yml
    Обратите внимание, что бакет для хранения файлов (если его ещё не существует) создаётся автоматически при добавлении
    нового файла.
