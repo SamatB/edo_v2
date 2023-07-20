@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS department
 (
     id                   BIGSERIAL PRIMARY KEY,
-    full_name            VARCHAR(50) NOT NULL,
-    short_name           VARCHAR(25),
-    address              VARCHAR(50),
+    full_name            VARCHAR(100) NOT NULL,
+    short_name           VARCHAR(50),
+    address              VARCHAR(100),
     phone                VARCHAR(11),
     creation_date        TIMESTAMP NOT NULL,
     archived_date        TIMESTAMP,
