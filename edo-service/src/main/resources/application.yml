@@ -14,7 +14,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        default_schema: edo
+        default_schema: edo-2
   application:
     name: edo-service
   main:
