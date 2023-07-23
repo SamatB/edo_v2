@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -146,7 +147,7 @@ class DepartmentListenerTest {
         when(departmentService.saveDepartment(departmentDto)).thenReturn(departmentDto);
 
         // Act
-        departmentListener.receiveDepartment(JSON_DEPARTMENT);
+        departmentListener.receiveDepartment(Map.of("department", JSON_DEPARTMENT));
 
         // Assert
         verify(departmentService, times(1)).saveDepartment(departmentDto);

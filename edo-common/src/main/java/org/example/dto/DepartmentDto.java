@@ -1,10 +1,8 @@
 package org.example.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.example.utils.ZonedDateTimeDeserializer;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -33,9 +31,7 @@ public class DepartmentDto implements Serializable {
     private DepartmentDto department;
     @NotNull
     @Schema(description = "Дата создания")
-    @JsonDeserialize(using = ZonedDateTimeDeserializer.class)
     private ZonedDateTime creationDate;
     @Schema(description = "Дата архивации")
-    @JsonDeserialize(using = ZonedDateTimeDeserializer.class)
     private ZonedDateTime archivedDate;
 }
