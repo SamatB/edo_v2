@@ -11,7 +11,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -31,51 +30,6 @@ class DepartmentListenerTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    public final String JSON_DEPARTMENT = "{\n" +
-            "  \"id\": 1,\n" +
-            "  \"fullName\": \"Отдел разработки\",\n" +
-            "  \"shortName\": \"Разраб.\",\n" +
-            "  \"address\": \"ул. Примерная, 123\",\n" +
-            "  \"addressDetails\": {\n" +
-            "    \"fullAddress\": \"ул. Примерная, 123, корпус 1, строение 2, кв. 45\",\n" +
-            "    \"street\": \"ул. Примерная\",\n" +
-            "    \"house\": \"123\",\n" +
-            "    \"index\": \"123456\",\n" +
-            "    \"housing\": \"корпус 1\",\n" +
-            "    \"building\": \"строение 2\",\n" +
-            "    \"city\": \"Город\",\n" +
-            "    \"region\": \"Область\",\n" +
-            "    \"country\": \"Страна\",\n" +
-            "    \"flat\": \"45\"\n" +
-            "  },\n" +
-            "  \"phone\": \"+12345\",\n" +
-            "  \"externalId\": \"EXT-001\",\n" +
-            "  \"department\": {\n" +
-            "    \"id\": 2,\n" +
-            "    \"fullName\": \"Отдел тестирования\",\n" +
-            "    \"shortName\": \"Тест.\",\n" +
-            "    \"address\": \"ул. Тестовая, 456\",\n" +
-            "    \"addressDetails\": {\n" +
-            "      \"fullAddress\": \"ул. Примерная, 130, корпус 1, строение 2, кв. 45\",\n" +
-            "      \"street\": \"ул. Примерная\",\n" +
-            "      \"house\": \"130\",\n" +
-            "      \"index\": \"123456\",\n" +
-            "      \"housing\": \"корпус 1\",\n" +
-            "      \"building\": \"строение 2\",\n" +
-            "      \"city\": \"Город\",\n" +
-            "      \"region\": \"Область\",\n" +
-            "      \"country\": \"Страна\",\n" +
-            "      \"flat\": \"45\"\n" +
-            "    },\n" +
-            "    \"phone\": \"+98765\",\n" +
-            "    \"externalId\": \"EXT-002\",\n" +
-            "    \"creationDate\": \"2023-07-22T12:34:56+00:00\",\n" +
-            "    \"archivedDate\": null\n" +
-            "  },\n" +
-            "  \"creationDate\": \"2023-07-22T12:34:56+00:00\",\n" +
-            "  \"archivedDate\": null\n" +
-            "}\n";
-
     /**
      * Тест для метода receiveDepartment.
      * Проверка корректности преобразования JSON в объект DepartmentDto
@@ -86,7 +40,6 @@ class DepartmentListenerTest {
         DepartmentDto departmentDto = new DepartmentDto();
 
         // Задаем значения полям DepartmentDto
-        departmentDto.setId(1L);
         departmentDto.setFullName("Отдел разработки");
         departmentDto.setShortName("Разраб.");
         departmentDto.setAddress("ул. Примерная, 123");
@@ -147,7 +100,7 @@ class DepartmentListenerTest {
         when(departmentService.saveDepartment(departmentDto)).thenReturn(departmentDto);
 
         // Act
-        departmentListener.receiveDepartment(Map.of("department", JSON_DEPARTMENT));
+        departmentListener.receiveDepartment(departmentDto);
 
         // Assert
         verify(departmentService, times(1)).saveDepartment(departmentDto);
