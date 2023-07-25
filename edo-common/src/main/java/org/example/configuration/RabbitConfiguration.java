@@ -78,6 +78,14 @@ public class RabbitConfiguration {
     }
 
     /**
+     * Бин очереди для DepartmentDto
+     */
+    @Bean
+    public Queue departmentQueue() {
+        return new Queue("department");
+    }
+
+    /**
      * Бин обменника типа direct
      */
     @Bean

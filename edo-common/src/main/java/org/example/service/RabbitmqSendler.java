@@ -17,11 +17,11 @@ import java.util.Map;
 @Getter
 @Setter
 @AllArgsConstructor
-public class RabbitMQSender {
-    private final Logger logger = LoggerFactory.getLogger(RabbitMQSender.class);
+public class RabbitmqSendler {
+    private final Logger logger = LoggerFactory.getLogger(RabbitmqSendler.class);
     private RabbitTemplate rabbitTemplate;
-    public void send(String queue, Object dto) {
-        rabbitTemplate.convertAndSend(queue, dto);
-        logger.info("Sending Message to the Queue : " + queue);
+    public void send(Map<String,String> map) {
+        rabbitTemplate.convertAndSend(map.get("key"), map);
+        logger.info("Sending Message to the Queue : " + map.get("key"));
     }
 }

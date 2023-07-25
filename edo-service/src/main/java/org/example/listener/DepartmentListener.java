@@ -22,6 +22,5 @@ public class DepartmentListener {
         } catch (Exception e) {
             System.err.println("Ошибка при обработке сообщения из RabbitMQ: " + e.getMessage());
         }
-
     }
 }
