@@ -13,6 +13,11 @@ import lombok.Setter;
 import lombok.ToString;
 import org.example.utils.Employment;
 
+
+
+/**
+ * Личные данные автора документа
+ */
 @Entity
 @Table(name = "author")
 @NoArgsConstructor
@@ -20,10 +25,6 @@ import org.example.utils.Employment;
 @Getter
 @Setter
 @ToString
-
-/**
- * Личные данные автора документа
- */
 public class Author extends BaseEntity {
     /**
      * Имя автора
