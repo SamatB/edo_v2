@@ -27,7 +27,7 @@ public class RabbitController {
     public ResponseEntity<String> receiveMessage(@RequestBody Map<String, Object> dto) {
         if (dto.get("key") == null) {
             logger.info("Message is done but key of receiver is absent");
-            return ResponseEntity.ok("Field JSON param is required");
+            return ResponseEntity.ok("Field \"key\" in JSON body is required");
         }
         if ((dto.get("key").toString()).equals("common")) {
             rabbitmqSender.getRabbitTemplate().setExchange("commonExchange");
