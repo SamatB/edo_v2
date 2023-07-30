@@ -10,6 +10,7 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+
   minio:
     container_name: minio
     image: minio/minio:latest
@@ -20,3 +21,15 @@ services:
       - "9000:9000"
       - "9090:9090"
     command: server /data --console-address ":9090"
+
+  #postgres
+  db:
+    container_name: project_postgresql
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: oog
+      POSTGRES_DB: edo_db

@@ -9,6 +9,7 @@ import org.example.dto.AppealDto;
 import org.example.entity.Appeal;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
+import org.example.service.impl.AppealServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -35,7 +36,7 @@ public class AppealServiceTest {
     private AppealMapper appealMapper;
 
     @InjectMocks
-    private AppealService appealService;
+    private AppealServiceImpl appealService;
 
     @BeforeEach
     public void setUp() {

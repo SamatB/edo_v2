@@ -108,4 +108,8 @@ public class RabbitConfiguration {
     public Binding fanoutBinding() {
         return BindingBuilder.bind(queue()).to(fanoutExchange());
     }
+
+    @Bean
+    public Queue employeeDtoId() {return new Queue("employeeDtoId");}
+
 }
