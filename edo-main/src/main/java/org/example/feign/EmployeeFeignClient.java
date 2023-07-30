@@ -13,5 +13,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface EmployeeFeignClient {
 
     @GetMapping("/employee")
-    public EmployeeDto getByUsername(@RequestParam String username);
+    EmployeeDto getByUsername(@RequestParam String username);
 }

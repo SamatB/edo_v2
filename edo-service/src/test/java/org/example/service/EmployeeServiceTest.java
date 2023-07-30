@@ -4,6 +4,7 @@ import org.example.dto.EmployeeDto;
 import org.example.entity.Employee;
 import org.example.mapper.EmployeeMapper;
 import org.example.repository.EmployeeRepository;
+import org.example.service.impl.EmployeeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +21,7 @@ public class EmployeeServiceTest {
     @Mock
     private EmployeeRepository employeeRepository;
     @InjectMocks
-    private EmployeeService employeeService;
+    private EmployeeServiceImpl employeeService;
 
 
     @BeforeEach

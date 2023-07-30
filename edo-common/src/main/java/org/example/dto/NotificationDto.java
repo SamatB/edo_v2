@@ -1,7 +1,6 @@
 package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +19,6 @@ import java.time.ZonedDateTime;
 @Schema(description = "DTO для сущности Notification")
 public class NotificationDto {
 
-    @NotNull
     @Schema(description = "Идентификатор оповещения")
     private Long id;
 

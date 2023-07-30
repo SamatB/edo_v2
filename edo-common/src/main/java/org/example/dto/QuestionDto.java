@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 @Data
 @Schema(description = "Вопрос")
 public class QuestionDto {
-    @NotNull
+
     @Schema(description = "Идентификатор вопроса")
     private Long id;
 

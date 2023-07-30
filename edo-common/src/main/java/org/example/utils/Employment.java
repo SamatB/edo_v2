@@ -2,10 +2,11 @@ package org.example.utils;
 
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
+
 /**
  * Enum типов трудоустройства
  */
+@AllArgsConstructor
 public enum Employment {
     UNEMPLOYED("Безработный"),
     WORKER("Работник"),

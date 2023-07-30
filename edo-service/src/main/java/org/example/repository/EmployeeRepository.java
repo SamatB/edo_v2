@@ -15,5 +15,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
      * Поиск Employee в базе данных по username.
      * @param username - имя пользователя.
      */
-    public Employee findByUsername(String username);
+    Employee findByUsername(String username);
 }

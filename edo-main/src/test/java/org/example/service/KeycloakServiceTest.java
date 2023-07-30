@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.dto.EmployeeDto;
 import org.example.feign.EmployeeFeignClient;
+import org.example.service.impl.KeycloakServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.keycloak.KeycloakPrincipal;
@@ -40,7 +41,7 @@ class KeycloakServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        keycloakService = new KeycloakService(employeeFeignClient);
+        keycloakService = new KeycloakServiceImpl(employeeFeignClient);
     }
 
     @Test

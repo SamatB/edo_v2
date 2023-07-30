@@ -20,4 +20,6 @@ public class RabbitmqListener {
     public void processMessage(Map<String,String> map) {
         logger.info(map.toString());
     }
+
+
 }
