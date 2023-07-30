@@ -47,10 +47,11 @@ public class EmployeeService {
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
         Employee employee = employeeMapper.dtoToEntity(employeeDto);
         try {
-        Employee savedEmployee = employeeRepository.save(employee);
-        return employeeMapper.entityToDto(savedEmployee);
+            Employee savedEmployee = employeeRepository.save(employee);
+            return employeeMapper.entityToDto(savedEmployee);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Ошибка сохранения обращения: обращение не должно быть null");
         }
+
     }
 }
