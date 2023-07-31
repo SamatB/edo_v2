@@ -36,6 +36,6 @@ public class NotificationServiceImpl implements NotificationService {
                 })
                 .map(notificationRepository::save)
                 .map(notificationMapper::entityToDto)
-                .orElseThrow((() -> new IllegalArgumentException("Ошибка сохранения оповещения: оповещение не должно быть null")));
+                .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения оповещения: оповещение не должно быть null"));
     }
 }
