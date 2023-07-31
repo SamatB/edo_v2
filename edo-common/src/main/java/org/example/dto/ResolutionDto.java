@@ -1,7 +1,6 @@
 package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +20,6 @@ import java.util.Set;
 @Schema(description = "DTO для сущности Resolution")
 public class ResolutionDto {
 
-    @NotNull
     @Schema(description = "Идентификатор резолюции")
     private Long id;
 

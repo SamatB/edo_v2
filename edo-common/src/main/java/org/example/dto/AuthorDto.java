@@ -8,19 +8,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.utils.Employment;
 
+
+
+/**
+ * DTO-класс личных данных автора документа
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Автор")
-
-/**
- * DTO-класс личных данных автора документа
- */
-
 public class AuthorDto {
 
-    @NotNull
     @Schema(description = "идентификатор автора")
     private Long id;
 

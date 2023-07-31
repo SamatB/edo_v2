@@ -1,13 +1,13 @@
 package org.example.service.impl;
 
 import lombok.SneakyThrows;
+import org.apache.commons.collections4.CollectionUtils;
 import org.example.entity.Address;
 import org.example.service.AddressParser;
 import org.example.utils.GeocodeResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Iterator;
 import java.util.Optional;
