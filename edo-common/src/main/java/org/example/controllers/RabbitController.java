@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.service.RabbitmqSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class RabbitController {
     private final Logger logger = LoggerFactory.getLogger(RabbitController.class);
     private final RabbitmqSender rabbitmqSender;
+    private final RabbitTemplate rabbitTemplate;
 
     /**
      * Контроллер сообщений RabbitMQ
@@ -27,11 +29,11 @@ public class RabbitController {
             return ResponseEntity.ok("Field \"key\" in JSON body is required");
         }
         if ((dto.get("key").toString()).equals("common")) {
-            rabbitmqSender.getRabbitTemplate().setExchange("commonExchange");
+            rabbitTemplate.setExchange("commonExchange");
             logger.info("Sending Message to the all Queues");
-            rabbitmqSender.getRabbitTemplate().convertAndSend(dto);
+            rabbitTemplate.convertAndSend(dto);
         } else {
-            rabbitmqSender.getRabbitTemplate().setExchange("directExchange");
+            rabbitTemplate.setExchange("directExchange");
             rabbitmqSender.send(dto.get("key").toString(),dto.get("dto"));
         }
         return ResponseEntity.ok("Message is done");
