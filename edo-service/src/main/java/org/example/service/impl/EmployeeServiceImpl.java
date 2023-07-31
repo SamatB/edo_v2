@@ -7,11 +7,12 @@ package org.example.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.EmployeeDto;
-import org.example.entity.Employee;
 import org.example.mapper.EmployeeMapper;
 import org.example.repository.EmployeeRepository;
 import org.example.service.EmployeeService;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,22 +29,22 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public EmployeeDto getEmployeeByUsername(String username) {
-        Employee employee = employeeRepository.findByUsername(username);
-        if (employee != null) {
-            return employeeMapper.entityToDto(employee);
-        }
-        throw new EntityNotFoundException("Ошибка поиска: работник с username: " + username + " не найден");
+        return Optional.ofNullable(username)
+                .map(employeeRepository::findByUsername)
+                .map(employeeMapper::entityToDto)
+                .orElseThrow(() -> new EntityNotFoundException("Ошибка поиска: работник с username: " + username + " не найден"));
     }
 
     /**
      * Получает работника из базы данных по id.
      *
      * @param id - пользовательское имя работника.
-     * @return объект работника.
+     * @return объект DTO работника.
      */
     @Override
-    public Employee getEmployeeById(Long id) {
+    public EmployeeDto getEmployeeById(Long id) {
         return employeeRepository.findById(id)
+                .map(employeeMapper::entityToDto)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Ошибка поиска: работник с id: %s не найден", id)));
     }
 }
