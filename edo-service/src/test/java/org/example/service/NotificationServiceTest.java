@@ -4,11 +4,12 @@ import org.example.dto.NotificationDto;
 import org.example.entity.Notification;
 import org.example.mapper.NotificationMapper;
 import org.example.repository.NotificationRepository;
+import org.example.service.impl.NotificationServiceImpl;
 import org.example.utils.NotificationType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,8 +34,9 @@ public class NotificationServiceTest {
      */
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        notificationService = new NotificationService(notificationRepository, notificationMapper);
+        notificationRepository = Mockito.mock(NotificationRepository.class);
+        notificationMapper = Mockito.mock(NotificationMapper.class);
+        notificationService = new NotificationServiceImpl(notificationRepository, notificationMapper);
     }
 
     /**
