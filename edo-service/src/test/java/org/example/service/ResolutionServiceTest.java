@@ -5,6 +5,7 @@ import org.example.dto.ResolutionDto;
 import org.example.entity.Resolution;
 import org.example.mapper.ResolutionMapper;
 import org.example.repository.ResolutionRepository;
+import org.example.service.impl.ResolutionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -33,7 +34,7 @@ public class ResolutionServiceTest {
     private ResolutionMapper resolutionMapper;
 
     @InjectMocks
-    private ResolutionService resolutionService;
+    private ResolutionServiceImpl resolutionService;
 
     @BeforeEach
     public void setUp() {

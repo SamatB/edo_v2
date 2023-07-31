@@ -9,6 +9,7 @@ import org.example.dto.AppealDto;
 import org.example.entity.Appeal;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
+import org.example.service.impl.AppealServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,9 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class AppealServiceTest {
 
@@ -35,7 +34,7 @@ public class AppealServiceTest {
     private AppealMapper appealMapper;
 
     @InjectMocks
-    private AppealService appealService;
+    private AppealServiceImpl appealService;
 
     @BeforeEach
     public void setUp() {
