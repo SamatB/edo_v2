@@ -4,7 +4,6 @@ import org.example.dto.NotificationDto;
 import org.example.entity.Notification;
 import org.example.mapper.NotificationMapper;
 import org.example.repository.NotificationRepository;
-import org.example.service.impl.NotificationServiceImpl;
 import org.example.utils.NotificationType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,7 @@ public class NotificationServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        notificationService = new NotificationServiceImpl(notificationRepository, notificationMapper);
+        notificationService = new NotificationService(notificationRepository, notificationMapper);
     }
 
     /**
