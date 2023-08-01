@@ -2,10 +2,9 @@ package org.example.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.Employee;
+import org.example.dto.EmployeeDto;
 import org.example.service.EmployeeService;
 import org.example.service.RabbitmqSender;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
-import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,10 +34,9 @@ public class EmployeeController {
      * @return ok
      */
     @PostMapping("/ids")
-    @Operation(summary = "Получает коллекцию ID EmployeeDTO")
+    @Operation(summary = "Получает коллекцию ID EmployeeDTO и отправляет в очередь")
     public ResponseEntity<String> sendEmployeeDtoId(@RequestBody Collection<Long> idsEmployeeDTO) {
         try {
-            log.info("Отправление коллекции ID EmployeeDTO в очередь");
             rabbitmqSender.send("employeeDtoId", idsEmployeeDTO);
             return ResponseEntity.ok("ok");
         } catch (Exception e) {
@@ -57,12 +54,13 @@ public class EmployeeController {
      */
 
     @PostMapping("/emails")
+    @Operation(summary = "Получает коллекцию ID EmployeeDTO и отплавляет коллекцию Emails")
     Collection<String> getByEmails(@RequestBody Collection<Long> idsEmployeeDTO) {
         log.info("Коллекция idsEmployeeDTO успешно получен и Коллекция email отправлена в очередь");
         return idsEmployeeDTO.stream()
-                .map(employeeService::getEmployeeById)      // получаем employee
-                .map(Employee::getEmail)                    // получаем email
-                .filter(s -> !s.isEmpty())                  // убираем null&пустые строки
+                .map(employeeService::getEmployeeById)
+                .map(EmployeeDto::getEmail)
+                .filter(s -> !s.isEmpty())
                 .toList();
     }
 }

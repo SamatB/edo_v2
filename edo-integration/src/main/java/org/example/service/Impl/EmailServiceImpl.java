@@ -14,16 +14,16 @@ import org.springframework.stereotype.Service;
 public class EmailServiceImpl implements EmailService {
 
     private JavaMailSender emailSender;
-    private final String FROM = "john.doe@example.org";
 
     @Override
     public void sendEmail(String to) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(FROM);
-            message.setTo(to);
-            message.setSubject("Hello world");
-            message.setText("Hello");
+            SimpleMailMessage message = new SimpleMailMessage() {{
+                setFrom("john.doe@example.org");
+                setTo(to);
+                setSubject("Hello world");
+                setText("Hello");
+            }};
             emailSender.send(message);
             log.info("Письмо было отправлено на адрес: " + to);
         } catch (Exception e) {

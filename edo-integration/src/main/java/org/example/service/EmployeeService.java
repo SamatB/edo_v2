@@ -9,5 +9,5 @@ import java.util.Collection;
 public interface EmployeeService {
     /** Получение коллекции email по id
      */
-    Collection<String> getEmailToId(Collection <Long> ids);
+    Collection<String> getEmailById(Collection <Long> ids);
 }

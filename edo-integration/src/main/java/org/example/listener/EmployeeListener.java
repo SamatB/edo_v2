@@ -21,7 +21,7 @@ public class EmployeeListener {
     @RabbitListener(queues = "employeeDtoId")
     public void receiveEmployeeDtoId(Collection<Long> employeeDtoId) {
         try {
-            employeeService.getEmailToId(employeeDtoId)
+            employeeService.getEmailById(employeeDtoId)
                     .parallelStream()
                     .forEach(emailService::sendEmail);
             log.info("Коллекция employeeDtoIDs успешно получен из очереди");
