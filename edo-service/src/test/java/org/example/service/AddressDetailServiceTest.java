@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.entity.Address;
 import org.example.repository.AddressDetailsRepository;
+import org.example.service.impl.AddressDetailServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,7 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Тесты для класса AddressDetailService.
+ * Тесты для класса AddressDetailServiceImpl.
  */
 class AddressDetailServiceTest {
 
@@ -21,7 +22,7 @@ class AddressDetailServiceTest {
     private AddressDetailsRepository addressDetailsRepository;
 
     @InjectMocks
-    private AddressDetailService addressDetailService;
+    private AddressDetailServiceImpl addressDetailService;
 
     @BeforeEach
     public void setUp() {

@@ -2,7 +2,7 @@ package org.example.listener;
 
 import org.example.dto.AddressDto;
 import org.example.dto.DepartmentDto;
-import org.example.service.DepartmentService;
+import org.example.service.impl.DepartmentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class DepartmentListenerTest {
 
     @Mock
-    private DepartmentService departmentService;
+    private DepartmentServiceImpl departmentService;
 
     @InjectMocks
     private DepartmentListener departmentListener;

@@ -8,6 +8,6 @@ import org.mapstruct.Mapper;
 /**
  * Маппер для преобразования между сущностью Department и объектом DepartmentDto.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {AddressMapper.class})
 public interface DepartmentMapper extends AbstractMapper<Department, DepartmentDto> {
 }

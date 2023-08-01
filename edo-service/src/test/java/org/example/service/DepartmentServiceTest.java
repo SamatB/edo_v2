@@ -5,6 +5,7 @@ import org.example.dto.DepartmentDto;
 import org.example.entity.Department;
 import org.example.mapper.DepartmentMapper;
 import org.example.repository.DepartmentRepository;
+import org.example.service.impl.DepartmentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -27,7 +28,7 @@ class DepartmentServiceTest {
     DepartmentMapper departmentMapper;
 
     @InjectMocks
-    DepartmentService departmentService;
+    DepartmentServiceImpl departmentService;
 
     @BeforeEach
     public void setUp() {
