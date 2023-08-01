@@ -110,6 +110,14 @@ public class RabbitConfiguration {
     }
 
     /**
+     * Бин связи очереди department с обменником direct
+     */
+    @Bean
+    public Binding directBindingDepartment() {
+        return BindingBuilder.bind(departmentQueue()).to(directExchange()).with("department");
+    }
+
+    /**
      * Бин связи очереди с обменником fanout
      */
     @Bean

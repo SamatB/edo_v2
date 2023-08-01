@@ -27,15 +27,13 @@ public class AddressDetailServiceImpl implements AddressDetailService {
      * @return сохраненный объект Address
      */
     public Address saveAddress(Address addressDetails) {
-        Optional<Address> address = addressDetailsRepository.findByFullAddress(addressDetails.getFullAddress());
-        // Если такого адреса нет, создаем его
-        if (address.isEmpty()) {
-            addressDetails = addressDetailsRepository.save(addressDetails);
-            log.info("В базу данных сохранен объект Address: " + addressDetails.getFullAddress());
-        } else {
-            // Если такой адрес уже есть в базе, возвращаем его
-            addressDetails = address.get();
-        }
-        return addressDetails;
+        return addressDetailsRepository.findByFullAddress(addressDetails.getFullAddress())
+                .stream()
+                .findFirst()
+                .orElseGet(() -> {
+                    Address savedAddress = addressDetailsRepository.save(addressDetails);
+                    log.info("В базу данных сохранен объект Address: " + savedAddress.getFullAddress());
+                    return savedAddress;
+                });
     }
 }
