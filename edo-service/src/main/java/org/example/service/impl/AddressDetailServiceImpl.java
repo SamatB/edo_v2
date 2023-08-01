@@ -27,13 +27,14 @@ public class AddressDetailServiceImpl implements AddressDetailService {
      * @return сохраненный объект Address
      */
     public Address saveAddress(Address addressDetails) {
-        return addressDetailsRepository.findByFullAddress(addressDetails.getFullAddress())
-                .stream()
-                .findFirst()
-                .orElseGet(() -> {
-                    Address savedAddress = addressDetailsRepository.save(addressDetails);
-                    log.info("В базу данных сохранен объект Address: " + savedAddress.getFullAddress());
-                    return savedAddress;
-                });
+        return Optional.ofNullable(addressDetails)
+                .map(Address::getFullAddress)
+                .flatMap(addressDetailsRepository::findByFullAddress)
+                .map(entity -> {
+                            addressDetailsRepository.save(entity);
+                            log.info("В базу данных сохранен объект Address: " + entity.getFullAddress());
+                            return entity;
+                })
+                .orElseThrow(()->new IllegalArgumentException("Ошибка сохранения адреса: адрес не должен быть null"));
     }
 }
