@@ -31,10 +31,10 @@ public class AddressDetailServiceImpl implements AddressDetailService {
                 .map(Address::getFullAddress)
                 .flatMap(addressDetailsRepository::findByFullAddress)
                 .map(entity -> {
-                            addressDetailsRepository.save(entity);
-                            log.info("В базу данных сохранен объект Address: " + entity.getFullAddress());
-                            return entity;
+                    addressDetailsRepository.save(entity);
+                    log.info("В базу данных сохранен объект Address: " + entity.getFullAddress());
+                    return entity;
                 })
-                .orElseThrow(()->new IllegalArgumentException("Ошибка сохранения адреса: адрес не должен быть null"));
+                .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения адреса: адрес не должен быть null"));
     }
 }
