@@ -1,16 +1,26 @@
 package org.example.listener;
 
+import org.example.dto.AppealDto;
 import org.example.dto.EmployeeDto;
+import org.example.entity.Appeal;
 import org.example.listener.EmployeeListener;
+import org.example.mapper.EmployeeMapper;
+import org.example.repository.EmployeeRepository;
 import org.example.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 public class EmployeeListenerTest {
 
@@ -20,23 +30,25 @@ public class EmployeeListenerTest {
     @InjectMocks
     private EmployeeListener employeeListener;
 
+    private EmployeeDto employeeDto;
+
+    private EmployeeMapper employeeMapper;
+    private EmployeeRepository employeeRepository;
+
     @BeforeEach
     public void setUp() {
-        // Инициализация mock объектов перед каждым тестом
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Тест получения DTO работника из очереди.
+     */
     @Test
     public void testReceiveEmployee_Successful() {
-        // Test 1: Успешное получение работника из очереди
-        // Arrange
         EmployeeDto employeeDto = new EmployeeDto();
-
-        // Act
         employeeListener.receiveEmployee(employeeDto);
-
-        // Assert
         verify(employeeService).saveEmployee(employeeDto);
     }
+
 
 }

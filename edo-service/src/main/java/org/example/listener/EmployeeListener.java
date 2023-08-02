@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
 public class EmployeeListener {
 
     private final EmployeeService employeeService;
-    @RabbitListener(queues = "employee")
+    @RabbitListener(queues = "saveEmployee")
     public void receiveEmployee(EmployeeDto employeeDto) {
         try {
             log.info("Работник успешно получен из очереди");
             employeeService.saveEmployee(employeeDto);
         } catch (Exception e) {
-            log.error("Ошибка при обработке сообщения из RabbitMQ: " + e.getMessage());
+            log.error("Ошибка при сохранении в EmployeeListener: " + e.getMessage());
         }
     }
 }

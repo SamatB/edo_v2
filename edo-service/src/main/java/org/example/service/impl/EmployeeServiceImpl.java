@@ -12,6 +12,7 @@ import org.example.repository.EmployeeRepository;
 import org.example.service.EmployeeService;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 @Service
@@ -51,7 +52,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     /**
      * Сохраняет работника в базу данных.
      *
-     *  @param username - логин работника.
+     *  @param employeeDto - логин работника.
      * @return объект DTO работника.
      */
 
@@ -59,6 +60,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
         return Optional.ofNullable(employeeDto)
                 .map(employeeMapper::dtoToEntity)
+                .map(employee -> {
+                    employee.setCreationDate(ZonedDateTime.now());
+                    return employee;
+                })
                 .map(employeeRepository::save)
                 .map(employeeMapper::entityToDto)
                 .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения работника: работник не должен быть null"));
