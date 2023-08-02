@@ -95,24 +95,6 @@ public class RabbitConfiguration {
     /**
      * Бин очереди работника
      */
-    @Bean
-    public Queue employeeQueue() {
-        return new Queue("employee");
-    }
-    /**
-     * Бин очереди работника
-     */
-    @Bean
-    public Queue employeeQueue() {
-        return new Queue("employee");
-    }
-    /**
-     * Бин очереди работника
-     */
-    @Bean
-    public Queue employeeQueue() {
-        return new Queue("employee");
-    }
     /**
      * Бин обменника типа direct
      */
