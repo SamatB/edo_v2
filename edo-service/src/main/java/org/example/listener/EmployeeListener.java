@@ -19,7 +19,7 @@ public class EmployeeListener {
             log.info("Работник успешно получен из очереди");
             employeeService.saveEmployee(employeeDto);
         } catch (Exception e) {
-            log.error("Ошибка при обработке сообщения из RabbitMQ: " + e.getMessage());
+            log.error("Ошибка при сохранении в EmployeeListener: " + e.getMessage());
         }
     }
 }

@@ -26,10 +26,9 @@ public class RabbitConfiguration {
     private String queue;
 
     /**
-     * Очередь и RoutingKey для Employee
+     * Очередь и RoutingKey для операции сохранения в БД работника
      */
-    final private String employee = "employee";
-    final private String employeeRoutingKey = "employee";
+    final private String saveEmployee = "saveEmployee";
 
 
     @Value("${spring.rabbitmq.template.routing-key}")
@@ -86,15 +85,13 @@ public class RabbitConfiguration {
         return new Queue(queue);
     }
     /**
-     * Бин очереди для Employee
+     * Бин очереди для операции сохранения работника в БД
      */
     @Bean
-    public Queue employeeQueue() {
-        return new Queue(employee);
+    public Queue saveEmployeeQueue() {
+        return new Queue(saveEmployee);
     }
-    /**
-     * Бин очереди работника
-     */
+
     /**
      * Бин обменника типа direct
      */
@@ -128,17 +125,15 @@ public class RabbitConfiguration {
     }
 
     /**
-     * Бин связи очереди Employee с обменником direct
+     * Бины связи очереди на сохранение работника с обменником direct
      */
     @Bean
     public Binding directBindingEmployee() {
-        return BindingBuilder.bind(employeeQueue()).to(directExchange()).with(employeeRoutingKey);
+        return BindingBuilder.bind(saveEmployeeQueue()).to(directExchange()).with(saveEmployee);
     }
-    /**
-     * Бин связи очереди Employee с обменником fanout
-     */
     @Bean
     public Binding fanoutBindingEmployee() {
-        return BindingBuilder.bind(employeeQueue()).to(fanoutExchange());
+        return BindingBuilder.bind(saveEmployeeQueue()).to(fanoutExchange());
     }
+
 }
