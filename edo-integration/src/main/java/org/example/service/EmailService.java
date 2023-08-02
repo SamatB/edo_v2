@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 /** Сервис отправки почты
@@ -8,5 +9,5 @@ import org.springframework.stereotype.Service;
 public interface EmailService {
     /** метод отправки почты
      */
-    void sendEmail(String to);
+    SimpleMailMessage sendEmail(String to);
 }

@@ -16,17 +16,19 @@ public class EmployeeListener {
     private final EmailService emailService;
 
     /**
+     * Получает Коллекцию id EmployeeDTO с очереди rabbitmq и отправляет emails
+     * на основе переданных идентификаторов.
      * @param employeeDtoId Коллекция id EmployeeDTO
      */
     @RabbitListener(queues = "employeeDtoId")
-    public void receiveEmployeeDtoId(Collection<Long> employeeDtoId) {
+    public void sendEmailToEmployeeDtoId(Collection<Long> employeeDtoId) {
         try {
             employeeService.getEmailById(employeeDtoId)
                     .parallelStream()
                     .forEach(emailService::sendEmail);
             log.info("Коллекция employeeDtoIDs успешно получен из очереди");
         } catch (Exception e) {
-            System.err.println("Ошибка при обработке сообщения из RabbitMQ: " + e.getMessage());
+            log.error("Ошибка при обработке сообщения из RabbitMQ: " + e.getMessage());
         }
     }
 }
