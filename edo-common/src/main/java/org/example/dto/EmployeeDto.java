@@ -1,7 +1,6 @@
 package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -14,7 +13,6 @@ import java.time.ZonedDateTime;
 @Schema(description = "DTO для сущности Employee")
 public class EmployeeDto {
 
-    @NotNull
     @Schema(description = "Идентификатор сотрудника")
     private Long id;
 
