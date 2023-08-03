@@ -20,7 +20,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return Collection<String>  Коллекция emails Employee.
      */
     @Override
-    public Collection<String> getEmailById(Collection<Long> ids) {
+    public Collection<String> getEmailsByIds(Collection<Long> ids) {
         if(ids == null) {
             throw new IllegalArgumentException("Коллекция id Employee не может быть null");
         }
