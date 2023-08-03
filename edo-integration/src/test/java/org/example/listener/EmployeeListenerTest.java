@@ -26,7 +26,7 @@ class EmployeeListenerTest {
     @DisplayName("Should log error message when exception is thrown during email sending")
     void sendEmailToEmployeeDtoIdWhenExceptionThrown() {
         Collection<Long> employeeDtoId = Arrays.asList(1L, 2L, 3L);
-        when(employeeService.getEmailById(employeeDtoId)).thenThrow(new RuntimeException("Error retrieving email"));
+        when(employeeService.getEmailsByIds(employeeDtoId)).thenThrow(new RuntimeException("Error retrieving email"));
         employeeListener.sendEmailToEmployeeDtoId(employeeDtoId);
     }
 
@@ -34,7 +34,7 @@ class EmployeeListenerTest {
     @DisplayName("Should send emails to all employeeDtoId and log success message")
     void sendEmailToEmployeeDtoIdWhenSuccessful() {
         Collection<Long> employeeDtoIds = Arrays.asList(1L, 2L, 3L);
-        when(employeeService.getEmailById(employeeDtoIds)).thenReturn(Arrays.asList("email1@example.com", "email2@example.com", "email3@example.com"));
+        when(employeeService.getEmailsByIds(employeeDtoIds)).thenReturn(Arrays.asList("email1@example.com", "email2@example.com", "email3@example.com"));
         employeeListener.sendEmailToEmployeeDtoId(employeeDtoIds);
     }
 

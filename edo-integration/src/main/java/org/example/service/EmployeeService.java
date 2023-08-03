@@ -11,3 +11,4 @@ public interface EmployeeService {
      */
     Collection<String> getEmailsByIds(Collection <Long> ids);
 }
+

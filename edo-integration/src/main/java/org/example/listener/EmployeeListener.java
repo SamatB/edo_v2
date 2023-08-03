@@ -24,7 +24,7 @@ public class EmployeeListener {
     public void sendEmailToEmployeeDtoId(Collection<Long> employeeDtoId) {
         try {
             log.info("Коллекция employeeDtoIDs успешно получен из очереди");
-            employeeService.getEmailById(employeeDtoId)
+            employeeService.getEmailsByIds(employeeDtoId)
                     .parallelStream()
                     .forEach(emailService::sendEmail);
         } catch (Exception e) {

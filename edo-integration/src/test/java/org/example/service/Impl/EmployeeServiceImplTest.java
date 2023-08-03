@@ -27,7 +27,7 @@ class EmployeeServiceImplTest {
     @Test
     @DisplayName("Should throw an exception when null is passed as ids")
     void getEmailByIdWhenNullIsPassedAsIdsThenThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> employeeService.getEmailById(null));
+        assertThrows(IllegalArgumentException.class, () -> employeeService.getEmailsByIds(null));
     }
 
     @Test
@@ -35,7 +35,7 @@ class EmployeeServiceImplTest {
     void getEmailByIdWhenNoIdsAreProvided() {
         Collection<Long> ids = Collections.emptyList();
 
-        Collection<String> result = employeeService.getEmailById(ids);
+        Collection<String> result = employeeService.getEmailsByIds(ids);
 
         assertTrue(result.isEmpty());
         verifyNoInteractions(employeeFeignClient);
@@ -49,7 +49,7 @@ class EmployeeServiceImplTest {
 
         when(employeeFeignClient.getEmailsByIds(ids)).thenReturn(expectedEmails);
 
-        Collection<String> actualEmails = employeeService.getEmailById(ids);
+        Collection<String> actualEmails = employeeService.getEmailsByIds(ids);
 
         assertEquals(expectedEmails.size(), actualEmails.size());
         assertTrue(actualEmails.containsAll(expectedEmails));
