@@ -47,13 +47,13 @@ class EmployeeServiceImplTest {
         Collection<Long> ids = Arrays.asList(1L, 2L, 3L);
         Collection<String> expectedEmails = Arrays.asList("john.doe@example.com", "jane.smith@example.com", "bob.johnson@example.com");
 
-        when(employeeFeignClient.getByEmails(ids)).thenReturn(expectedEmails);
+        when(employeeFeignClient.getEmailsByIds(ids)).thenReturn(expectedEmails);
 
         Collection<String> actualEmails = employeeService.getEmailById(ids);
 
         assertEquals(expectedEmails.size(), actualEmails.size());
         assertTrue(actualEmails.containsAll(expectedEmails));
-        verify(employeeFeignClient, times(1)).getByEmails(ids);
+        verify(employeeFeignClient, times(1)).getEmailsByIds(ids);
     }
 
 }

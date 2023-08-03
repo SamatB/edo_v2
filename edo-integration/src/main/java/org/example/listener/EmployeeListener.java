@@ -23,10 +23,10 @@ public class EmployeeListener {
     @RabbitListener(queues = "employeeDtoId")
     public void sendEmailToEmployeeDtoId(Collection<Long> employeeDtoId) {
         try {
+            log.info("Коллекция employeeDtoIDs успешно получен из очереди");
             employeeService.getEmailById(employeeDtoId)
                     .parallelStream()
                     .forEach(emailService::sendEmail);
-            log.info("Коллекция employeeDtoIDs успешно получен из очереди");
         } catch (Exception e) {
             log.error("Ошибка при обработке сообщения из RabbitMQ: " + e.getMessage());
         }

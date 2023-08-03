@@ -28,7 +28,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             return List.of();
         }
         log.info("Коллекция emails успешно получен из очереди");
-        return employeeFeignClient.getByEmails(ids);
+        return employeeFeignClient.getEmailsByIds(ids);
     }
 }
 
