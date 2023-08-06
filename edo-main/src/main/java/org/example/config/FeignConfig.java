@@ -1,14 +1,12 @@
-/**
- * Класс конфигурации Feign-клиентов
- * */
-
 package org.example.config;
 
 import feign.Logger;
-import feign.okhttp.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Класс конфигурации Feign-клиентов
+ */
 @Configuration
 public class FeignConfig {
 
@@ -17,8 +15,4 @@ public class FeignConfig {
         return Logger.Level.FULL;
     }
 
-    @Bean
-    public OkHttpClient client() {
-        return new OkHttpClient();
-    }
 }

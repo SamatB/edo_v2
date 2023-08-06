@@ -39,8 +39,8 @@ jwt:
 
 eureka:
   client:
-    registerWithEureka: false
-    fetchRegistry: false
+    registerWithEureka: true
+    fetchRegistry: true
   dashboard:
     enabled: true
 management:
