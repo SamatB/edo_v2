@@ -12,4 +12,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = {AddressMapper.class, DeparmentMapper.class})
 public interface EmployeeMapper extends AbstractMapper<Employee, EmployeeDto> {
 
+
 }

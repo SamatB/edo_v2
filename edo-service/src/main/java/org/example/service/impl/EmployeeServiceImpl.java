@@ -6,11 +6,15 @@ package org.example.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.example.dto.EmployeeDto;
+import org.example.entity.Employee;
 import org.example.mapper.EmployeeMapper;
 import org.example.repository.EmployeeRepository;
 import org.example.service.EmployeeService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -29,6 +33,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return объект DTO работника.
      */
     @Override
+    @Transactional(readOnly = true)
     public EmployeeDto getEmployeeByUsername(String username) {
         return Optional.ofNullable(username)
                 .map(employeeRepository::findByUsername)
@@ -43,6 +48,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return объект DTO работника.
      */
     @Override
+    @Transactional(readOnly = true)
     public EmployeeDto getEmployeeById(Long id) {
         return employeeRepository.findById(id)
                 .map(employeeMapper::entityToDto)
@@ -55,17 +61,10 @@ public class EmployeeServiceImpl implements EmployeeService {
      *  @param employeeDto - логин работника.
      * @return объект DTO работника.
      */
-
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
-        return Optional.ofNullable(employeeDto)
-                .map(employeeMapper::dtoToEntity)
-                .map(employee -> {
-                    employee.setCreationDate(ZonedDateTime.now());
-                    return employee;
-                })
-                .map(employeeRepository::save)
-                .map(employeeMapper::entityToDto)
-                .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения работника: работник не должен быть null"));
+        Employee savedEmployee = employeeRepository.save(employeeMapper.dtoToEntity(employeeDto));
+        return employeeMapper.entityToDto(savedEmployee);
     }
 }

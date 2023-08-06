@@ -15,12 +15,9 @@ public class EmployeeListener {
     private final EmployeeService employeeService;
     @RabbitListener(queues = "saveEmployee")
     public void receiveEmployee(EmployeeDto employeeDto) {
-        try {
-            log.info("Работник успешно получен из очереди");
-            employeeService.saveEmployee(employeeDto);
-        } catch (Exception e) {
-            log.error("Ошибка при сохранении в EmployeeListener: " + e.getMessage());
-        }
+        log.info("Employee {} successful get from queue", employeeDto.getUsername());
+        EmployeeDto saveEmployee = employeeService.saveEmployee(employeeDto);
+        log.info("Saved Employee - {} successful!", saveEmployee.getUsername());
     }
 }
 
