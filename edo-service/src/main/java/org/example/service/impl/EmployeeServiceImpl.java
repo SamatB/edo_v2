@@ -33,7 +33,6 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return объект DTO работника.
      */
     @Override
-    @Transactional(readOnly = true)
     public EmployeeDto getEmployeeByUsername(String username) {
         return Optional.ofNullable(username)
                 .map(employeeRepository::findByUsername)
@@ -48,7 +47,6 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return объект DTO работника.
      */
     @Override
-    @Transactional(readOnly = true)
     public EmployeeDto getEmployeeById(Long id) {
         return employeeRepository.findById(id)
                 .map(employeeMapper::entityToDto)
@@ -62,7 +60,6 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return объект DTO работника.
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
         Employee savedEmployee = employeeRepository.save(employeeMapper.dtoToEntity(employeeDto));
         return employeeMapper.entityToDto(savedEmployee);

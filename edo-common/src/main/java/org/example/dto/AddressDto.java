@@ -1,14 +1,18 @@
 package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * DTO-класс для передачи информации об адресе.
  */
 @Data
+@Builder
 @Schema(description = "Адрес")
-public class AddressDto {
+public class AddressDto  implements Serializable {
     @Schema(description = "Полный адрес")
     private String fullAddress;
     @Schema(description = "Название улицы")

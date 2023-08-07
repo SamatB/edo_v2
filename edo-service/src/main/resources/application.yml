@@ -30,7 +30,7 @@ spring:
       default-receive-queue: "service"
       reply-timeout: 10000
 server:
-  port: 0
+  port: 2999
 eureka:
   client:
     serviceUrl:

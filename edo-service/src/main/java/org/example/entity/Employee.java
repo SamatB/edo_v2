@@ -59,7 +59,7 @@ public class Employee extends BaseEntity {
     /**
      * Подробная информация об адресе сотрудника.
      */
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "address_id")
     private Address addressDetails;
 
