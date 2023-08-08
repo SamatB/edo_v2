@@ -93,6 +93,14 @@ public class RabbitConfiguration {
     }
 
     /**
+     * Бин очереди для DepartmentDto
+     */
+    @Bean
+    public Queue departmentQueue() {
+        return new Queue("department");
+    }
+
+    /**
      * Бин обменника типа direct
      */
     @Bean
@@ -114,6 +122,14 @@ public class RabbitConfiguration {
     @Bean
     public Binding directBinding() {
         return BindingBuilder.bind(queue()).to(directExchange()).with(routingKey);
+    }
+
+    /**
+     * Бин связи очереди department с обменником direct
+     */
+    @Bean
+    public Binding directBindingDepartment() {
+        return BindingBuilder.bind(departmentQueue()).to(directExchange()).with("department");
     }
 
     /**

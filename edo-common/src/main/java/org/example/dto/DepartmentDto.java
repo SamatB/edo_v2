@@ -10,7 +10,6 @@ import java.time.ZonedDateTime;
 @Data
 @Schema(description = "Департамент")
 public class DepartmentDto implements Serializable {
-
     @Schema(description = "Идентификатор департамента")
     private Long id;
     @NotNull
