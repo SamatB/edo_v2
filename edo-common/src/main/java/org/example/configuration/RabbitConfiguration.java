@@ -78,11 +78,12 @@ public class RabbitConfiguration {
     }
 
     /**
-     * Бин очереди для Коллекции ID EmployeeDTO
+     * Бин очереди для DepartmentDto
      */
     @Bean
-    public Queue employeeDtoId() {return new Queue("employeeDtoId");}
-
+    public Queue departmentQueue() {
+        return new Queue("department");
+    }
 
     /**
      * Бин обменника типа direct
@@ -109,12 +110,18 @@ public class RabbitConfiguration {
     }
 
     /**
+     * Бин связи очереди department с обменником direct
+     */
+    @Bean
+    public Binding directBindingDepartment() {
+        return BindingBuilder.bind(departmentQueue()).to(directExchange()).with("department");
+    }
+
+    /**
      * Бин связи очереди с обменником fanout
      */
     @Bean
     public Binding fanoutBinding() {
         return BindingBuilder.bind(queue()).to(fanoutExchange());
     }
-
-
 }
