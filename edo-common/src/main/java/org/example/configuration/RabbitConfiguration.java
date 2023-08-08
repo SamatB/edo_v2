@@ -28,7 +28,7 @@ public class RabbitConfiguration {
     /**
      * Очередь и RoutingKey для операции сохранения в БД работника
      */
-    final private String SAVE_EMPLOYEE = "saveEmployee";
+    final public static String SAVE_EMPLOYEE = "saveEmployee";
 
 
     @Value("${spring.rabbitmq.template.routing-key}")
