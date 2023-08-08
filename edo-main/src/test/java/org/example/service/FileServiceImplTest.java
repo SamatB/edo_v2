@@ -3,6 +3,7 @@ package org.example.service;
 import org.example.dto.FilePoolDto;
 import org.example.feign.FileFeignClient;
 import org.example.feign.FilePoolFeignClient;
+import org.example.service.impl.FileServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,16 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Тесты для класса FileService.
+ * Тесты для класса FileServiceImpl.
  */
 @DisplayName("Тестирование сервиса для работы с файлами")
-class FileServiceTest {
+class FileServiceImplTest {
     @Mock
     private FileFeignClient fileFeignClient;
     @Mock
     private FilePoolFeignClient filePoolFeignClient;
     @InjectMocks
-    private FileService fileService;
+    private FileServiceImpl fileService;
 
     @BeforeEach
     public void setUp() {

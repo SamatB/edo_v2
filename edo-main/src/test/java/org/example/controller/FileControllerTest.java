@@ -1,6 +1,6 @@
 package org.example.controller;
 
-import org.example.service.FileService;
+import org.example.service.impl.FileServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @DisplayName("Тестирование контроллера для работы с файлами")
 class FileControllerTest {
     @Mock
-    private FileService fileService;
+    private FileServiceImpl fileService;
 
     @InjectMocks
     FileController fileController;

@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.service.FileService;
+import org.example.service.impl.FileServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "File")
 public class FileController {
 
-    private final FileService fileService;
+    private final FileServiceImpl fileService;
     /**
      * Сохраняет MultipartFile в файловое хранилище MinIO
      * Сохраняет информацию о загруженном файле FilePool в базе данных
