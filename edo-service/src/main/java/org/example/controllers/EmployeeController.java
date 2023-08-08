@@ -4,14 +4,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.configuration.RabbitConfiguration;
 import org.example.dto.EmployeeDto;
 import org.example.service.EmployeeService;
 import org.example.service.RabbitmqSender;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -20,7 +25,6 @@ import java.util.Collection;
 @Tag(name = "Employee")
 public class EmployeeController {
     private final EmployeeService employeeService;
-
     private final RabbitmqSender rabbitmqSender;
 
     /**
@@ -34,7 +38,7 @@ public class EmployeeController {
     @Operation(summary = "Получает коллекцию ID EmployeeDTO и отправляет в очередь")
     public ResponseEntity<String> sendEmployeeDtoId(@RequestBody Collection<Long> idsEmployeeDTO) {
         try {
-            rabbitmqSender.send("employeeDtoId", idsEmployeeDTO);
+            rabbitmqSender.send(RabbitConfiguration.EMPLOYEE_DTO_ID, idsEmployeeDTO);
             return ResponseEntity.ok("ok");
         } catch (Exception e) {
             System.err.println("Ошибка при добавлении в очередь: " + e.getMessage());
@@ -52,10 +56,9 @@ public class EmployeeController {
 
     @PostMapping("/emails")
     @Operation(summary = "Получает коллекцию ID EmployeeDTO и отплавляет коллекцию Emails")
-    Collection<String> getEmailsByIds(@RequestBody Collection<Long> idsEmployeeDTO) {
+    Collection<String> getEmailsByIds(@RequestBody List<Long> idsEmployeeDTO) {
         log.info("Коллекция idsEmployeeDTO успешно получен и Коллекция email отправлена в очередь");
-        return idsEmployeeDTO.stream()
-                .map(employeeService::getEmployeeById)
+        return employeeService.getEmployeesByIds(idsEmployeeDTO).stream()
                 .map(EmployeeDto::getEmail)
                 .filter(s -> !s.isEmpty())
                 .toList();

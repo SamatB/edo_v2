@@ -35,6 +35,8 @@ public class RabbitConfiguration {
     @Value("${spring.rabbitmq.template.reply-timeout}")
     private Integer replyTimeout;
 
+    public static final String EMPLOYEE_DTO_ID = "employeeDtoId";
+
     /**
      * Бин, отвечающий за соединение с сервером RabbitMQ
      */
@@ -84,6 +86,14 @@ public class RabbitConfiguration {
     public Queue departmentQueue() {
         return new Queue("department");
     }
+
+
+    /**
+     * Бин очереди для Коллекции ID EmployeeDTO
+     */
+    @Bean
+    public Queue employeeDtoId() {return new Queue(EMPLOYEE_DTO_ID);}
+
 
     /**
      * Бин обменника типа direct
