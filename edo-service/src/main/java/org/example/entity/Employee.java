@@ -143,7 +143,7 @@ public class Employee extends BaseEntity {
     /**
      * Связь/принадлежность работника департаменту
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
 }

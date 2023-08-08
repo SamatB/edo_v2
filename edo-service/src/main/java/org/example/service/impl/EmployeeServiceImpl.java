@@ -8,9 +8,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.EmployeeDto;
-import org.example.entity.Address;
 import org.example.mapper.EmployeeMapper;
 import org.example.repository.AddressRepository;
+import org.example.repository.DepartmentRepository;
 import org.example.repository.EmployeeRepository;
 import org.example.service.EmployeeService;
 import org.springframework.stereotype.Service;
@@ -26,6 +26,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
     private final AddressRepository addressRepository;
+    private final DepartmentRepository departmentRepository;
 
     /**
      * Получает работника из базы данных по username.
@@ -53,7 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .map(employeeMapper::entityToDto)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Ошибка поиска: работник с id: %s не найден", id)));
     }
-
+    
     /**
      * Сохраняет работника в базу данных.
      *
@@ -66,9 +67,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         return Optional.ofNullable(employeeDto)
                 .map(employeeMapper::dtoToEntity)
                 .map(employee -> {
-                    Address savedAddress = addressRepository.save(employee.getAddressDetails());
-                    log.info("Address {} was saved!", savedAddress);
-                    employee.setAddressDetails(savedAddress);
+                    addressRepository.save(employee.getAddressDetails());
+                    departmentRepository.save(employee.getDepartment());
                     return employee;
                 })
                 .map(employeeRepository::save)

@@ -45,7 +45,8 @@ public class EmployeeListenerTest {
      */
     @Test
     public void testReceiveEmployee_Successful() {
-        EmployeeDto employeeDto = new EmployeeDto();
+        EmployeeDto employeeDto = EmployeeDto.builder().username("papal2da")
+                        .firstName("Denis").lastName("Filatov").creationDate(ZonedDateTime.now()).build();
         employeeListener.receiveEmployee(employeeDto);
         verify(employeeService).saveEmployee(employeeDto);
     }
