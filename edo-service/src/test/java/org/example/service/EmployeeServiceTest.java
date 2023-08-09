@@ -3,6 +3,8 @@ package org.example.service;
 import org.example.dto.EmployeeDto;
 import org.example.entity.Employee;
 import org.example.mapper.EmployeeMapper;
+import org.example.repository.AddressRepository;
+import org.example.repository.DepartmentRepository;
 import org.example.repository.EmployeeRepository;
 import org.example.service.impl.EmployeeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +21,10 @@ public class EmployeeServiceTest {
     @Mock
     private EmployeeMapper employeeMapper;
     @Mock
+    private AddressRepository addressRepository;
+    @Mock
+    private DepartmentRepository departmentRepository;
+    @Mock
     private EmployeeRepository employeeRepository;
     @InjectMocks
     private EmployeeServiceImpl employeeService;
@@ -34,7 +40,7 @@ public class EmployeeServiceTest {
      */
     @Test
     public void testSaveEmployee() {
-        EmployeeDto employeeDto = new EmployeeDto();
+        EmployeeDto employeeDto = EmployeeDto.builder().build();
         Employee employeeMock = mock(Employee.class);
         when(employeeMapper.dtoToEntity(employeeDto)).thenReturn(employeeMock);
         when(employeeRepository.save(employeeMock)).thenReturn(employeeMock);
