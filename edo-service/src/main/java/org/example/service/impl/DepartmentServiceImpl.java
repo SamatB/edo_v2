@@ -47,7 +47,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         // Проверяем, есть ли связанный AddressDetails
         Address addressDetails = department.getAddressDetails();
         if (addressDetails != null) {
-            department.setAddressDetails(addressDetailService.saveAddress(addressDetails));
+            department.setAddressDetails(addressDetailService.saveAddress(department.getAddressDetails()));
         }
         // Теперь сохраняем Department, и связанные с ним объекты (если есть)
         Department savedDepartment = departmentRepository.save(department);

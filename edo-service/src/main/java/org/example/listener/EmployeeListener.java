@@ -1,5 +1,6 @@
 package org.example.listener;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.EmployeeDto;
@@ -27,8 +28,8 @@ public class EmployeeListener {
     @RabbitListener(queues = SAVE_EMPLOYEE)
     public void receiveEmployee(EmployeeDto employeeDto) {
         log.info("Employee {} successful get from queue", employeeDto.getUsername());
-        EmployeeDto saveEmployee = employeeService.saveEmployee(employeeDto);
-        log.info("Saved Employee - {} successful!", saveEmployee.getUsername());
+            EmployeeDto saveEmployee = employeeService.saveEmployee(employeeDto);
+            log.info("Saved Employee - {} successful!", saveEmployee.getUsername());
     }
 }
 
