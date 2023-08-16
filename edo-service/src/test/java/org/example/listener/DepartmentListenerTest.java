@@ -36,15 +36,10 @@ class DepartmentListenerTest {
      */
     @Test
     void receiveDepartment_ValidJson_ShouldCallSaveDepartment() {
-        // Создаем тестовый объект DepartmentDto
         DepartmentDto departmentDto = new DepartmentDto();
-
-        // Задаем значения полям DepartmentDto
         departmentDto.setFullName("Отдел разработки");
         departmentDto.setShortName("Разраб.");
         departmentDto.setAddress("ул. Примерная, 123");
-
-        // Создаем объект AddressDetails и задаем его значения
         AddressDto addressDetails = new AddressDto();
         addressDetails.setFullAddress("ул. Примерная, 123, корпус 1, строение 2, кв. 45");
         addressDetails.setStreet("ул. Примерная");
@@ -56,21 +51,15 @@ class DepartmentListenerTest {
         addressDetails.setRegion("Область");
         addressDetails.setCountry("Страна");
         addressDetails.setFlat("45");
-
-        // Задаем объект Address в поле address объекта DepartmentDto
         departmentDto.setAddressDetails(addressDetails);
 
         departmentDto.setPhone("+12345");
         departmentDto.setExternalId("EXT-001");
-
-        // Создаем вложенный объект DepartmentDto и задаем его значения
         DepartmentDto nestedDepartmentDto = new DepartmentDto();
         nestedDepartmentDto.setId(2L);
         nestedDepartmentDto.setFullName("Отдел тестирования");
         nestedDepartmentDto.setShortName("Тест.");
         nestedDepartmentDto.setAddress("ул. Тестовая, 456");
-
-        // Создаем вложенный объект AddressDetails и задаем его значения
         AddressDto nestedAddressDetails = new AddressDto();
         nestedAddressDetails.setFullAddress("ул. Примерная, 130, корпус 1, строение 2, кв. 45");
         nestedAddressDetails.setStreet("ул. Примерная");
@@ -82,27 +71,19 @@ class DepartmentListenerTest {
         nestedAddressDetails.setRegion("Область");
         nestedAddressDetails.setCountry("Страна");
         nestedAddressDetails.setFlat("45");
-
-        // Задаем объект AddressDetails в поле addressDetails объекта DepartmentDto
         nestedDepartmentDto.setAddressDetails(nestedAddressDetails);
 
         nestedDepartmentDto.setPhone("+98765");
         nestedDepartmentDto.setExternalId("EXT-002");
         nestedDepartmentDto.setCreationDate(ZonedDateTime.parse("2023-07-22T12:34:56+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         nestedDepartmentDto.setArchivedDate(null);
-
-        // Задаем вложенный объект DepartmentDto в поле department объекта DepartmentDto
         departmentDto.setDepartment(nestedDepartmentDto);
 
         departmentDto.setCreationDate(ZonedDateTime.parse("2023-07-22T12:34:56+00:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME));
         departmentDto.setArchivedDate(null);
 
         when(departmentService.saveDepartment(departmentDto)).thenReturn(departmentDto);
-
-        // Act
         departmentListener.receiveDepartment(departmentDto);
-
-        // Assert
         verify(departmentService, times(1)).saveDepartment(departmentDto);
     }
 }
