@@ -40,7 +40,7 @@ public class FacsimileController {
             log.info("Факсимиле успешно сохранен");
             return ResponseEntity.ok(savedFacsimile);
         } catch (Exception e) {
-            log.warn("Ошибка сохранения факсимиле: " + e.getMessage());
+            log.error("Ошибка сохранения факсимиле: " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -61,7 +61,7 @@ public class FacsimileController {
             log.info("Факсимиле с id = {} успешно удален", id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            log.warn("Ошибка удаления факсимиле: " + e.getMessage());
+            log.error("Ошибка удаления факсимиле: " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -71,18 +71,18 @@ public class FacsimileController {
      * При ошибке удаления возвращается ответ со статусом "Bad Request"
      *
      * @param id идентификатор факсимиле, статус архивации которого нужно изменить.
-     * @return ответ с Dto объектом факсимиле в виде ResponseEntity<FacsimileDto>
+     * @return ответ в виде ResponseEntity со статусом 200
      */
     @PostMapping("/toggle-archived-status/{id}")
     @Operation(summary = "Меняет статус архивации/разархивации факсимиле")
-    public ResponseEntity<FacsimileDto> toggleArchivedStatus(@PathVariable Long id) {
+    public ResponseEntity<?> toggleArchivedStatus(@PathVariable Long id) {
         log.info("Изменение статуса архивации факсимиле");
         try {
-            FacsimileDto newStatusFacsimile = facsimileService.toggleArchivedStatus(id);
-            log.info("Статус факсимиле с id = {} изменен на {}", id, newStatusFacsimile.isArchived() ? "архивирован" : "разархивирован");
-            return ResponseEntity.ok(newStatusFacsimile);
+            facsimileService.toggleArchivedStatus(id);
+            log.info("Статус факсимиле с id = {} изменен", id);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.warn("Ошибка изменения статуса архивации факсимиле: " + e.getMessage());
+            log.error("Ошибка изменения статуса архивации факсимиле: " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -103,7 +103,7 @@ public class FacsimileController {
             log.info("Список всех факсимиле со статусом {} получен", (isArchived ? "архивирован" : "разархивирован"));
             return ResponseEntity.ok(facsimilesByArchivedStatus);
         } catch (Exception e) {
-            log.warn("Ошибка получения списка факсимиле по статусу архивации: " + e.getMessage());
+            log.error("Ошибка получения списка факсимиле по статусу архивации: " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -128,7 +128,7 @@ public class FacsimileController {
             log.info("Список факсимиле с применением пэйджинга успешно получен");
             return ResponseEntity.ok(paginatedFacsimiles);
         } catch (Exception e) {
-            log.warn("Ошибка получения списка факсимиле с пагинацией: " + e.getMessage());
+            log.error("Ошибка получения списка факсимиле с пагинацией: " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }

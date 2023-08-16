@@ -10,7 +10,7 @@ public interface FacsimileService {
 
     void deleteFacsimile(Long id);
 
-    FacsimileDto toggleArchivedStatus( Long id);
+    void toggleArchivedStatus(Long id);
 
     List<FacsimileDto> getFacsimilesByArchivedStatus(boolean isArchived);
 

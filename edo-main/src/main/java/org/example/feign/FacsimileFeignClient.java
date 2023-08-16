@@ -25,7 +25,7 @@ public interface FacsimileFeignClient {
      * Метод, меняющий статус архивации/разархивации факсимиле
      */
     @PostMapping("/toggle-archived-status/{id}")
-    FacsimileDto toggleArchivedStatus(@PathVariable Long id);
+    void toggleArchivedStatus(@PathVariable Long id);
 
     /**
      * Метод получения списка факсимиле с указанным статусом архивации

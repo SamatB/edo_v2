@@ -54,28 +54,13 @@ public class FacsimileServiceImpl implements FacsimileService {
 
     /**
      * Изменяет статус архивации факсимиле.
-     * Если факсимиле с таким id отсутствует в базе данных - выбрасывается исключение
-     * При ошибке изменения статуса выбрасывается исключение
      *
-     * @param id идентификатор факсимиле, который следует удалить.
-     * @return ответ с Dto объектом факсимиле с измененным статусом архивации
+     * @param id идентификатор факсимиле, статус которого следует изменить.
      */
     @Override
-    public FacsimileDto toggleArchivedStatus(Long id) {
-        Optional<Facsimile> optionalFacsimile = Optional.ofNullable(id)
-                .flatMap(facsimileRepository::findById);
-
-        if (optionalFacsimile.isEmpty()) {
-            throw new IllegalArgumentException("Факсимиле с id = " + id + " не найдено");
-        }
-
-        return optionalFacsimile
-                .map(facsimile -> {
-                    facsimile.setArchived(!facsimile.isArchived());
-                    return facsimileRepository.save(facsimile);
-                })
-                .map(facsimileMapper::entityToDto)
-                .orElseThrow(() -> new IllegalStateException("Ошибка изменения статуса архивации факсимиле: id не должно быть null"));
+    @Transactional
+    public void toggleArchivedStatus(Long id) {
+        facsimileRepository.toggleArchivedStatus(id);
     }
 
     @Override
