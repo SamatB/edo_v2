@@ -12,6 +12,7 @@ import org.example.repository.EmployeeRepository;
 import org.example.service.EmployeeService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,5 +47,20 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.findById(id)
                 .map(employeeMapper::entityToDto)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Ошибка поиска: работник с id: %s не найден", id)));
+    }
+    /**
+     * Получает работников из базы данных по id.
+     *
+     * @param ids - Коллекция id работников.
+     * @return объект работника.
+     */
+    public List<EmployeeDto> getEmployeesByIds(List<Long> ids) {
+        if(ids.isEmpty()) {
+             throw new IllegalArgumentException("Коллекция id пользователей не должно быть null");
+        }
+        return employeeRepository.findAll().stream()
+                .filter(employee -> ids.contains(employee.getId()))
+                .map(employeeMapper::entityToDto)
+                .toList();
     }
 }

@@ -57,6 +57,14 @@ public class Employee extends BaseEntity {
     private String address;
 
     /**
+     * Email сотрудника.
+     */
+    @NotNull
+    @Size(max = 100)
+    @Column(name = "email")
+    private String email;
+
+    /**
      * Подробная информация об адресе сотрудника.
      */
     @OneToOne(fetch = FetchType.LAZY)

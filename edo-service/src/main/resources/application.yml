@@ -1,7 +1,6 @@
 yandex:
   geo:
     url: https://geocode-maps.yandex.ru/1.x/?format=json&results=1&sco=longlat&apikey=9fdbb2aa-5f75-43e0-ae21-491b46864d11&geocode=
-
 spring:
   flyway:
     enabled: true
