@@ -31,6 +31,9 @@ public class EmployeeDto implements Serializable {
     @Schema(description = "Отчество сотрудника")
     private String middleName;
 
+    @Schema(description = "Email сотрудника")
+    private String email;
+
     @Schema(description = "Адрес сотрудника")
     private String address;
 

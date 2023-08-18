@@ -1,4 +1,13 @@
 spring:
+  mail:
+    host: "app.debugmail.io"
+    port: 25
+    username: "a5ae3681-2cee-4604-b9e1-1c31e8fdba67"
+    password: "d71639cd-4d78-4344-af83-ddeb90f46c6c"
+    protocol: smtp
+    properties.mail.smtp:
+      auth: true
+      ssl: false
   application:
     name: edo-integration
   main:
