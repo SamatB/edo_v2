@@ -17,6 +17,7 @@ import org.example.service.EmployeeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -82,5 +83,15 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .map(employeeRepository::save)
                 .map(employeeMapper::entityToDto)
                 .orElseThrow(() -> new RuntimeException("Сохранение прошло неудачно."));
+    }
+    @Override
+    public List<EmployeeDto> getEmployeesByIds(List<Long> ids) {
+        if(ids.isEmpty()) {
+            throw new IllegalArgumentException("Коллекция id пользователей не должно быть null");
+        }
+        return employeeRepository.findAll().stream()
+                .filter(employee -> ids.contains(employee.getId()))
+                .map(employeeMapper::entityToDto)
+                .toList();
     }
 }

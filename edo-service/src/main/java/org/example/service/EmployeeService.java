@@ -10,4 +10,5 @@ public interface EmployeeService {
     EmployeeDto getEmployeeById(Long id);
 
     List<EmployeeDto> getEmployeesByIds(List<Long> ids);
+    EmployeeDto saveEmployee(EmployeeDto employeeDto);
 }
