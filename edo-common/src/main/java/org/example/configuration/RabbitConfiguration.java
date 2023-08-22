@@ -1,10 +1,12 @@
 package org.example.configuration;
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * Класс конфигурации RabbitMQ
  */
 @Configuration
+@EnableRabbit
 public class RabbitConfiguration {
     @Value("${spring.rabbitmq.host}")
     private String host;
@@ -22,6 +25,12 @@ public class RabbitConfiguration {
 
     @Value("${spring.rabbitmq.template.default-receive-queue}")
     private String queue;
+
+    /**
+     * Очередь и RoutingKey для операции сохранения в БД работника
+     */
+    final public static String SAVE_EMPLOYEE = "saveEmployee";
+
 
     @Value("${spring.rabbitmq.template.routing-key}")
     private String routingKey;
@@ -80,6 +89,14 @@ public class RabbitConfiguration {
     }
 
     /**
+     * Бин очереди для операции сохранения работника в БД
+     */
+    @Bean
+    public Queue saveEmployeeQueue() {
+        return new Queue(SAVE_EMPLOYEE);
+    }
+
+    /**
      * Бин очереди для DepartmentDto
      */
     @Bean
@@ -134,4 +151,17 @@ public class RabbitConfiguration {
     public Binding fanoutBinding() {
         return BindingBuilder.bind(queue()).to(fanoutExchange());
     }
+
+    /**
+     * Бины связи очереди на сохранение работника с обменником direct
+     */
+    @Bean
+    public Binding directBindingEmployee() {
+        return BindingBuilder.bind(saveEmployeeQueue()).to(directExchange()).with(SAVE_EMPLOYEE);
+    }
+    @Bean
+    public Binding fanoutBindingEmployee() {
+        return BindingBuilder.bind(saveEmployeeQueue()).to(fanoutExchange());
+    }
+
 }

@@ -1,8 +1,12 @@
 package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
@@ -10,8 +14,10 @@ import java.time.ZonedDateTime;
  * DTO для сущности Employee.
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "DTO для сущности Employee")
-public class EmployeeDto {
+public class EmployeeDto implements Serializable {
 
     @Schema(description = "Идентификатор сотрудника")
     private Long id;
