@@ -8,6 +8,11 @@ import org.example.repository.FilePoolRepository;
 import org.example.service.FilePoolService;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 public class FilePoolServiceImpl implements FilePoolService {
@@ -21,6 +26,7 @@ public class FilePoolServiceImpl implements FilePoolService {
      * @param filePoolDto объект DTO с новыми данными FilePool, которые требуется сохранить в базе данных.
      * @return объект DTO FilePool.
      */
+
     @Override
     public FilePoolDto saveFilePool(FilePoolDto filePoolDto) {
         FilePool filePool = filePoolMapper.dtoToEntity(filePoolDto);
