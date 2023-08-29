@@ -5,7 +5,7 @@ spring:
   flyway:
     enabled: true
     user: postgres
-    password: oog
+    password: postgres
     url: jdbc:postgresql://localhost:5432/edo_db?currentSchema=${spring.flyway.default-schema}
     default-schema: edo-2
     locations: db/migration
