@@ -1,14 +1,14 @@
 package org.example.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.example.utils.FilePoolType;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -41,6 +41,14 @@ public class FilePool extends BaseEntity {
     @NotNull
     @Column(name = "extension", length = 4)
     private String extension;
+    /**
+     * тип файла
+     * */
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "file_type")
+    private FilePoolType fileType;
+
     /**
      * размер файла
      * */

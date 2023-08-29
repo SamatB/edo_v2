@@ -29,8 +29,7 @@ public class RabbitConfiguration {
     /**
      * Очередь и RoutingKey для операции сохранения в БД работника
      */
-    final public static String SAVE_EMPLOYEE = "saveEmployee";
-
+    final public static String SAVE_EMPLOYEE_ROUTING_KEY = "saveEmployee";
 
     @Value("${spring.rabbitmq.template.routing-key}")
     private String routingKey;
@@ -43,7 +42,7 @@ public class RabbitConfiguration {
 
     @Value("${spring.rabbitmq.template.reply-timeout}")
     private Integer replyTimeout;
-
+    public static final String SAVE_DEPARTMENT_ROUTING_KEY = "save_department";
     public static final String EMPLOYEE_DTO_ID = "employeeDtoId";
 
     /**
@@ -93,7 +92,7 @@ public class RabbitConfiguration {
      */
     @Bean
     public Queue saveEmployeeQueue() {
-        return new Queue(SAVE_EMPLOYEE);
+        return new Queue(SAVE_EMPLOYEE_ROUTING_KEY);
     }
 
     /**
@@ -101,7 +100,7 @@ public class RabbitConfiguration {
      */
     @Bean
     public Queue departmentQueue() {
-        return new Queue("department");
+        return new Queue(SAVE_DEPARTMENT_ROUTING_KEY);
     }
 
 
@@ -141,7 +140,7 @@ public class RabbitConfiguration {
      */
     @Bean
     public Binding directBindingDepartment() {
-        return BindingBuilder.bind(departmentQueue()).to(directExchange()).with("department");
+        return BindingBuilder.bind(departmentQueue()).to(directExchange()).with(SAVE_DEPARTMENT_ROUTING_KEY);
     }
 
     /**
@@ -157,11 +156,20 @@ public class RabbitConfiguration {
      */
     @Bean
     public Binding directBindingEmployee() {
-        return BindingBuilder.bind(saveEmployeeQueue()).to(directExchange()).with(SAVE_EMPLOYEE);
+        return BindingBuilder.bind(saveEmployeeQueue()).to(directExchange()).with(SAVE_EMPLOYEE_ROUTING_KEY);
     }
+    /**
+     * Бины связи очереди на сохранение работника с обменником fanout
+     */
     @Bean
     public Binding fanoutBindingEmployee() {
         return BindingBuilder.bind(saveEmployeeQueue()).to(fanoutExchange());
     }
+    /**
+     * Бины связи очереди на сохранение департамента с обменником fanout
+     */
+    @Bean
+    public Binding fanoutBindingDepartment() {
+        return BindingBuilder.bind(departmentQueue()).to(fanoutExchange()); }
 
 }

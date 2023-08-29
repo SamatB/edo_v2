@@ -34,28 +34,21 @@ public class KeycloakSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf().ignoringRequestMatchers("/eureka/**");
-//        http
-//                .authorizeHttpRequests(c -> c.requestMatchers("/error").permitAll()
-//                        .requestMatchers("/eureka/**").permitAll()
-//                .anyRequest().authenticated());
-//        http.oauth2Login()
-//                .and()
-//                .logout()
-//                .addLogoutHandler(keycloakLogoutHandler)
-//                .logoutSuccessUrl("/");
-//        http.oauth2ResourceServer()
-//                .jwt()
-//                .jwtAuthenticationConverter(jwtAuthConverter);
-//        return http.build();
         http
-                .csrf().disable();
+                .csrf().ignoringRequestMatchers("/eureka/**");
         http
-                .authorizeHttpRequests(c -> c.requestMatchers("/").permitAll()
+                .authorizeHttpRequests(c -> c.requestMatchers("/error").permitAll()
                         .requestMatchers("/eureka/**").permitAll()
-                        .anyRequest().permitAll());
-                return http.build();
+                .anyRequest().authenticated());
+        http.oauth2Login()
+                .and()
+                .logout()
+                .addLogoutHandler(keycloakLogoutHandler)
+                .logoutSuccessUrl("/");
+        http.oauth2ResourceServer()
+                .jwt()
+                .jwtAuthenticationConverter(jwtAuthConverter);
+        return http.build();
     }
 
     @Bean

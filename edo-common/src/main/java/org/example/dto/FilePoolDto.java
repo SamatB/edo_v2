@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.utils.FilePoolType;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -19,6 +20,9 @@ public class FilePoolDto {
 
     @Schema(name = "id файла в таблице")
     private Long id;
+
+    @Schema(name = "тип файла")
+    private FilePoolType fileType;
 
     @Schema(name ="uuid файла")
     private UUID storageFileId;
