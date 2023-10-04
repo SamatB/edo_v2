@@ -2,6 +2,8 @@ server:
   port: 8761
 
 spring:
+  application:
+    name: edo-main
   security:
     oauth2:
       resourceserver:
@@ -41,6 +43,13 @@ eureka:
   client:
     registerWithEureka: true
     fetchRegistry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${spring.application.instance_id:${random.value}}
+  server:
+    enable-self-preservation: false
   dashboard:
     enabled: true
 management:
