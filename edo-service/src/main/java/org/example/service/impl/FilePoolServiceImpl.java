@@ -6,12 +6,14 @@ import org.example.entity.FilePool;
 import org.example.mapper.FilePoolMapper;
 import org.example.repository.FilePoolRepository;
 import org.example.service.FilePoolService;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Set;
+import java.time.DateTimeException;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class FilePoolServiceImpl implements FilePoolService {
      * Метод для сохранения FilePool в базе данных.
      * Если FilePool равен null, то выбрасывается исключение IllegalArgumentException.
      * Метод выполняет сохранение FilePool используя FilePoolRepository.
+     *
      * @param filePoolDto объект DTO с новыми данными FilePool, которые требуется сохранить в базе данных.
      * @return объект DTO FilePool.
      */
@@ -37,4 +40,23 @@ public class FilePoolServiceImpl implements FilePoolService {
             throw new IllegalArgumentException("Ошибка сохранения обращения: обращение не должно быть null");
         }
     }
+
+    /**
+     * Метод для получения списка UUID FilePool, относящихся к обращениям, созданным более 5 лет назад.
+     *
+     * @return список UUID.
+     */
+    @Override
+    public List<UUID> getUUIDByCreationDateBeforeFiveYears() {
+        try {
+            ZonedDateTime fiveYearsAgo = ZonedDateTime.now().minusYears(5);
+            List<UUID> list = filePoolRepository.findFilePoolByCreationDateBefore(fiveYearsAgo).stream()
+                    .map(FilePool::getStorageFileId)
+                    .collect(Collectors.toList());
+            return list;
+        } catch (DataAccessException | DateTimeException e) {
+            throw new DateTimeException("Ошибка при определении даты или доступа к БД");
+        }
+    }
 }
+

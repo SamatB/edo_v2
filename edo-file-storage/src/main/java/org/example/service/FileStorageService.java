@@ -2,7 +2,11 @@ package org.example.service;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Сервис для сохранения файлов в хранилище и получения файлов из хранилища.
@@ -32,4 +36,13 @@ public interface FileStorageService {
      * @return ответ с файлом или статусом "Not Found", если файл не найден
      */
     ResponseEntity<Resource> getFile(String uuid);
+
+    /**
+     * Метод для удаления файлов из хранилища MinIO по-заданным UUID(список UUID).
+     *
+     * @param uuidList список uuid, которые нужно удалить
+     * @return ResponseEntity.HTTPStatus.ok  в случае успешного удаления,
+     * либо ответ с HTTP статусом 500 в случае ошибки
+     */
+    ResponseEntity<UUID> deleteOldestThanFiveYearsFiles(@RequestBody List<UUID> uuidList);
 }

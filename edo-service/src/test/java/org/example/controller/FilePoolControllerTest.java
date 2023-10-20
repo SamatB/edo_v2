@@ -5,16 +5,16 @@ import org.example.service.impl.FilePoolServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,5 +74,35 @@ class FilePoolControllerTest {
         assertEquals(filePoolDto.getStorageFileId().toString(), response.getBody());
 
         verify(filePoolService, times(1)).saveFilePool(filePoolDto);
+    }
+
+    /**
+     * Проверка на корректное получение списка UUID
+     */
+    @Test
+    @DisplayName("Should return the List of UUID")
+    void testGetListOfOldRequestFile() {
+        List<UUID> uuidList = new ArrayList<>();
+        uuidList.add(UUID.randomUUID());
+
+        when(filePoolService.getUUIDByCreationDateBeforeFiveYears()).thenReturn(uuidList);
+
+        ResponseEntity<List<UUID>> responseEntity = filePoolController.getListOfOldRequestFile();
+
+        assertEquals(ResponseEntity.ok(uuidList), responseEntity);
+        verify(filePoolService, times(1)).getUUIDByCreationDateBeforeFiveYears();
+    }
+    /**
+     * Проверка на получение пустого списка UUID
+     */
+    @Test
+    @DisplayName("Should return a bad_request response when the List of UUID is null")
+    void testGetListOfOldRequestFileIsNullThenReturnBadRequest() {
+        when(filePoolService.getUUIDByCreationDateBeforeFiveYears()).thenReturn(null);
+
+        ResponseEntity<List<UUID>> responseEntity = filePoolController.getListOfOldRequestFile();
+
+        assertEquals(ResponseEntity.badRequest().build(), responseEntity);
+        verify(filePoolService, times(1)).getUUIDByCreationDateBeforeFiveYears();
     }
 }
