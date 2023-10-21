@@ -78,6 +78,7 @@ public class Author extends BaseEntity {
      */
     @Column(name = "fio_nominative", length = 255)
     private String fioNominative;
+
     /**
      * обращение с которым связан автор
      */
