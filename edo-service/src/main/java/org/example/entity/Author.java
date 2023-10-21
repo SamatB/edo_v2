@@ -1,6 +1,10 @@
 package org.example.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import jakarta.persistence.EnumType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -78,10 +82,4 @@ public class Author extends BaseEntity {
      */
     @Column(name = "fio_nominative", length = 255)
     private String fioNominative;
-    /**
-     * обращение с которым связан автор
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "appeal_id")
-    private Appeal appeal;
 }
