@@ -49,11 +49,9 @@ public class FilePoolServiceImpl implements FilePoolService {
     @Override
     public List<UUID> getUUIDByCreationDateBeforeFiveYears() {
         try {
-            ZonedDateTime fiveYearsAgo = ZonedDateTime.now().minusYears(5);
-            List<UUID> list = filePoolRepository.findFilePoolByCreationDateBefore(fiveYearsAgo).stream()
+            return filePoolRepository.findFilePoolByCreationDateBefore(ZonedDateTime.now().minusYears(5)).stream()
                     .map(FilePool::getStorageFileId)
                     .collect(Collectors.toList());
-            return list;
         } catch (DataAccessException | DateTimeException e) {
             throw new DateTimeException("Ошибка при определении даты или доступа к БД");
         }
