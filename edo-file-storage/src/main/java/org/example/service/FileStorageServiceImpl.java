@@ -1,12 +1,7 @@
 package org.example.service;
 
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
-import io.minio.GetObjectArgs;
-import io.minio.errors.ErrorResponseException;
-import io.minio.errors.MinioException;
+import io.minio.*;
+import io.minio.errors.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,18 +10,17 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.UUID;
 
 /**
- * Сервис для сохранения файлов в хранилище MinIO и для получения файлов из хранилища MinIO.
+ * Сервис для сохранения, получения, удаления файлов в хранилище MinIO.
  * Реализует интерфейс FileStorageService.
  */
 @Log4j2
@@ -188,5 +182,36 @@ public class FileStorageServiceImpl implements FileStorageService {
             log.error("Ошибка при получении файла из сервера MinIO.");
             throw new RuntimeException(e);
         }
+    }
+
+
+    /**
+     * Метод для удаления файлов из хранилища MinIO по-заданным UUID(список UUID).
+     *
+     * @param uuidList список uuid, которые нужно удалить
+     * @return ResponseEntity.HTTPStatus.ok  в случае успешного удаления,
+     * либо ответ с HTTP статусом 500 в случае ошибки
+     */
+    @Override
+    public ResponseEntity<UUID> deleteOldestThanFiveYearsFiles(@RequestBody List<UUID> uuidList) {
+        for (UUID uuid : uuidList) {
+            try {
+                minioClient.removeObject(RemoveObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(uuid.toString())
+                        .build());
+            } catch (ErrorResponseException e) {
+                log.warn("Файла на сервере MinIO не существует по UUID: " + uuid);
+                return ResponseEntity.notFound().build();
+            } catch (MinioException | IOException e) {
+                log.error("Ошибка при удалении файла из сервера MinIO");
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            } catch (IllegalArgumentException | NoSuchAlgorithmException | InvalidKeyException e) {
+                log.error("Ошибка при удалении файла из сервера MinIO");
+                throw new RuntimeException(e);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

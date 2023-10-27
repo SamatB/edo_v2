@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.controller.FileController;
 import org.example.service.FileStorageService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
@@ -12,7 +13,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -122,5 +126,53 @@ public class EdoFileStorageApplicationTests {
         // Проверяем, что полученный ответ имеет статус 404 Not Found
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
+    }
+
+    /**
+     * Тест удачного удаления старых файлов из MinIO.
+     */
+    @Test
+    @DisplayName("Should return a response with status 200 when the delete operation is success")
+    public void testDeleteOldFiles_Success() {
+        // Создаем заглушку для FileStorageService
+        FileStorageService fileStorageService = mock(FileStorageService.class);
+
+        // Задаем UUID файлов для теста
+        List<UUID> uuidList = new ArrayList<>();
+        uuidList.add(UUID.randomUUID());
+        uuidList.add(UUID.randomUUID());
+
+        // Создаем экземпляр контроллера и передаем заглушку в конструктор
+        FileController controller = new FileController(fileStorageService);
+
+        when(fileStorageService.deleteOldestThanFiveYearsFiles(uuidList)).thenReturn(ResponseEntity.status(200).build());
+
+        ResponseEntity<HttpStatus> response = controller.deleteOldFiles(uuidList);
+
+        assertEquals(ResponseEntity.status(200).build(), response);
+    }
+
+    /**
+     * Тест удаления старых файлов из MinIO c ошибкой.
+     */
+    @Test
+    @DisplayName("Should return a bad_request response when happened Server Error")
+    public void testDeleteOldFiles_Exception(){
+        // Создаем заглушку для FileStorageService
+        FileStorageService fileStorageService = mock(FileStorageService.class);
+
+        // Задаем UUID файлов для теста
+        List<UUID> uuidList = new ArrayList<>();
+        uuidList.add(UUID.randomUUID());
+        uuidList.add(UUID.randomUUID());
+
+        // Создаем экземпляр контроллера и передаем заглушку в конструктор
+        FileController controller = new FileController(fileStorageService);
+
+        when(fileStorageService.deleteOldestThanFiveYearsFiles(uuidList)).thenThrow();
+
+        ResponseEntity response = controller.deleteOldFiles(uuidList);
+
+        assertEquals(ResponseEntity.status(500).build(), response);
     }
 }

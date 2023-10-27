@@ -49,4 +49,7 @@ public class FilePoolDto {
 
     @Schema(name ="дата архивации файла")
     private ZonedDateTime archivedDate;
+
+    @Schema(description = "Обращение к которому прикреплен файл")
+    private AppealDto appeal;
 }

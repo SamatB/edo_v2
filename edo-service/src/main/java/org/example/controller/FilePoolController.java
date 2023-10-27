@@ -8,10 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.dto.FilePoolDto;
 import org.example.service.impl.FilePoolServiceImpl;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Контроллер для работы с сущностью FilePool.
@@ -35,7 +35,7 @@ public class FilePoolController {
     public ResponseEntity<String> saveFilePool(
             @Parameter(description = "Объект DTO FilePool", required = true)
             @RequestBody FilePoolDto filePoolDto) {
-        if(filePoolDto==null) {
+        if (filePoolDto == null) {
             log.warn("Объект FilePoolDto не должен быть null");
             return ResponseEntity.badRequest().body("Объект FilePoolDto не должен быть null");
         }
@@ -43,5 +43,24 @@ public class FilePoolController {
         FilePoolDto savedFilePoolDto = filePoolService.saveFilePool(filePoolDto);
         log.info("FilePool успешно сохранен");
         return ResponseEntity.ok(savedFilePoolDto.getStorageFileId().toString());
+    }
+
+    /**
+     * Получает список UUID всех файлов, обращения которых старше 5 лет.
+     * При ошибке получения возвращается ответ со статусом "Bad Request"
+     *
+     * @return Список UUID.
+     */
+    @GetMapping("/getolduuid")
+    @Operation(summary = "Получение списка UUID всех файлов, старше 5 лет")
+    public ResponseEntity<List<UUID>> getListOfOldRequestFile() {
+        log.info("Получение списка UUID всех файлов, старше 5 лет");
+        List<UUID> uuidList = filePoolService.getUUIDByCreationDateBeforeFiveYears();
+        if (uuidList == null) {
+            log.warn("Ошибка получения списка UUID - список пуст");
+            return ResponseEntity.badRequest().build();
+        }
+        log.info("Список UUID, файлов старше 5 лет успешно получен");
+        return ResponseEntity.ok(uuidList);
     }
 }

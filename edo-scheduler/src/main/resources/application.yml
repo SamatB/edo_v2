@@ -26,6 +26,7 @@ eureka:
 job:
   schedule:
     cron: "0 0 * * * *" # Расписание выполнения задачи (каждый час)
+    cron_delete_old_files: "0 0 0 * * *" # Расписание выполнения задачи (каждый день в полночь)
 external:
   storage:
     url: "http://xn--d1ab2a.space/mock/employees" # Адрес внешнего хранилища данных
