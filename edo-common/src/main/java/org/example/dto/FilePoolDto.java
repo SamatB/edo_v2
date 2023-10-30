@@ -18,36 +18,36 @@ import java.util.UUID;
 @Schema(description = "Хранимые файлы")
 public class FilePoolDto {
 
-    @Schema(name = "id файла в таблице")
+    @Schema(description = "id файла в таблице")
     private Long id;
 
-    @Schema(name = "тип файла")
+    @Schema(description = "тип файла")
     private FilePoolType fileType;
 
-    @Schema(name ="uuid файла")
+    @Schema(description ="uuid файла")
     private UUID storageFileId;
 
     @NotNull
-    @Schema(name ="название фала")
+    @Schema(description ="название фала")
     private String name;
 
     @NotNull
-    @Schema(name ="расширение файла")
+    @Schema(description ="расширение файла")
     private String extension;
 
     @NotNull
-    @Schema(name ="размер файла")
+    @Schema(description ="размер файла")
     private Long size;
 
     @NotNull
-    @Schema(name ="количество страниц файла")
+    @Schema(description ="количество страниц файла")
     private Integer pageCount;
 
     @NotNull
-    @Schema(name ="дата и время загрузки файла")
+    @Schema(description ="дата и время загрузки файла")
     private ZonedDateTime uploadDate;
 
-    @Schema(name ="дата архивации файла")
+    @Schema(description ="дата архивации файла")
     private ZonedDateTime archivedDate;
 
     @Schema(description = "Обращение к которому прикреплен файл")
