@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.FilePoolDto;
+import org.example.entity.FilePool;
 import org.example.service.impl.FilePoolServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,5 +64,27 @@ public class FilePoolController {
         }
         log.info("Список UUID, файлов старше 5 лет успешно получен");
         return ResponseEntity.ok(uuidList);
+    }
+
+    /**
+     * Помечает в БД filePool, что файл удален из MinIO
+     * При ошибке получения возвращается ответ со статусом "Bad Request"
+     *
+     * @param uuidList список UUID, файлы которых были удалены из MinIO
+     * @return ответ в виде ResponseEntity со статусом 200.
+     */
+    @PostMapping("/markremoved")
+    @Operation(summary = "Помечает filePool, что файл удален из Storage ")
+    public ResponseEntity<?> markFilePoolRemoved(
+            @Parameter(description = "Список UUID помечаемых filePools", required = true)
+            @RequestBody List<UUID> uuidList) {
+        log.info("Изменение статуса хранения файла в MinIO на 'удален'");
+        if (uuidList == null) {
+            log.warn("Ошибка - список файлов удаленных из MinIO пуст");
+            return ResponseEntity.badRequest().build();
+        }
+        filePoolService.markThatTheFileHasBeenDeletedFromStorage(uuidList);
+        log.info("Изменение статуса завершено успешно");
+        return ResponseEntity.ok().build();
     }
 }
