@@ -2,7 +2,6 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dto.FacsimileDto;
-import org.example.entity.Facsimile;
 import org.example.mapper.FacsimileMapper;
 import org.example.repository.FacsimileRepository;
 import org.example.service.FacsimileService;

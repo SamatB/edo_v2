@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.FilePoolDto;
 import org.example.entity.FilePool;
-import org.example.repository.mapper.FilePoolMapper;
+import org.example.mapper.FilePoolMapper;
 import org.example.repository.FilePoolRepository;
 import org.example.service.FilePoolService;
 import org.springframework.dao.DataAccessException;
