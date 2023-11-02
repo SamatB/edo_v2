@@ -1,4 +1,4 @@
-package org.example.mapper;
+package org.example.repository.mapper;
 
 import org.example.dto.AddressDto;
 import org.example.entity.Address;

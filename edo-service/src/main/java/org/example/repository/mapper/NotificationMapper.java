@@ -1,4 +1,4 @@
-package org.example.mapper;
+package org.example.repository.mapper;
 
 import org.example.dto.NotificationDto;
 import org.example.entity.Notification;
