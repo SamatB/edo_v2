@@ -2,7 +2,7 @@
  * Маппер для Employee
  */
 
-package org.example.repository.mapper;
+package org.example.mapper;
 
 import org.example.dto.EmployeeDto;
 import org.example.entity.Employee;

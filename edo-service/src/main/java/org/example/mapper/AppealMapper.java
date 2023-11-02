@@ -2,7 +2,7 @@
  * Маппер для преобразования между сущностью Appeal и объектом AppealDto.
  */
 
-package org.example.repository.mapper;
+package org.example.mapper;
 
 import org.example.dto.AppealDto;
 import org.example.entity.Appeal;
