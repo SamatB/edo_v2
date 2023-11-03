@@ -15,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -106,4 +107,20 @@ class FilePoolServiceTest {
         List<UUID> expected = Stream.of(uuid1, uuid2, uuid3).collect(Collectors.toList());
         assertEquals(expected, result);
     }
+
+    /**
+     * Проверка корректной работы метода по изменению
+     */
+    @Test
+    public void markThatTheFileHasBeenDeletedFromStorage() {
+        // Arrange
+        List<UUID> uuidList = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
+
+        // Act
+        filePoolService.markThatTheFileHasBeenDeletedFromStorage(uuidList);
+
+        // Assert
+        verify(filePoolRepository, times(1)).changeRemovedField(uuidList);
+    }
 }
+
