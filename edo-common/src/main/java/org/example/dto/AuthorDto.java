@@ -57,4 +57,7 @@ public class AuthorDto {
 
     @Schema(description = "ФИО автора в именительном падеже")
     private String fioNominative;
+
+    @Schema(description = "Обращение автора")
+    private AppealDto appeal;
 }
