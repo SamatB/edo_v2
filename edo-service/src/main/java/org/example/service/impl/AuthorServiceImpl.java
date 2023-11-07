@@ -3,9 +3,7 @@ package org.example.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AuthorDto;
-import org.example.entity.Author;
 import org.example.mapper.AuthorMapper;
-import org.example.mapper.FacsimileMapper;
 import org.example.repository.AuthorRepository;
 import org.example.service.AuthorService;
 import org.springframework.stereotype.Service;
@@ -36,8 +34,7 @@ public class AuthorServiceImpl implements AuthorService {
         StringBuilder result = new StringBuilder();
 
         char[] chars = input.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
+        for (char c : chars) {
             if (ENGLISH_ALPHABET.indexOf(c) != -1) {
                 result.append(RUSSIAN_ALPHABET.charAt(ENGLISH_ALPHABET.indexOf(c)));
             } else {
