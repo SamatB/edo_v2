@@ -84,5 +84,5 @@ public class FilePool extends BaseEntity {
      * Метка что файл был удален из MinIO
      */
     @Column(name = "removed")
-    private boolean removed;
+    private Boolean removed;
 }

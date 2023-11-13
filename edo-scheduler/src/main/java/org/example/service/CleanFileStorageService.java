@@ -6,7 +6,9 @@ import org.example.feign.FileFeignClient;
 import org.example.feign.FilePoolFeignClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,8 +30,7 @@ public class CleanFileStorageService {
     public void cleanFileStorage() {
         log.info("Получение списка UUID из FilePool");
         List<UUID> uuidList = filePoolFeignClient.getListOfOldRequestFile().getBody();
-        ;
-        if (uuidList.isEmpty()) {
+        if (CollectionUtils.isEmpty(uuidList)) {
             log.warn("Полученная выборка из FilePool пуста - старые файлы из MinIO удалены ранее");
         } else {
             log.info("Данные из FilePool получены");
