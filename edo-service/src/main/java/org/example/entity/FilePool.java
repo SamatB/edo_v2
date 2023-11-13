@@ -79,4 +79,10 @@ public class FilePool extends BaseEntity {
     @ManyToOne()
     @JoinColumn(name = "appeal_id")
     private Appeal appeal;
+
+    /**
+     * Метка что файл был удален из MinIO
+     */
+    @Column(name = "removed")
+    private Boolean removed;
 }

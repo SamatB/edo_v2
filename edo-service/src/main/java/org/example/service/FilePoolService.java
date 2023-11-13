@@ -10,4 +10,6 @@ public interface FilePoolService {
     FilePoolDto saveFilePool(FilePoolDto filePoolDto);
 
     List<UUID> getUUIDByCreationDateBeforeFiveYears();
+
+    void markThatTheFileHasBeenDeletedFromStorage(List<UUID> uuidList);
 }

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,6 +93,7 @@ class FilePoolControllerTest {
         assertEquals(ResponseEntity.ok(uuidList), responseEntity);
         verify(filePoolService, times(1)).getUUIDByCreationDateBeforeFiveYears();
     }
+
     /**
      * Проверка на получение пустого списка UUID
      */
@@ -105,4 +107,26 @@ class FilePoolControllerTest {
         assertEquals(ResponseEntity.badRequest().build(), responseEntity);
         verify(filePoolService, times(1)).getUUIDByCreationDateBeforeFiveYears();
     }
+
+    @Test
+    void markFilePoolRemoved_WithValidUuidList_ReturnsOkResponse() {
+        List<UUID> uuidList = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
+        ResponseEntity<?> expectedResponse = ResponseEntity.ok().build();
+
+        ResponseEntity<?> actualResponse = filePoolController.markFilePoolRemoved(uuidList);
+
+        assertEquals(expectedResponse, actualResponse);
+        verify(filePoolService, times(1)).markThatTheFileHasBeenDeletedFromStorage(uuidList);
+    }
+
+    @Test
+    void markFilePoolRemoved_WithNullUuidList_ReturnsBadRequestResponse() {
+        ResponseEntity<?> expectedResponse = ResponseEntity.badRequest().build();
+
+        ResponseEntity<?> actualResponse = filePoolController.markFilePoolRemoved(null);
+
+        assertEquals(expectedResponse, actualResponse);
+        verifyNoInteractions(filePoolService);
+    }
+
 }

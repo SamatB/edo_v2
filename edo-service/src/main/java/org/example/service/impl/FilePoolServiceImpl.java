@@ -1,5 +1,6 @@
 package org.example.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.FilePoolDto;
 import org.example.entity.FilePool;
@@ -36,7 +37,7 @@ public class FilePoolServiceImpl implements FilePoolService {
         try {
             FilePool savedFilePool = filePoolRepository.save(filePool);
             return filePoolMapper.entityToDto(savedFilePool);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException("Ошибка сохранения обращения: обращение не должно быть null");
         }
     }
@@ -54,6 +55,19 @@ public class FilePoolServiceImpl implements FilePoolService {
                     .collect(Collectors.toList());
         } catch (DataAccessException | DateTimeException e) {
             throw new DateTimeException("Ошибка при определении даты или доступа к БД");
+        }
+    }
+
+    /**
+     * Метод для изменения признака, что файл удален из FileStorage.
+     */
+    @Override
+    @Transactional
+    public void markThatTheFileHasBeenDeletedFromStorage(List<UUID> uuidList) {
+        try {
+            filePoolRepository.changeRemovedField(uuidList);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Ошибка при доступе к БД");
         }
     }
 }

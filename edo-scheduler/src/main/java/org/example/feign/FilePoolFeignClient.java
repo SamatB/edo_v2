@@ -3,6 +3,7 @@ package org.example.feign;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,4 +21,12 @@ public interface FilePoolFeignClient {
      */
     @GetMapping("/file-pool/getolduuid")
     ResponseEntity<List<UUID>> getListOfOldRequestFile();
+
+    /**
+     * Метод для получения списка UUID, старых обращений
+     *
+     * @return список UUID файлов, обращения которых созданы более 5 лет назад
+     */
+    @PostMapping("/file-pool/markremoved")
+    ResponseEntity<?> markFilePoolRemoved(List<UUID> uuidList);
 }
