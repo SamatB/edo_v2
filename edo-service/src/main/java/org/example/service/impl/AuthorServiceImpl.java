@@ -20,12 +20,12 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public List<AuthorDto> getAuthorsByFirstLetters(String search) {
-        String[] parts = fixLayout(search).split(" ");
-        String searchLastName = parts.length > 0 ? parts[0] : "";
-        String searchFirstName = parts.length > 1 ? parts[1] : "";
-        String searchMiddleName = parts.length > 2 ? parts[2] : "";
-        log.info("Начат поиск в БД по фамилии: " + searchLastName + ", имени: " + searchFirstName + ", отчеству: " + searchMiddleName);
-        return authorRepository.findByLastNameStartingWithIgnoreCaseAndFirstNameStartingWithIgnoreCaseAndMiddleNameStartingWithIgnoreCase(searchLastName, searchFirstName, searchMiddleName).stream().map(authorMapper::entityToDto).collect(Collectors.toList());
+        String fixedSearch = fixLayout(search);
+        log.info("Начат поиск в БД по ФИО: " + fixedSearch);
+        return authorRepository.searchByFullName(fixedSearch)
+                .stream()
+                .map(authorMapper::entityToDto)
+                .collect(Collectors.toList());
     }
 
     private static String fixLayout(String input) {
