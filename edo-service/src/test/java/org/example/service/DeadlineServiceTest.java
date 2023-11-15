@@ -51,7 +51,7 @@ public class DeadlineServiceTest {
         when(deadlineMapper.entityToDto(deadlineMock)).thenReturn(deadlineDto);
         when(deadlineRepository.findByResolutionId(resolutionId)).thenReturn(deadlineMock);
 
-        DeadlineDto result = deadlineService.setOrUpdateDeadline(1l, deadlineDto);
+        DeadlineDto result = deadlineService.setOrUpdateDeadline(1L, deadlineDto);
 
         assertEquals(deadlineDto, result);
     }

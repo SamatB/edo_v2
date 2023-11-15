@@ -1,11 +1,14 @@
 package org.example.service.impl;
 
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.DeadlineDto;
 import org.example.entity.Deadline;
+import org.example.entity.Resolution;
 import org.example.mapper.DeadlineMapper;
 import org.example.repository.DeadlineRepository;
+import org.example.repository.ResolutionRepository;
 import org.example.service.DeadlineService;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +19,7 @@ import java.util.Optional;
 public class DeadlineServiceImpl implements DeadlineService {
     private final DeadlineRepository deadlineRepository;
     private final DeadlineMapper deadlineMapper;
-
+    private final ResolutionRepository resolutionRepository;
 
     /**
      * Устанавливает или изменяет дату дедлайна, может быть добавлено описание причины переноса.
@@ -33,7 +36,9 @@ public class DeadlineServiceImpl implements DeadlineService {
             if (deadlineRepository.findByResolutionId(resolutionId) != null) {
                 deadlineRepository.setDeadlineDate(resolutionId, deadline.getDeadlineDate(), deadline.getDescriptionOfDeadlineMuving());
             } else {
-                deadlineRepository.saveAndFlush(deadline);      // тут д.быть корректная присоединенная сущность Resolution в запросе.
+                Resolution resolution =  resolutionRepository.findById(resolutionId).orElseThrow();
+                deadline.setResolution(resolution);
+                deadlineRepository.saveAndFlush(deadline);
             }
             return Optional.of(deadline)
                     .map(deadlineMapper::entityToDto)
