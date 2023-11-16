@@ -26,12 +26,9 @@ public class DeadlineDto {
     private ZonedDateTime deadlineDate;
 
     @Schema(description = "причины переноса дедлайна")
-    private String descriptionOfDeadlineMuving;
+    private String descriptionOfDeadlineMoving;
 
     @Schema(description = "резолюция для которой выставляется дедлайн")
     private ResolutionDto resolution;
-
-    @Schema(description = "резолюция для которой выставляется дедлайн")
-    private List<EmployeeDto> singers;
 }
 

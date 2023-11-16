@@ -23,7 +23,7 @@ public interface DeadlineRepository extends JpaRepository<Deadline, Long> {
      */
     @Modifying
     @Transactional
-    @Query("UPDATE Deadline dl SET dl.deadlineDate = :DateTime, dl.descriptionOfDeadlineMuving = :description WHERE dl.resolution.id = :id")
+    @Query("UPDATE Deadline dl SET dl.deadlineDate = :DateTime, dl.descriptionOfDeadlineMoving = :description WHERE dl.resolution.id = :id")
     void setDeadlineDate(@Param("id") Long resolutionId, @Param("DateTime") ZonedDateTime DateTime, @Param("description") String description);
 
     /**

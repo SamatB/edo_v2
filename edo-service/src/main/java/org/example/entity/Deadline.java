@@ -31,19 +31,8 @@ public class Deadline extends BaseEntity {
     /**
      * Описание причины переноса дедлайна
      */
-    @Column(name = "description_of_deadline_muving")
-    private String descriptionOfDeadlineMuving;
-
-    /**
-     * связь один ко многим с таблицей Employee
-     * исполнитель(пользователь)
-     */
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "deadline_employee_singers"
-            , joinColumns = @JoinColumn(name = "id_deadline")
-            , inverseJoinColumns = @JoinColumn(name = "id_employee")
-    )
-    private List<Employee> singers;
+    @Column(name = "description_of_deadline_moving")
+    private String descriptionOfDeadlineMoving;
 
     /**
      * связь один к одному к таблице Resolution
