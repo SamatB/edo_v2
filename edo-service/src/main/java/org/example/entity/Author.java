@@ -7,9 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.example.utils.Employment;
-
-
 
 /**
  * Личные данные автора документа
@@ -21,6 +20,7 @@ import org.example.utils.Employment;
 @Getter
 @Setter
 @ToString
+@SuperBuilder
 public class Author extends BaseEntity {
     /**
      * Имя автора
