@@ -10,6 +10,3 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
 }
-
-
-//TODO разобраться и сделать миграцию - flyway java миграция spring boot
