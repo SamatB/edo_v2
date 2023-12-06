@@ -1,9 +1,7 @@
 package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -12,6 +10,8 @@ import java.time.ZonedDateTime;
  * DTO для сущности Participant
  */
 @Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "DTO для сущности Participant")
