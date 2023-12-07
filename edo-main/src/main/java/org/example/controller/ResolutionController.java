@@ -8,13 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
 import org.example.feign.EdoServiceClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Контроллер для работы с сущностью Resolution.
@@ -105,5 +101,30 @@ public class ResolutionController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(updatedResolutionDto);
+    }
+
+    /**
+     * Получение List всех резолюций
+     *
+     * @return возвращает List сущностей ResolutionDto со статусом 200 если все ОК или 502 Bad Gateway.
+     */
+    @GetMapping("/find")
+    private ResponseEntity<List<ResolutionDto>> getAll(@RequestParam(name = "archivedStatus") Boolean archived){
+
+        if (archived == null) {
+            log.info("Получение всех резолюций");
+        } else {
+            log.info("Получение {} резолюций", (archived ? "архивных" : "не архивных"));
+        }
+
+        try {
+            List<ResolutionDto> resolutionDtoList = edoServiceClient.findResolutions(archived);
+            log.info("Список резолюций получен");
+            return ResponseEntity.ok(resolutionDtoList);
+        }
+        catch (Exception e){
+            log.error("Возникла ошибка поиска резолюций");
+            return ResponseEntity.status(502).build();
+        }
     }
 }
