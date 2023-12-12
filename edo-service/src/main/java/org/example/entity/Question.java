@@ -3,6 +3,8 @@ package org.example.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,4 +45,11 @@ public class Question extends BaseEntity {
      */
     @Column(name = "summary", length = 1000)
     String summary;
+
+    /**
+     * Связь с сущностью Обращение
+     */
+    @ManyToOne
+    @JoinColumn(name = "appeal_id")
+    private Appeal appeal;
 }
