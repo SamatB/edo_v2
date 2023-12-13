@@ -77,4 +77,28 @@ class DepartmentServiceTest {
         DepartmentDto result = departmentService.saveDepartment(departmentDto);
         assertEquals(departmentDto, result);
     }
+
+    /**
+     * Тест для метода fixLayout с русской расскладкой.
+     */
+
+    @Test
+    void fixLayout_should_Russian_layout() {
+        String resault = departmentService.fixLayout("мэрия");
+
+        assertEquals("мэрия", resault);
+    }
+
+    /**
+     * Тест для метода fixLayout с английской расскладкой.
+     */
+
+    @Test
+    void fixLayout_should_English_layout() {
+        String resault = departmentService.fixLayout("v'hbz");
+
+        assertEquals("мэрия", resault);
+    }
+
+
 }
