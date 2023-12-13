@@ -25,4 +25,7 @@ public class QuestionDto {
 
     @Schema(description = "Содержание вопроса")
     private String summary;
+
+    @Schema(description = "Идентификатор обращения")
+    private Long appealId;
 }
