@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
-import org.example.feign.EdoServiceClient;
+import org.example.feign.ResolutionFeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Resolutions")
 public class ResolutionController {
 
-    private final EdoServiceClient edoServiceClient;
+    private final ResolutionFeignClient resolutionFeignClient;
 
     /**
      * Сохраняет резолюцию в базе данных.
@@ -40,7 +40,7 @@ public class ResolutionController {
             @Parameter(description = "Объект DTO резолюции", required = true)
             @RequestBody ResolutionDto resolutionDto) {
         log.info("Saving new resolution");
-        ResolutionDto savedResolutionDto = edoServiceClient.saveResolution(resolutionDto);
+        ResolutionDto savedResolutionDto = resolutionFeignClient.saveResolution(resolutionDto);
         return ResponseEntity.ok(savedResolutionDto);
     }
 
@@ -56,7 +56,7 @@ public class ResolutionController {
             @Parameter(description = "Идентификатор резолюции", required = true)
             @PathVariable Long id) {
         log.info("Archiving resolution with id {}", id);
-        ResolutionDto updatedResolutionDto = edoServiceClient.archiveResolution(id);
+        ResolutionDto updatedResolutionDto = resolutionFeignClient.archiveResolution(id);
         if (updatedResolutionDto == null) {
             log.warn("Resolution with id {} not found", id);
             return ResponseEntity.notFound().build();
@@ -76,7 +76,7 @@ public class ResolutionController {
             @Parameter(description = "Идентификатор резолюции", required = true)
             @PathVariable Long id) {
         log.info("Getting resolution with id {}", id);
-        ResolutionDto resolutionDto = edoServiceClient.getResolution(id);
+        ResolutionDto resolutionDto = resolutionFeignClient.getResolution(id);
         if (resolutionDto == null) {
             log.warn("Resolution with id {} not found", id);
             return ResponseEntity.notFound().build();
@@ -99,7 +99,7 @@ public class ResolutionController {
             @Parameter(description = "Объект DTO с новыми данными резолюции", required = true)
             @RequestBody ResolutionDto resolutionDto) {
         log.info("Updating resolution with id {}", id);
-        ResolutionDto updatedResolutionDto = edoServiceClient.updateResolution(id, resolutionDto);
+        ResolutionDto updatedResolutionDto = resolutionFeignClient.updateResolution(id, resolutionDto);
         if (updatedResolutionDto == null) {
             log.warn("Resolution with id {} not found", id);
             return ResponseEntity.notFound().build();
