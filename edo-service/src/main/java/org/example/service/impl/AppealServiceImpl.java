@@ -4,8 +4,10 @@
 
 package org.example.service.impl;
 
+import jakarta.annotation.PreDestroy;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
@@ -14,14 +16,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AppealServiceImpl implements AppealService {
 
     private final AppealRepository appealRepository;
     private final AppealMapper appealMapper;
-
+    public static AtomicInteger countOfRequestsToAppeal = new AtomicInteger(0);
     /**
      * Метод для сохранения обращения в базе данных.
      * Если обращение равно null, то выбрасывается исключение IllegalArgumentException.
@@ -47,6 +51,7 @@ public class AppealServiceImpl implements AppealService {
      * @return объект DTO обращения.
      */
     public AppealDto getAppeal(Long id) {
+        countOfRequestsToAppeal.incrementAndGet();
         return appealRepository.findById(id)
                 .map(appealMapper::entityToDto)
                 .orElseThrow(() -> new EntityNotFoundException("Ошибка получечния обращения: обращение с указанным id: " + id + " не найдено"));
@@ -69,5 +74,13 @@ public class AppealServiceImpl implements AppealService {
                 .map(appealRepository::save)
                 .map(appealMapper::entityToDto)
                 .orElseThrow(() -> new EntityNotFoundException("Ошибка архивации: обращение с id: " + id + "не найдено"));
+    }
+    /**
+     * Метод для вывода в лог количества обращений к Appeal перед завершением приложения.
+    */
+    @PreDestroy
+    public int logCountOfRequestsToAppeal() {
+        log.info("Количество запросов на просмотр обращений: " + countOfRequestsToAppeal.get());
+        return countOfRequestsToAppeal.get();
     }
 }
