@@ -1,5 +1,6 @@
 package org.example.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.example.dto.AddressDto;
 import org.example.dto.DepartmentDto;
 import org.example.entity.Address;
@@ -14,7 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 /**
@@ -100,5 +105,53 @@ class DepartmentServiceTest {
         assertEquals("мэрия", resault);
     }
 
+    /**
+     * Тест для метода getDepartmentByName, если пользователь существует в БД.
+     */
+    @Test
+    void getDepartmentByName_ThereIsUser() {
+        String fullName = "мэрия";
+        List<Department> departmentList = new ArrayList<>();
+        List<DepartmentDto> departmentDtoList = new ArrayList<>();
+
+        Department department = new Department();
+        department.setFullName(fullName);
+        departmentList.add(department);
+
+        DepartmentDto departmentDto = new DepartmentDto();
+        departmentDto.setFullName(fullName);
+        departmentDtoList.add(departmentDto);
+
+        when(departmentRepository.searchByName(fullName)).thenReturn(departmentList);
+        when(departmentMapper.entityToDto(department)).thenReturn(departmentDto);
+
+        List<DepartmentDto> resault = departmentService.getDepartmentByName(fullName);
+        assertEquals(departmentDtoList, resault);
+
+    }
+
+    /**
+     * Тест для метода getDepartmentByName, если пользователь не существует в БД.
+     */
+    @Test
+    void getDepartmentByName_ThereIsNotUser() {
+        String fullName = "мэрия";
+        List<Department> departmentList = new ArrayList<>();
+        List<DepartmentDto> departmentDtoList = new ArrayList<>();
+
+        when(departmentRepository.searchByName(fullName)).thenReturn(departmentList);
+
+        List<DepartmentDto> resault = departmentService.getDepartmentByName(fullName);
+        assertEquals(departmentDtoList, resault);
+    }
+
+    /**
+     * Тест для метода getDepartmentByName, при строке поиска менее трех символов.
+     */
+
+    @Test
+    void getDepartmentByName_LessThanThreeCharacters() {
+        assertThrows(EntityNotFoundException.class, () -> departmentService.getDepartmentByName("мэ"));
+    }
 
 }
