@@ -49,7 +49,4 @@ public class ResolutionDto {
 
     @Schema(description = "Серийный номер резолюции")
     private Integer serialNumber;
-
-    @Schema(description = "Идентификатор вопроса")
-    private Long questionId;
 }
