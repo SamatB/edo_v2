@@ -1,5 +1,6 @@
 package org.example.repository;
 
+import org.example.dto.ResolutionDto;
 import org.example.entity.Resolution;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,11 +15,11 @@ import java.util.List;
 @Repository
 public interface ResolutionRepository extends JpaRepository<Resolution, Long> {
 
-    @Query(value = "UPDATE Resolution res SET res.archivedDate = :now WHERE res.id = :id")
-    void archiveResolution(Long id, OffsetDateTime now);
+    @Query(value = "UPDATE resolution SET resolution.archived_date = now() WHERE resolution.id = :id", nativeQuery = true)
+    void archiveResolution(Long id);
 
     @Query("SELECT e FROM Resolution e WHERE (:archived IS NULL " +
             "OR (:archived = true AND e.archivedDate IS NOT NULL) " +
             "OR (:archived = false AND e.archivedDate IS NULL))")
-    List<Resolution> findResolutions(Boolean archived);
+    List<ResolutionDto> findResolutions(Boolean archived);
 }

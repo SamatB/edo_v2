@@ -57,7 +57,7 @@ public class ResolutionServiceImpl implements ResolutionService {
     public ResolutionDto archiveResolution(Long id) {
 
         try {
-            resolutionRepository.archiveResolution(id, OffsetDateTime.now());
+            resolutionRepository.archiveResolution(id);
             return resolutionMapper.entityToDto(resolutionRepository.findById(id).get());
         }
         catch (Exception e){
@@ -106,7 +106,7 @@ public class ResolutionServiceImpl implements ResolutionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Resolution> findResolution(Boolean archivedType) {
+    public List<ResolutionDto> findResolution(Boolean archivedType) {
         return resolutionRepository.findResolutions(archivedType);
     }
 }

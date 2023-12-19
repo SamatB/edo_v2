@@ -14,6 +14,6 @@ public interface ResolutionService {
 
     ResolutionDto updateResolution(Long id, ResolutionDto resolutionDto);
 
-    List<Resolution> findResolution(Boolean archivedType);
+    List<ResolutionDto> findResolution(Boolean archivedType);
 
 }

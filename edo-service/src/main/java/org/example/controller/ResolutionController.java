@@ -34,9 +34,9 @@ public class ResolutionController {
     private ResponseEntity<Collection<ResolutionDto>> getAll(){
         log.info("Получение всех резолюций");
         try {
-            List<Resolution> resolutionList = resolutionService.findResolution(null);
+            List<ResolutionDto> resolutionList = resolutionService.findResolution(null);
             log.info("Список резолюций получен");
-            return ResponseEntity.ok(resolutionMapper.entityListToDtoList(resolutionList));
+            return ResponseEntity.ok(resolutionList);
         }
         catch (Exception e){
             log.error("Возникла ошибка поиска всех резолюций");
@@ -53,7 +53,7 @@ public class ResolutionController {
     private ResponseEntity<?> getArchived(){
         log.info("Получение архивных резолюций");
         try {
-            List<Resolution> resolutionList = resolutionService.findResolution(true);
+            List<ResolutionDto> resolutionList = resolutionService.findResolution(true);
             if (resolutionList != null){
                 log.info("Список архивных резолюций получен");
                 return ResponseEntity.ok(resolutionList);
@@ -78,7 +78,7 @@ public class ResolutionController {
     private ResponseEntity<?> withoutArchived(){
         log.info("Получение всех резолюций, кроме архивных");
         try {
-            List<Resolution> resolutionList = resolutionService.findResolution(false);
+            List<ResolutionDto> resolutionList = resolutionService.findResolution(false);
             if (resolutionList != null){
                 log.info("Список всех резолюций, кроме архивных получен");
                 return ResponseEntity.ok(resolutionList);

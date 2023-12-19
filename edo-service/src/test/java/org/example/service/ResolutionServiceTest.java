@@ -92,23 +92,23 @@ public class ResolutionServiceTest {
 
     @Test
     public void testFindResolutions() {
-        Resolution resolutionMock1 = mock(Resolution.class);
-        Resolution resolutionMock2 = mock(Resolution.class);
-        Resolution resolutionMock3 = mock(Resolution.class);
+        ResolutionDto resolutionMock1 = mock(ResolutionDto.class);
+        ResolutionDto resolutionMock2 = mock(ResolutionDto.class);
+        ResolutionDto resolutionMock3 = mock(ResolutionDto.class);
         resolutionMock1.setArchivedDate(ZonedDateTime.now());
         resolutionMock3.setArchivedDate(ZonedDateTime.now());
 
-        List<Resolution> archivedResolutions = List.of(resolutionMock1, resolutionMock3);
-        List<Resolution> notArchivedResolutions = List.of(resolutionMock2);
-        List<Resolution> allResolutions = List.of(resolutionMock1, resolutionMock2, resolutionMock3);
+        List<ResolutionDto> archivedResolutions = List.of(resolutionMock1, resolutionMock3);
+        List<ResolutionDto> notArchivedResolutions = List.of(resolutionMock2);
+        List<ResolutionDto> allResolutions = List.of(resolutionMock1, resolutionMock2, resolutionMock3);
 
         when(resolutionService.findResolution(true)).thenReturn(archivedResolutions);
         when(resolutionService.findResolution(false)).thenReturn(notArchivedResolutions);
         when(resolutionService.findResolution(null)).thenReturn(allResolutions);
 
-        List<Resolution> resultListArchivedResolutions =  resolutionService.findResolution(true);
-        List<Resolution> resultListNotArchivedResolutions =  resolutionService.findResolution(false);
-        List<Resolution> resultListAllResolutions =  resolutionService.findResolution(null);
+        List<ResolutionDto> resultListArchivedResolutions =  resolutionService.findResolution(true);
+        List<ResolutionDto> resultListNotArchivedResolutions =  resolutionService.findResolution(false);
+        List<ResolutionDto> resultListAllResolutions =  resolutionService.findResolution(null);
 
 
         assertEquals(archivedResolutions, resultListArchivedResolutions);
