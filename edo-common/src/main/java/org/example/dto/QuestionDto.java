@@ -1,6 +1,7 @@
 package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,6 +12,7 @@ import java.time.ZonedDateTime;
  */
 @Data
 @Schema(description = "Вопрос")
+@Builder
 public class QuestionDto {
 
     @Schema(description = "Идентификатор вопроса")
@@ -27,5 +29,5 @@ public class QuestionDto {
     private String summary;
 
     @Schema(description = "Идентификатор обращения")
-    private Long appealId;
+    private Long appeal_id;
 }
