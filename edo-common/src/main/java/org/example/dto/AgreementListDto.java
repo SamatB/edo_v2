@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 
 /**
  * DTO-класс данных Листа согласования
@@ -39,11 +40,26 @@ public class AgreementListDto {
     @Schema(description = "Дата архивности")
     private ZonedDateTime archiveDate;
 
+
     @Schema(description = "Комментарий инициатора")
     private String comment;
 
+
     @Schema(description = "Обращение с которым связан лист согласования")
     private AppealDto appealDto;
+
+
+    @Schema(description = "Инициатор запуска листа согласования")
+    private ParticipantDto participantDto;
+
+
+    @Schema(description = "Блоки подписантов")
+    private Set<MatchingBlockDto> signatoryDto;
+
+
+    @Schema(description = "Блоки согласующих")
+    private Set<MatchingBlockDto> coordinatingDto;
+
 }
 
 

@@ -9,6 +9,9 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.example.utils.MatchingBlockType;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * Блок согласования
  */
@@ -22,6 +25,17 @@ import org.example.utils.MatchingBlockType;
 @SuperBuilder
 public class MatchingBlock extends BaseEntity {
 
+    /**
+     * Участники согласования
+     */
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "matching_block_participant",
+            joinColumns = @JoinColumn(name = "matching_block_id"),
+            inverseJoinColumns = @JoinColumn(name = "participant_id")
+    )
+    private Set<Participant> participants;
 
     /**
      * Номер по порядку согласования и отображения.
@@ -40,5 +54,14 @@ public class MatchingBlock extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private MatchingBlockType matchingBlockType;
+
+
+    /**
+     * Связь с сущностью AgreementList.
+     */
+
+    @ManyToOne
+    @Column(name = "agreement_list_id")
+    private AgreementList agreementList;
 
 }
