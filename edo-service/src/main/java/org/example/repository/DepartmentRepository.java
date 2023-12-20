@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
-    @Query("SELECT d FROM Department d WHERE d.fullName LIKE :search%")
+    @Query("SELECT d FROM Department d WHERE d.fullName LIKE concat( :search, '%')")
     List<Department> searchByName(@Param("search") String search);
 
 }
