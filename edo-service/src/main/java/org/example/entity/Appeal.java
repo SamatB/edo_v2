@@ -85,4 +85,10 @@ public class Appeal extends BaseEntity {
             , inverseJoinColumns = @JoinColumn(name = "id_employee")
     )
     private List<Employee> addressee;
+    /**
+     * свзязь с сущностью Номенклатура
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nomenclature_id")
+    private Nomenclature nomenclature;
 }

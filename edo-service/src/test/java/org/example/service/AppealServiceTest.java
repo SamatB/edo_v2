@@ -7,6 +7,7 @@ package org.example.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.example.dto.AppealDto;
 import org.example.entity.Appeal;
+import org.example.entity.Nomenclature;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
 import org.example.service.impl.AppealServiceImpl;
@@ -35,6 +36,9 @@ public class AppealServiceTest {
 
     @InjectMocks
     private AppealServiceImpl appealService;
+
+    @Mock
+    private NomenclatureService nomenclatureService;
 
     @BeforeEach
     public void setUp() {
@@ -71,8 +75,10 @@ public class AppealServiceTest {
     @Test
     public void testSaveAppeal() {
         AppealDto appealDto = new AppealDto();
+        Nomenclature nomenclatureMock = mock((Nomenclature.class));
         Appeal appealMock = mock(Appeal.class);
         when(appealMapper.dtoToEntity(appealDto)).thenReturn(appealMock);
+        appealMock.setNumber(nomenclatureService.generateNumberForAppeal(nomenclatureMock));
         when(appealRepository.save(appealMock)).thenReturn(appealMock);
         when(appealMapper.entityToDto(appealMock)).thenReturn(appealDto);
 

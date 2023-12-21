@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.dto.NomenclatureDto;
+import org.example.entity.Nomenclature;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface NomenclatureService {
     void ArchiveNomenclature(Long id, boolean switcher);
 
     List<NomenclatureDto> getArchivedOrNoArchivedNomenclature(boolean isArchivedOrNonArchived);
+
+    String generateNumberForAppeal(Nomenclature nomenclature);
 }

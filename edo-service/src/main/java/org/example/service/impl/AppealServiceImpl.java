@@ -7,9 +7,11 @@ package org.example.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.AppealDto;
+import org.example.dto.NomenclatureDto;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
 import org.example.service.AppealService;
+import org.example.service.NomenclatureService;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -21,6 +23,7 @@ public class AppealServiceImpl implements AppealService {
 
     private final AppealRepository appealRepository;
     private final AppealMapper appealMapper;
+    private final NomenclatureService nomenclatureService;
 
     /**
      * Метод для сохранения обращения в базе данных.
@@ -33,6 +36,10 @@ public class AppealServiceImpl implements AppealService {
     public AppealDto saveAppeal(AppealDto appealDto) {
         return Optional.ofNullable(appealDto)
                 .map(appealMapper::dtoToEntity)
+                .map(appeal -> {
+                    appeal.setNumber(nomenclatureService.generateNumberForAppeal(appeal.getNomenclature()));
+                    return appeal;
+                })
                 .map(appealRepository::save)
                 .map(appealMapper::entityToDto)
                 .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения обращения: обращение не должно быть null"));

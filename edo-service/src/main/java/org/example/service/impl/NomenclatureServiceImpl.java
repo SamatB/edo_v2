@@ -11,6 +11,7 @@ import org.example.service.NomenclatureService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public class NomenclatureServiceImpl implements NomenclatureService {
     private final NomenclatureRepository nomenclatureRepository;
     private final NomenclatureMapper nomenclatureMapper;
     private final DepartmentService departmentService;
+
     @Override
     public NomenclatureDto saveNomenclature(NomenclatureDto nomenclatureDto) {
         log.info("запрос на сохранение прилетел");
@@ -55,10 +57,9 @@ public class NomenclatureServiceImpl implements NomenclatureService {
     }
 
     /**
-     *
-     * @param id - айди обрабатываемой сущности
+     * @param id        - айди обрабатываемой сущности
      * @param archivate - true- сущность архиваируется, устанавливается дата архивации
-     *                 false - сущность разархивируется, устанавливается null в поле archived_date
+     *                  false - сущность разархивируется, устанавливается null в поле archived_date
      */
     @Override
     public void ArchiveNomenclature(Long id, boolean archivate) {
@@ -69,13 +70,14 @@ public class NomenclatureServiceImpl implements NomenclatureService {
 
     /**
      * метод получения архивной/неархивной версии номенклатуры
+     *
      * @param giveMeArchived - если true получаем архивную версию, false - неархивную
      * @return List<NomenclatureDto> - возвращает коллекцию архивных/неархивных сущностей
      */
     @Override
     public List<NomenclatureDto> getArchivedOrNoArchivedNomenclature(boolean giveMeArchived) {
         List<Nomenclature> listOfNomenclature = nomenclatureRepository.findAll();
-        if (giveMeArchived){
+        if (giveMeArchived) {
             return listOfNomenclature.stream()
                     .filter(x -> x.getArchivedDate() != null)
                     .map(nomenclatureMapper::entityToDto)
@@ -87,4 +89,19 @@ public class NomenclatureServiceImpl implements NomenclatureService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * метод генерации номера обращения
+     */
+    @Override
+    public String generateNumberForAppeal(Nomenclature nomenclature) {
+        Nomenclature.setCounter(Nomenclature.getCounter() + 1L);
+        nomenclature.setCurrentValue(Nomenclature.getCounter());
+        StringBuilder sbNumber = new StringBuilder();
+        return sbNumber.append(nomenclature.getIndex())
+                .append("-")
+                .append(Year.now())
+                .append("/2-")
+                .append(nomenclature.getCurrentValue())
+                .toString();
+    }
 }

@@ -3,17 +3,16 @@ package org.example.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.example.dto.DepartmentDto;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
+
 @Entity
 @SuperBuilder
 @NoArgsConstructor
 @Getter
 @Setter
-public class Nomenclature extends BaseEntity{
+public class Nomenclature extends BaseEntity {
 
     /**
      * Код-номер обращения (первая часть номера)
@@ -57,5 +56,18 @@ public class Nomenclature extends BaseEntity{
     @Column(name = "creation_date")
     @CreationTimestamp
     private ZonedDateTime creationDate;
+    /**
+     * Cчетчик для нуменклатулы
+     */
+    @Getter
+    @Setter
+    private static Long counter;
+    /**
+     * свзязь с сущностью Обращение
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "appeal_id")
+    private Appeal appeal;
+
 
 }
