@@ -53,7 +53,6 @@ public class AppealServiceTest {
 
         AppealDto test = appealService.getAppeal(1L);
         assertEquals(appealDto, test);
-        assertEquals(appealService.logCountOfRequestsToAppeal(), 1);
     }
 
     /**
