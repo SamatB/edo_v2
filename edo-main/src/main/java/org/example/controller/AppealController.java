@@ -7,6 +7,7 @@ package org.example.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.example.feign.AppealFeignClient;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @RestController
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AppealController {
 
 private final AppealFeignClient appealFeignClient;
+private final AtomicInteger countOfRequestsToAppeal = new AtomicInteger(0);
 
 /**
  * Возвращает обращение из базы данных.
@@ -47,6 +50,7 @@ private final AppealFeignClient appealFeignClient;
             @PathVariable Long id) {
         log.info("Начат поиск обращения с id: " + id + " ...");
         AppealDto appealDto = appealFeignClient.getAppeal(id);
+        countOfRequestsToAppeal.incrementAndGet();
         if (appealDto == null) {
             log.warn("Ошибка получечния обращения: обращение с id: " + id + " не найдено");
             return ResponseEntity.notFound().build();
@@ -100,5 +104,16 @@ private final AppealFeignClient appealFeignClient;
         }
         log.info("Обращение номер: " + archivedAppeal.getNumber() + " успешно заархивировано");
         return ResponseEntity.ok(archivedAppeal);
+    }
+
+    /**
+     * Метод для вывода в лог количества обращений к Appeal перед завершением приложения.
+     *
+     * @return кол-во обращений к Appeal
+     */
+    @PreDestroy
+    public int logCountOfRequestsToAppeal() {
+        log.info("Количество запросов на просмотр обращений: " + countOfRequestsToAppeal.get());
+        return countOfRequestsToAppeal.get();
     }
 }
