@@ -106,4 +106,11 @@ public class Resolution extends BaseEntity {
     @NotNull
     @Column(name = "serial_number")
     private Integer serialNumber;
+
+    /**
+     * Связь с сущностью Вопрос
+     */
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
 }
