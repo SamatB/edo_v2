@@ -4,8 +4,10 @@
 
 package org.example.service.impl;
 
+import jakarta.annotation.PreDestroy;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
 import org.example.dto.NomenclatureDto;
 import org.example.mapper.AppealMapper;
@@ -16,9 +18,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AppealServiceImpl implements AppealService {
 
     private final AppealRepository appealRepository;

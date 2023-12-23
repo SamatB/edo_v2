@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * Клиент для работы с сервисом edo-service.
  */
 @FeignClient(name = "edo-service")
-public interface EdoServiceClient {
+public interface ResolutionFeignClient {
 
     /**
      * Сохраняет резолюцию в базе данных.

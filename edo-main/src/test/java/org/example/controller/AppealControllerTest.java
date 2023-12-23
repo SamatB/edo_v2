@@ -42,6 +42,8 @@ public class AppealControllerTest {
         ResponseEntity<AppealDto> response = appealController.getAppeal(1L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(appealDto, response.getBody());
+        assertEquals(appealController.logCountOfRequestsToAppeal(), 1);
+
     }
 
     /**

@@ -9,7 +9,7 @@ import org.example.entity.Employee;
 import org.example.mapper.util.AbstractMapper;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", uses = {AddressMapper.class, DeparmentMapper.class})
+@Mapper(componentModel = "spring", uses = {AddressMapper.class, DepartmentMapper.class})
 public interface EmployeeMapper extends AbstractMapper<Employee, EmployeeDto> {
 
 

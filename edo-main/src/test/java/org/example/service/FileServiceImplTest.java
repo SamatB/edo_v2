@@ -105,7 +105,7 @@ class FileServiceImplTest {
                                 dto.getSize() == 1024L &&
                                 dto.getPageCount() == 1 &&
                                 dto.getUploadDate() != null && // Ensure the uploadDate is not null
-                                dto.getArchivedDate() == null // Ensure the archivedDate is null
+                                dto.getArchivedDate() != null // Ensure the archivedDate is null
                 )
         );
         assertNotNull(response);

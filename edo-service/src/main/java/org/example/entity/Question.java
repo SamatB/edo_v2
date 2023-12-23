@@ -3,11 +3,14 @@ package org.example.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,6 +25,7 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
+@SuperBuilder
 public class Question extends BaseEntity {
     /**
      * Дата создания вопроса
@@ -43,4 +47,11 @@ public class Question extends BaseEntity {
      */
     @Column(name = "summary", length = 1000)
     String summary;
+
+    /**
+     * Связь с сущностью Обращение
+     */
+    @ManyToOne
+    @JoinColumn(name = "appeal_id")
+    private Appeal appeal;
 }
