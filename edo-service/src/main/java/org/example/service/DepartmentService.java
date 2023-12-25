@@ -7,8 +7,6 @@ import java.util.List;
 public interface DepartmentService {
     DepartmentDto saveDepartment(DepartmentDto departmentDto);
 
-    String fixLayout(String input);
-
     List<DepartmentDto> getDepartmentByName(String search);
 
 }

@@ -9,6 +9,7 @@ import org.example.mapper.DepartmentMapper;
 import org.example.repository.DepartmentRepository;
 import org.example.service.impl.AddressServiceImpl;
 import org.example.service.impl.DepartmentServiceImpl;
+import org.example.utils.CheckingLayout;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -89,7 +90,7 @@ class DepartmentServiceTest {
 
     @Test
     void fixLayout_should_Russian_layout() {
-        String resault = departmentService.fixLayout("мэрия");
+        String resault = CheckingLayout.fixLayout("мэрия");
 
         assertEquals("мэрия", resault);
     }
@@ -100,7 +101,7 @@ class DepartmentServiceTest {
 
     @Test
     void fixLayout_should_English_layout() {
-        String resault = departmentService.fixLayout("v'hbz");
+        String resault = CheckingLayout.fixLayout("v'hbz");
 
         assertEquals("мэрия", resault);
     }
@@ -123,7 +124,7 @@ class DepartmentServiceTest {
         departmentDtoList.add(departmentDto);
 
         when(departmentRepository.searchByName(fullName)).thenReturn(departmentList);
-        when(departmentMapper.entityToDto(department)).thenReturn(departmentDto);
+        when(departmentMapper.entityListToDtoList(departmentList)).thenReturn(departmentDtoList);
 
         List<DepartmentDto> resault = departmentService.getDepartmentByName(fullName);
         assertEquals(departmentDtoList, resault);

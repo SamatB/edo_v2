@@ -9,9 +9,10 @@ import org.example.entity.Department;
 import org.example.mapper.DepartmentMapper;
 import org.example.repository.DepartmentRepository;
 import org.example.service.DepartmentService;
+import org.example.utils.CheckingLayout;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -58,40 +59,17 @@ public class DepartmentServiceImpl implements DepartmentService {
      */
 
     public List<DepartmentDto> getDepartmentByName(String search) {
-        String fixedSearch = fixLayout(search);
+        String fixedSearch = CheckingLayout.fixLayout(search);
 
         if (fixedSearch == null || fixedSearch.length() <= 3) {
             log.info("Строка поиска пуста или менее трех символов!");
             throw new EntityNotFoundException("Строка поиска пуста или менее трех символов!");
         }
         log.info("Начат поиск в БД по имени департамента: " + fixedSearch);
-        return departmentRepository.searchByName(fixedSearch)
-                .stream()
-                .map(departmentMapper::entityToDto)
-                .collect(Collectors.toList());
+        return new ArrayList<>(Optional.ofNullable(departmentRepository.searchByName(fixedSearch))
+                .map(departmentMapper::entityListToDtoList)
+                .orElseGet(Collections::emptyList));
 
-    }
 
-    /**
-     * Проверка расскладки клавиатуры(проверяет и при необходимости конвертирует строку в русские символы).
-     *
-     * @param input строка символов в русской или английской расскладке
-     * @return возвращает строку в русской расскладке
-     */
-
-    public String fixLayout(String input) {
-        final String ENGLISH_ALPHABET = "`qwertyuiop[]asdfghjkl;'zxcvbnm,.~QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>";
-        final String RUSSIAN_ALPHABET = "ёйцукенгшщзхъфывапролджэячсмитьбюЁЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ";
-        StringBuilder result = new StringBuilder();
-
-        char[] chars = input.toCharArray();
-        for (char c : chars) {
-            if (ENGLISH_ALPHABET.indexOf(c) != -1) {
-                result.append(RUSSIAN_ALPHABET.charAt(ENGLISH_ALPHABET.indexOf(c)));
-            } else {
-                result.append(c);
-            }
-        }
-        return result.toString();
     }
 }
