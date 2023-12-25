@@ -1,6 +1,6 @@
 package org.example.feign;
 
-import feign.Response;
+
 import org.example.dto.DepartmentDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;

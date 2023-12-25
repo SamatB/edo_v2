@@ -1,8 +1,7 @@
 package org.example.controller;
 
 import org.example.dto.DepartmentDto;
-
-import org.example.service.DepartmentService;
+import org.example.feign.DepartmentFeignClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,12 +11,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 /**
  * Тесты для класса DepartmentController.
@@ -27,7 +26,7 @@ import java.util.List;
 public class DepartmentControllerTest {
 
     @Mock
-    private DepartmentService departmentService;
+    private DepartmentFeignClient departmentFeignClient;
 
     @InjectMocks
     private DepartmentController departmentController;
@@ -36,6 +35,7 @@ public class DepartmentControllerTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
+
 
     /**
      * Тест для метода getDepartmentByName.
@@ -48,7 +48,7 @@ public class DepartmentControllerTest {
 
         departmentDtoList.add(departmentDto);
 
-        when(departmentService.getDepartmentByName(anyString())).thenReturn(departmentDtoList);
+        when(departmentFeignClient.getDepartmentByName(anyString()).getBody()).thenReturn(departmentDtoList);
 
         ResponseEntity<List<DepartmentDto>> response = departmentController.getDepartmentByName("мэрия");
 
@@ -65,7 +65,7 @@ public class DepartmentControllerTest {
     public void getDepartmentByName_shouldNotFound() {
         List<DepartmentDto> departmentDtoList = new ArrayList<>();
 
-        when(departmentService.getDepartmentByName(anyString())).thenReturn(departmentDtoList);
+        when(departmentFeignClient.getDepartmentByName(anyString()).getBody()).thenReturn(departmentDtoList);
 
         ResponseEntity<List<DepartmentDto>> response = departmentController.getDepartmentByName("мэрия");
 
