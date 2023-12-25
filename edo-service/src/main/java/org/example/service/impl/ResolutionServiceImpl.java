@@ -57,7 +57,7 @@ public class ResolutionServiceImpl implements ResolutionService {
     public ResolutionDto archiveResolution(Long id) {
 
         try {
-            resolutionRepository.archiveResolution(id);
+            resolutionRepository.archiveResolution(id, ZonedDateTime.now());
             return resolutionMapper.entityToDto(resolutionRepository.findById(id).get());
         }
         catch (Exception e){

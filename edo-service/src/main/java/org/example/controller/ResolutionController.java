@@ -1,6 +1,8 @@
 package org.example.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
@@ -8,9 +10,7 @@ import org.example.entity.Resolution;
 import org.example.mapper.ResolutionMapper;
 import org.example.service.ResolutionService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.List;
 public class ResolutionController {
 
     private final ResolutionService resolutionService;
-    private final ResolutionMapper resolutionMapper;
 
 
     /**
@@ -92,5 +91,25 @@ public class ResolutionController {
             log.error("Возникла ошибка поиска всех резолюций, кроме архивных");
             return ResponseEntity.status(502).build();
         }
+    }
+
+    /**
+     * Переносит резолюцию в архив.
+     *
+     * @param id идентификатор резолюции
+     * @return обновленный объект DTO резолюции
+     */
+    @PutMapping("/{id}/archive")
+    @Operation(summary = "Переносит резолюцию в архив")
+    public ResponseEntity<ResolutionDto> archiveResolution(
+            @Parameter(description = "Идентификатор резолюции", required = true)
+            @PathVariable Long id) {
+        log.info("Archiving resolution with id {}", id);
+        ResolutionDto updatedResolutionDto = resolutionService.archiveResolution(id);
+        if (updatedResolutionDto == null) {
+            log.warn("Resolution with id {} not found", id);
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedResolutionDto);
     }
 }
