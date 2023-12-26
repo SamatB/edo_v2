@@ -29,7 +29,7 @@ public class MatchingBlock extends BaseEntity {
      * Участники согласования
      */
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "matching_block_participant",
             joinColumns = @JoinColumn(name = "matching_block_id"),
@@ -57,11 +57,18 @@ public class MatchingBlock extends BaseEntity {
 
 
     /**
-     * Связь с сущностью AgreementList.
+     * Связь с сущностью AgreementList, блок подписантов.
      */
 
-    @ManyToOne
-    @Column(name = "agreement_list_id")
-    private AgreementList agreementList;
+    @ManyToMany(mappedBy = "signatory")
+    private Set<AgreementList> signatoryAgreementList;
+
+
+    /**
+     * Связь с сущностью AgreementList, блок согласующих.
+     */
+
+    @ManyToMany(mappedBy = "coordinating")
+    private Set<AgreementList> coordinatingAgreementList;
 
 }

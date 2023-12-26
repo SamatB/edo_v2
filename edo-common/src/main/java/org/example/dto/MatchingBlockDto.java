@@ -29,6 +29,6 @@ public class MatchingBlockDto {
     private MatchingBlockType matchingBlockType;
 
     @Schema(description = "Участники согласования")
-    private Set<ParticipantDto> participantsDto;
+    private Set<ParticipantDto> participants;
 
 }

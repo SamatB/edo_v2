@@ -50,15 +50,15 @@ public class AgreementListDto {
 
 
     @Schema(description = "Инициатор запуска листа согласования")
-    private ParticipantDto participantDto;
+    private ParticipantDto initiator;
 
 
     @Schema(description = "Блоки подписантов")
-    private Set<MatchingBlockDto> signatoryDto;
+    private Set<MatchingBlockDto> signatory;
 
 
     @Schema(description = "Блоки согласующих")
-    private Set<MatchingBlockDto> coordinatingDto;
+    private Set<MatchingBlockDto> coordinating;
 
 }
 

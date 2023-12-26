@@ -79,14 +79,14 @@ public class AgreementList extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participant_id")
-    private Participant participant;
+    private Participant initiator;
 
 
     /**
      * Блоки подписантов
      */
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "matching_block_signatory"
             , joinColumns = @JoinColumn(name = "id_agreement_list")
@@ -99,7 +99,7 @@ public class AgreementList extends BaseEntity {
      * Блоки согласующих
      */
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "matching_block_coordinating"
             , joinColumns = @JoinColumn(name = "id_agreement_list")
