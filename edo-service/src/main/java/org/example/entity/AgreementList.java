@@ -78,7 +78,7 @@ public class AgreementList extends BaseEntity {
      */
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "participant_id")
+    @JoinColumn(name = "initiator_id")
     private Participant initiator;
 
 
