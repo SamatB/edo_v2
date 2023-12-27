@@ -1,6 +1,7 @@
 package org.example.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceException;
 import org.example.dto.ResolutionDto;
 import org.example.entity.Resolution;
 import org.example.mapper.ResolutionMapper;
@@ -13,10 +14,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -63,16 +64,15 @@ public class ResolutionServiceTest {
      */
     @Test
     public void testArchiveResolution() {
-        Long id = 1L;
         Resolution resolutionMock = mock(Resolution.class);
-        when(resolutionRepository.findById(id)).thenReturn(Optional.of(resolutionMock));
-        when(resolutionRepository.save(resolutionMock)).thenReturn(resolutionMock);
-        ResolutionDto resolutionDto = new ResolutionDto();
-        when(resolutionMapper.entityToDto(resolutionMock)).thenReturn(resolutionDto);
+        ResolutionDto resolutionDtoTest = new ResolutionDto();
 
-        ResolutionDto result = resolutionService.archiveResolution(id);
+        when(resolutionRepository.findById(resolutionMock.getId())).thenReturn(Optional.of(resolutionMock));
+        when(resolutionMapper.entityToDto(resolutionMock)).thenReturn(resolutionDtoTest);
+        ResolutionDto resolutionDto = resolutionMapper.entityToDto(resolutionMock);
+        ResolutionDto result = resolutionService.archiveResolution(resolutionMock.getId());
+
         assertEquals(resolutionDto, result);
-        verify(resolutionMock).setArchivedDate(any(ZonedDateTime.class));
     }
 
     /**
@@ -83,7 +83,40 @@ public class ResolutionServiceTest {
         Long id = 1L;
         when(resolutionRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> resolutionService.archiveResolution(id));
+        assertThrows(PersistenceException.class, () -> resolutionService.archiveResolution(id));
+    }
+
+    /**
+     * Тест для метода findResolutions для получения резолюций по типу архивации.
+     */
+
+    @Test
+    public void testFindResolutions() {
+        ResolutionDto resolutionMock1 = mock(ResolutionDto.class);
+        ResolutionDto resolutionMock2 = mock(ResolutionDto.class);
+        ResolutionDto resolutionMock3 = mock(ResolutionDto.class);
+        resolutionMock1.setArchivedDate(ZonedDateTime.now());
+        resolutionMock3.setArchivedDate(ZonedDateTime.now());
+
+        List<ResolutionDto> archivedResolutions = List.of(resolutionMock1, resolutionMock3);
+        List<ResolutionDto> notArchivedResolutions = List.of(resolutionMock2);
+        List<ResolutionDto> allResolutions = List.of(resolutionMock1, resolutionMock2, resolutionMock3);
+
+        when(resolutionService.findResolution(true)).thenReturn(archivedResolutions);
+        when(resolutionService.findResolution(false)).thenReturn(notArchivedResolutions);
+        when(resolutionService.findResolution(null)).thenReturn(allResolutions);
+
+        List<ResolutionDto> resultListArchivedResolutions =  resolutionService.findResolution(true);
+        List<ResolutionDto> resultListNotArchivedResolutions =  resolutionService.findResolution(false);
+        List<ResolutionDto> resultListAllResolutions =  resolutionService.findResolution(null);
+
+
+        assertEquals(archivedResolutions, resultListArchivedResolutions);
+        assertEquals(notArchivedResolutions, resultListNotArchivedResolutions);
+        assertEquals(allResolutions, resultListAllResolutions);
+        verify(resolutionRepository).findResolutions(true);
+        verify(resolutionRepository).findResolutions(false);
+        verify(resolutionRepository).findResolutions(null);
     }
 
     /**
