@@ -1,15 +1,15 @@
 CREATE TABLE IF NOT EXISTS agreement_list
 (
-    id            BIGSERIAL PRIMARY KEY,
-    creation_date TIMESTAMP   NOT NULL,
-    sent_approval_date      TIMESTAMP  WITH TIME ZONE,
-    sign_date               TIMESTAMP  WITH TIME ZONE,
-    returned_date           TIMESTAMP  WITH TIME ZONE,
-    refund_processing_date  TIMESTAMP  WITH TIME ZONE,
-    archive_date            TIMESTAMP  WITH TIME ZONE,
-    comment    VARCHAR(1000),
-    appeal_id BIGINT,
-    FOREIGN KEY (appeal_id) REFERENCES appeal (id),
+    id                     BIGSERIAL PRIMARY KEY,
+    creation_date          TIMESTAMP NOT NULL,
+    sent_approval_date     TIMESTAMP WITH TIME ZONE,
+    sign_date              TIMESTAMP WITH TIME ZONE,
+    returned_date          TIMESTAMP WITH TIME ZONE,
+    refund_processing_date TIMESTAMP WITH TIME ZONE,
+    archive_date           TIMESTAMP WITH TIME ZONE,
+    comment                VARCHAR(1000),
+    appeal_id              BIGINT,
+    FOREIGN KEY (appeal_id) REFERENCES appeal (id)
 );
 
 comment on column agreement_list.id is 'Идентификатор обращения';

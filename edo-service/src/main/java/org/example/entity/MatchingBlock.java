@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.example.utils.MatchingBlockType;
 
-import java.util.List;
+
 import java.util.Set;
 
 /**
@@ -29,12 +29,8 @@ public class MatchingBlock extends BaseEntity {
      * Участники согласования
      */
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "matching_block_participant",
-            joinColumns = @JoinColumn(name = "matching_block_id"),
-            inverseJoinColumns = @JoinColumn(name = "participant_id")
-    )
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "participant_id")
     private Set<Participant> participants;
 
     /**
@@ -57,18 +53,11 @@ public class MatchingBlock extends BaseEntity {
 
 
     /**
-     * Связь с сущностью AgreementList, блок подписантов.
+     * Связь с сущностью AgreementList.
      */
 
-    @ManyToMany(mappedBy = "signatory")
-    private Set<AgreementList> signatoryAgreementList;
-
-
-    /**
-     * Связь с сущностью AgreementList, блок согласующих.
-     */
-
-    @ManyToMany(mappedBy = "coordinating")
-    private Set<AgreementList> coordinatingAgreementList;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agreement_list_id")
+    private AgreementList agreementList;
 
 }

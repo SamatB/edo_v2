@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 import org.example.utils.ParticipantType;
 
 import java.time.ZonedDateTime;
-import java.util.Set;
+
 
 /**
  * Сущность Participant представляет участника согласования
@@ -75,13 +75,5 @@ public class Participant extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
-
-
-    /**
-     * Связь с блоком согласования.
-     */
-    @ManyToMany(mappedBy = "participants")
-    private Set<MatchingBlock> matchingBlocks;
-
 
 }

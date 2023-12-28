@@ -31,4 +31,7 @@ public class MatchingBlockDto {
     @Schema(description = "Участники согласования")
     private Set<ParticipantDto> participants;
 
+    @Schema(description = "Лист согласования")
+    private AgreementListDto agreementList;
+
 }
