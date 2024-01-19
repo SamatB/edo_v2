@@ -1,5 +1,5 @@
 /**
- *  Контроллер для сохранения, получения и архивации Appeal
+ * Контроллер для сохранения, получения, регистрации и архивации Appeal
  */
 
 package org.example.controller;
@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.feign.AppealFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.AppealDto;
+import org.example.utils.AppealStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,18 +32,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Tag(name = "Appeal")
 public class AppealController {
 
-private final AppealFeignClient appealFeignClient;
-private final AtomicInteger countOfRequestsToAppeal = new AtomicInteger(0);
+    private final AppealFeignClient appealFeignClient;
+    private final AtomicInteger countOfRequestsToAppeal = new AtomicInteger(0);
 
-/**
- * Возвращает обращение из базы данных.
- * Если обращение по заданному id не найдено, возвращает ответ со статусом "Not Found".
- * Метод выполняет поиск обращения с помощью AppealFeignClient.
- *
- * @param id идентификатор вызываемого обращения.
- * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
- *
- */
+    /**
+     * Возвращает обращение из базы данных.
+     * Если обращение по заданному id не найдено, возвращает ответ со статусом "Not Found".
+     * Метод выполняет поиск обращения с помощью AppealFeignClient.
+     *
+     * @param id идентификатор вызываемого обращения.
+     * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
+     *
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Возвращает обращение по идентификатору")
     public ResponseEntity<AppealDto> getAppeal(
@@ -104,6 +105,35 @@ private final AtomicInteger countOfRequestsToAppeal = new AtomicInteger(0);
         }
         log.info("Обращение номер: " + archivedAppeal.getNumber() + " успешно заархивировано");
         return ResponseEntity.ok(archivedAppeal);
+    }
+
+
+    /**
+     * Метод для добавления даты регистрации обращения с указанным id.
+     * Если обращение по заданному id не найдено, возвращает ответ со статусом "Not Found".
+     * Если обращение уже было зарегистрировано, возвращает ответ со статусом "Method Not Allowed".
+     * Метод выполняет сохранение обращения с помощью AppealFeignClient.
+     *
+     * @param id идентификатор регистрируемого обращения.
+     * @return ответ с Dto объектом обращения в виде ResponseEntity<AppealDto>
+     */
+    @PatchMapping("/{id}/register")
+    @Operation(summary = "Регистрирует обращение")
+    public ResponseEntity<AppealDto> registerAppeal(
+            @Parameter(description = "Идентификатор обращения", required = true)
+            @PathVariable Long id) {
+        log.info("Регистрация обращения с id " + id + " ...");
+        AppealDto registeredAppeal = appealFeignClient.registerAppeal(id);
+        if (registeredAppeal == null) {
+            log.warn("Ошибка регистрации: обращение с id: " + id + " не найдено");
+            return ResponseEntity.notFound().build();
+        }
+        if (!registeredAppeal.isStatusChanged()) {
+            log.warn("Ошибка регистрации: обращение с id: " + id + " ранее уже было зарегистрировано");
+            return ResponseEntity.status(405).body(registeredAppeal);
+        }
+        log.info("Обращение номер: " + registeredAppeal.getNumber() + " успешно зарегистрировано");
+        return ResponseEntity.ok(registeredAppeal);
     }
 
     /**

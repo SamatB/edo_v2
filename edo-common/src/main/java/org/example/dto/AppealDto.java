@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.utils.AppealStatus;
 
 
 import java.time.ZonedDateTime;
@@ -23,6 +24,9 @@ public class AppealDto {
     @Schema(description = "Дата создания обращения")
     private ZonedDateTime creationDate;
 
+    @Schema(description = "Дата регистрации обращения")
+    private ZonedDateTime registrationDate;
+
     @Schema(description = "Дата архивирования обращения")
     private ZonedDateTime archivedDate;
 
@@ -32,4 +36,10 @@ public class AppealDto {
 
     @Schema(description = "Описание обращения")
     private String annotation;
+
+    @Schema(description = "Статус обращения")
+    private AppealStatus appealStatus;
+
+    @Schema(description = "Статус обращения изменен")
+    private boolean statusChanged;
 }

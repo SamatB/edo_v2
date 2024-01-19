@@ -1,19 +1,13 @@
 package org.example.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.example.utils.AppealStatus;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
@@ -38,6 +32,12 @@ public class Appeal extends BaseEntity {
     private ZonedDateTime creationDate;
 
     /**
+     * Дата регистрации обращения
+     */
+    @Column(name = "registration_date")
+    private ZonedDateTime registrationDate;
+
+    /**
      * Дата архивирования обращения
      */
     @Column(name = "archived_date")
@@ -55,6 +55,13 @@ public class Appeal extends BaseEntity {
      */
     @Column(name = "annotation")
     private String annotation;
+
+    /**
+     * Статус обращения
+     */
+    @Column(name = "appeal_status")
+    @Enumerated(EnumType.STRING)
+    private AppealStatus appealStatus;
 
     /**
      * свзязь один ко многим к таблице Employee

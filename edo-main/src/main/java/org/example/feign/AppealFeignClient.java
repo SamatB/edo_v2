@@ -31,4 +31,10 @@ public interface AppealFeignClient {
      */
     @PatchMapping("/appeal/{id}")
     AppealDto archiveAppeal(@PathVariable Long id);
+
+    /**
+     * Метод для регистрации обращения по id
+     */
+    @PatchMapping("/appeal/{id}/register")
+    AppealDto registerAppeal(@PathVariable Long id);
 }
