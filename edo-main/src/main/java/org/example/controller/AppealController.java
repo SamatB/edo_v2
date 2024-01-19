@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.feign.AppealFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.AppealDto;
-import org.example.utils.AppealStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -130,7 +130,7 @@ public class AppealController {
         }
         if (!registeredAppeal.isStatusChanged()) {
             log.warn("Ошибка регистрации: обращение с id: " + id + " ранее уже было зарегистрировано");
-            return ResponseEntity.status(405).body(registeredAppeal);
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(registeredAppeal);
         }
         log.info("Обращение номер: " + registeredAppeal.getNumber() + " успешно зарегистрировано");
         return ResponseEntity.ok(registeredAppeal);

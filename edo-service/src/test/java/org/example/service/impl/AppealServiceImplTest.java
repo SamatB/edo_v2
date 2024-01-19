@@ -5,6 +5,7 @@ import org.example.dto.AppealDto;
 import org.example.entity.Appeal;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
+import org.example.utils.AppealStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -36,10 +37,11 @@ class AppealServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Тест для метода registerAppeal.
+     */
     @Test
-    public void registerAppeal() {
-
-        // Тест 1
+    public void testRegisterAppeal() {
         AppealDto appealDto = new AppealDto();
         Appeal appealMock = mock(Appeal.class);
         when(appealRepository.findById(anyLong())).thenReturn(Optional.of(appealMock));
@@ -48,21 +50,28 @@ class AppealServiceImplTest {
 
         AppealDto test = appealService.registerAppeal(1L);
         assertEquals(appealDto, test);
+        assertTrue(test.isStatusChanged());
         verify(appealMock).setRegistrationDate(any(ZonedDateTime.class));
     }
 
     /**
-     * Тест для метода archiveAppeal с несуществующим обращением.
+     * Тест для метода registerAppeal с несуществующим обращением.
      */
     @Test
-    public void registerAppealNotFound() {
-        Appeal appeal = new Appeal();
-        when(appealRepository.getReferenceById(1L)).thenReturn(appeal);
-
-        assertThrows(EntityNotFoundException.class, () -> appealService.registerAppeal(2L));
+    public void testRegisterAppealNotFound() {
+        assertThrows(EntityNotFoundException.class, () -> appealService.registerAppeal(Long.MAX_VALUE));
     }
-//
-//    @Test
-//    void registerAppealTest3() {
-//    }
+
+    /**
+     * Тест для метода registerAppeal - попытка регистрации зарегистрированного обращения
+     */
+    @Test
+    public void testRegisterAppealRepeatedRegistration() {
+        AppealDto appealDto = new AppealDto();
+        Appeal appeal = new Appeal();
+        appeal.setAppealStatus(AppealStatus.REGISTERED);
+        when(appealRepository.findById(anyLong())).thenReturn(Optional.of(appeal));
+        when(appealMapper.entityToDto(appeal)).thenReturn(appealDto);
+        assertFalse(appealService.registerAppeal(1L).isStatusChanged());
+    }
 }
