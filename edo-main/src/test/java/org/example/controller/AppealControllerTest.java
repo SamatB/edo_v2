@@ -113,13 +113,15 @@ public class AppealControllerTest {
      * Тест для метода registerAppeal.
      */
     @Test
-    void testRegisterAppeal() {
+    public void testRegisterAppeal() {
         AppealDto appealDto = new AppealDto();
         appealDto.setNumber("АБВ-12345");
         appealDto.setAppealStatus(AppealStatus.REGISTERED);
         appealDto.setStatusChanged(true);
         when(appealFeignClient.registerAppeal(anyLong())).thenReturn(appealDto);
+
         ResponseEntity<AppealDto> response = appealController.registerAppeal(1L);
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(Objects.requireNonNull(response.getBody()).isStatusChanged());
         assertEquals(appealDto, response.getBody());
@@ -130,7 +132,8 @@ public class AppealControllerTest {
      */
     @Test
     public void testRegisterAppealNotFound() {
-        ResponseEntity<AppealDto> response = appealController.archiveAppeal(Long.MAX_VALUE);
+        ResponseEntity<AppealDto> response = appealController.registerAppeal(Long.MAX_VALUE);
+
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -138,12 +141,14 @@ public class AppealControllerTest {
      * Тест для метода registerAppeal - попытка регистрации зарегистрированного обращения.
      */
     @Test
-    void testRegisterAppealRepeatedRegistration() {
+    public void testRegisterAppealRepeatedRegistration() {
         AppealDto appealDto = new AppealDto();
         appealDto.setAppealStatus(AppealStatus.REGISTERED);
         appealDto.setStatusChanged(false);
         when(appealFeignClient.registerAppeal(anyLong())).thenReturn(appealDto);
+
         ResponseEntity<AppealDto> response = appealController.registerAppeal(1L);
+
         assertEquals(HttpStatus.METHOD_NOT_ALLOWED, response.getStatusCode());
         assertFalse(Objects.requireNonNull(response.getBody()).isStatusChanged());
         assertEquals(appealDto, response.getBody());
