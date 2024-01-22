@@ -56,18 +56,4 @@ public class Nomenclature extends BaseEntity {
     @Column(name = "creation_date")
     @CreationTimestamp
     private ZonedDateTime creationDate;
-    /**
-     * Cчетчик для нуменклатулы
-     */
-    @Getter
-    @Setter
-    private static Long counter;
-    /**
-     * свзязь с сущностью Обращение
-     */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "appeal_id")
-    private Appeal appeal;
-
-
 }

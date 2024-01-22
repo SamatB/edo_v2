@@ -15,6 +15,8 @@ import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,18 +92,26 @@ public class NomenclatureServiceImpl implements NomenclatureService {
     }
 
     /**
-     * метод генерации номера обращения
+     * метод генерации номера обращения, генерируется по шаблону %ИНДЕКС-%ГОД/2-%НОМЕР, где
+     * %ИНДЕКС - значение index
+     * %ГОД - текущий год
+     * %НОМЕР - значение currentValue
+     * @param nomenclature- номенклатура, по которой будет генерироваться номер
+     * @return String - возвращает сгенерированный номер обращения
      */
     @Override
     public String generateNumberForAppeal(Nomenclature nomenclature) {
-        Nomenclature.setCounter(Nomenclature.getCounter() + 1L);
-        nomenclature.setCurrentValue(Nomenclature.getCounter());
-        StringBuilder sbNumber = new StringBuilder();
-        return sbNumber.append(nomenclature.getIndex())
-                .append("-")
-                .append(Year.now())
-                .append("/2-")
-                .append(nomenclature.getCurrentValue())
-                .toString();
+        nomenclatureRepository.incrementCurrentValue();
+        Pattern patternIndex = Pattern.compile("%ИНДЕКС");
+        Pattern patternYear = Pattern.compile("%ГОД");
+        Pattern patternNumber = Pattern.compile("%НОМЕР");
+        Matcher matcherIndex = patternIndex.matcher(nomenclature.getTemplate());
+        var strIndex = matcherIndex.replaceAll(nomenclature.getIndex());
+        Matcher matcherYear = patternYear.matcher(strIndex);
+        var strYear = matcherYear.replaceAll(Year.now().toString());
+        Matcher matcherNumber = patternNumber.matcher(strYear);
+        return matcherNumber.replaceAll(Long.toString(nomenclature.getCurrentValue()));
     }
+
+
 }

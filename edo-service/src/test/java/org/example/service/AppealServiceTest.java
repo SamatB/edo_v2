@@ -86,6 +86,7 @@ public class AppealServiceTest {
         assertEquals(appealDto, test);
     }
 
+
     /**
      * Тест для метода archiveAppeal.
      */
@@ -113,3 +114,4 @@ public class AppealServiceTest {
         assertThrows(EntityNotFoundException.class, () -> appealService.archiveAppeal(2L));
     }
 }
+
