@@ -5,6 +5,7 @@
 package org.example.service.impl;
 
 import jakarta.annotation.PreDestroy;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +65,7 @@ public class AppealServiceImpl implements AppealService {
 
     /**
      * Метод для добавления даты архивации обращения с указанным id.
-     * Если обращение по заданному id не найдено, выбрасывает исключение EntityNotFoundException.
+     * Если обращение с указанным id не найдено, выбрасывает исключение EntityNotFoundException.
      * Метод выполняет поиск обращения по его id используя AppealRepository.
      *
      * @param id идентификатор архивируемого обращения.
@@ -83,28 +84,22 @@ public class AppealServiceImpl implements AppealService {
     }
 
     /**
-     * Метод для добавления даты регистрации обращения с указанным id.
-     * Если обращение по заданному id не найдено, выбрасывает исключение EntityNotFoundException.
-     * Если обращение уже ранее было зарегистрировано, устанавливает флаг statusChanged в false
-     * Если обращение ранее не было зарегистрировано, регистрирует и устанавливает флаг statusChanged в true
-     * Метод выполняет поиск обращения по его id используя AppealRepository.
-     *
-     * @param id идентификатор архивируемого обращения.
-     * @return объект DTO обращения.
+     * Метод для регистрации обращения с указанным id.
+     * Если обращение с указанным id не найдено, выбрасывает исключение EntityNotFoundException.
+     * Если обращение уже ранее было зарегистрировано, выбрасывает исключение EntityExistsException.
+     * @param id идентификатор регистрируемого обращения.
+     * @return объект DTO обращения в случае успешной регистрации.
      */
     @Override
     public AppealDto registerAppeal(Long id) {
         Appeal appeal = appealRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Ошибка регистрации: обращение с id: " + id + "не найдено"));
-        AppealDto appealDto = appealMapper.entityToDto(appeal);
+                .orElseThrow(() -> new EntityNotFoundException("Ошибка регистрации: обращение с id: " + id + " не найдено"));
         if (appeal.getAppealStatus() == AppealStatus.REGISTERED) {
-            appealDto.setStatusChanged(false);
-        } else {
-            appeal.setRegistrationDate(ZonedDateTime.now());
-            appeal.setAppealStatus(AppealStatus.REGISTERED);
-            appealRepository.save(appeal);
-            appealDto.setStatusChanged(true);
+            throw new EntityExistsException("Ошибка регистрации: обращение с id: " + id + " ранее зарегистрировано");
         }
-        return appealDto;
+        appeal.setRegistrationDate(ZonedDateTime.now());
+        appeal.setAppealStatus(AppealStatus.REGISTERED);
+        appealRepository.save(appeal);
+        return appealMapper.entityToDto(appeal);
     }
 }

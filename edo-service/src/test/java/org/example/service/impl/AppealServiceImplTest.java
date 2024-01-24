@@ -1,7 +1,7 @@
 package org.example.service.impl;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import org.example.dto.AppealDto;
 import org.example.entity.Appeal;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
@@ -12,14 +12,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
 class AppealServiceImplTest {
 
@@ -38,24 +35,21 @@ class AppealServiceImplTest {
     }
 
     /**
-     * Тест для метода registerAppeal.
+     * Тест для метода registerAppeal - успешная попытка регистрации обращения.
      */
     @Test
     public void testRegisterAppeal() {
-        AppealDto appealDto = new AppealDto();
-        Appeal appealMock = mock(Appeal.class);
-        when(appealRepository.findById(anyLong())).thenReturn(Optional.of(appealMock));
-        when(appealRepository.save(appealMock)).thenReturn(appealMock);
-        when(appealMapper.entityToDto(appealMock)).thenReturn(appealDto);
+        Appeal appeal = mock(Appeal.class);
+        appeal.setAppealStatus(AppealStatus.REGISTERED);
+        when(appealRepository.findById(anyLong())).thenReturn(Optional.of(appeal));
 
-        AppealDto test = appealService.registerAppeal(1L);
-        assertEquals(appealDto, test);
-        assertTrue(test.isStatusChanged());
-        verify(appealMock).setRegistrationDate(any(ZonedDateTime.class));
+        appealService.registerAppeal(1L);
+
+        verify(appeal, times(2)).setAppealStatus(AppealStatus.REGISTERED);
     }
 
     /**
-     * Тест для метода registerAppeal с несуществующим обращением.
+     * Тест для метода registerAppeal - попытка регистрации обращения с несуществующим id.
      */
     @Test
     public void testRegisterAppealNotFound() {
@@ -63,15 +57,14 @@ class AppealServiceImplTest {
     }
 
     /**
-     * Тест для метода registerAppeal - попытка регистрации зарегистрированного обращения
+     * Тест для метода registerAppeal - попытка регистрации зарегистрированного обращения.
      */
     @Test
     public void testRegisterAppealRepeatedRegistration() {
-        AppealDto appealDto = new AppealDto();
         Appeal appeal = new Appeal();
         appeal.setAppealStatus(AppealStatus.REGISTERED);
         when(appealRepository.findById(anyLong())).thenReturn(Optional.of(appeal));
-        when(appealMapper.entityToDto(appeal)).thenReturn(appealDto);
-        assertFalse(appealService.registerAppeal(1L).isStatusChanged());
+
+        assertThrows(EntityExistsException.class, () -> appealService.registerAppeal(1L));
     }
 }

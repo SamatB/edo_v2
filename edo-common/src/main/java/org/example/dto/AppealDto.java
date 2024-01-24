@@ -11,6 +11,7 @@ import org.example.utils.AppealStatus;
 
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 
 @Getter
@@ -19,6 +20,9 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @Schema(description = "Обращение")
 public class AppealDto {
+
+    @Schema(description = "идентификатор обращения")
+    private Long id;
 
     @NotNull
     @Schema(description = "Дата создания обращения")
@@ -40,6 +44,12 @@ public class AppealDto {
     @Schema(description = "Статус обращения")
     private AppealStatus appealStatus;
 
-    @Schema(description = "Статус обращения изменен")
-    private boolean statusChanged;
+    @Schema(description = "Исполнители")
+    private List<EmployeeDto> singers;
+
+    @Schema(description = "Создатель")
+    private EmployeeDto creator;
+
+    @Schema(description = "Адресаты")
+    private List<EmployeeDto> addressee;
 }

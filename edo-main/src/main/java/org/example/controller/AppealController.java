@@ -4,6 +4,7 @@
 
 package org.example.controller;
 
+import feign.FeignException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,7 +43,6 @@ public class AppealController {
      *
      * @param id идентификатор вызываемого обращения.
      * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
-     *
      */
     @GetMapping("/{id}")
     @Operation(summary = "Возвращает обращение по идентификатору")
@@ -50,14 +50,15 @@ public class AppealController {
             @Parameter(description = "Идентификатор обращения", required = true)
             @PathVariable Long id) {
         log.info("Начат поиск обращения с id: " + id + " ...");
-        AppealDto appealDto = appealFeignClient.getAppeal(id);
         countOfRequestsToAppeal.incrementAndGet();
-        if (appealDto == null) {
-            log.warn("Ошибка получечния обращения: обращение с id: " + id + " не найдено");
+        try {
+            AppealDto appealDto = appealFeignClient.getAppeal(id);
+            log.info("Обращение c номером: " + appealDto.getNumber() + " успешно получено");
+            return ResponseEntity.ok(appealDto);
+        } catch (Exception e) {
+            log.warn("Ошибка получения обращения: обращение с id: " + id + " не найдено");
             return ResponseEntity.notFound().build();
         }
-        log.info("Обращение c номером: " + appealDto.getNumber() + " успешно получено");
-        return ResponseEntity.ok(appealDto);
     }
 
     /**
@@ -67,7 +68,6 @@ public class AppealController {
      *
      * @param appealDto сохраненный объект DTO обращения.
      * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
-     *
      */
     @PostMapping
     @Operation(summary = "Сохраняет новое обращение в базу данных")
@@ -80,7 +80,7 @@ public class AppealController {
             log.warn("Ошибка сохранения обращения: обращение не должно быть null");
             return ResponseEntity.badRequest().build();
         }
-        log.info("Обращение с номером: " + appealDto.getNumber() + " успешно сохранено");
+        log.info("Обращение с номером: " + appealDto.getNumber() + " успешно сохранено. id: " + appealDto.getId());
         return ResponseEntity.ok(savedAppeal);
     }
 
@@ -109,10 +109,9 @@ public class AppealController {
 
 
     /**
-     * Метод для добавления даты регистрации обращения с указанным id.
-     * Если обращение по заданному id не найдено, возвращает ответ со статусом "Not Found".
-     * Если обращение уже было зарегистрировано, возвращает ответ со статусом "Method Not Allowed".
-     * Метод выполняет сохранение обращения с помощью AppealFeignClient.
+     * Метод для регистрации обращения с указанным id.
+     * Если обращение с указанным id не найдено, возвращает ответ со статусом "notFound".
+     * Если обращение уже было зарегистрировано, возвращает ответ со статусом "badRequest".
      *
      * @param id идентификатор регистрируемого обращения.
      * @return ответ с Dto объектом обращения в виде ResponseEntity<AppealDto>
@@ -123,17 +122,17 @@ public class AppealController {
             @Parameter(description = "Идентификатор обращения", required = true)
             @PathVariable Long id) {
         log.info("Регистрация обращения с id " + id + " ...");
-        AppealDto registeredAppeal = appealFeignClient.registerAppeal(id);
-        if (registeredAppeal == null) {
-            log.warn("Ошибка регистрации: обращение с id: " + id + " не найдено");
+        try {
+            AppealDto registeredAppeal = appealFeignClient.registerAppeal(id);
+            log.info("Обращение c номером " + registeredAppeal.getNumber() + " зарегистрировано");
+            return ResponseEntity.ok(registeredAppeal);
+        } catch (FeignException.NotFound e) {
+            log.warn("Ошибка получения обращения: обращение с id " + id + " не найдено");
             return ResponseEntity.notFound().build();
+        } catch (FeignException.BadRequest e) {
+            log.warn("Ошибка получения обращения: обращение с id " + id + " ранее зарегистрировано");
+            return ResponseEntity.badRequest().build();
         }
-        if (!registeredAppeal.isStatusChanged()) {
-            log.warn("Ошибка регистрации: обращение с id: " + id + " ранее уже было зарегистрировано");
-            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(registeredAppeal);
-        }
-        log.info("Обращение номер: " + registeredAppeal.getNumber() + " успешно зарегистрировано");
-        return ResponseEntity.ok(registeredAppeal);
     }
 
     /**
