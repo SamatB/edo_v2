@@ -1,8 +1,8 @@
 package org.example.controller;
 
+import feign.FeignException;
 import org.example.dto.AppealDto;
 import org.example.feign.AppealFeignClient;
-import org.example.utils.AppealStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -10,8 +10,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,6 +26,12 @@ public class AppealControllerTest {
 
     @InjectMocks
     AppealController appealController;
+
+    @Mock
+    FeignException.NotFound notFoundException;
+
+    @Mock
+    FeignException.BadRequest badRequestException;
 
     @BeforeEach
     public void setUp() {
@@ -116,14 +120,11 @@ public class AppealControllerTest {
     public void testRegisterAppeal() {
         AppealDto appealDto = new AppealDto();
         appealDto.setNumber("АБВ-12345");
-        appealDto.setAppealStatus(AppealStatus.REGISTERED);
-        appealDto.setStatusChanged(true);
         when(appealFeignClient.registerAppeal(anyLong())).thenReturn(appealDto);
 
         ResponseEntity<AppealDto> response = appealController.registerAppeal(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(Objects.requireNonNull(response.getBody()).isStatusChanged());
         assertEquals(appealDto, response.getBody());
     }
 
@@ -132,6 +133,8 @@ public class AppealControllerTest {
      */
     @Test
     public void testRegisterAppealNotFound() {
+        when(appealFeignClient.registerAppeal(anyLong())).thenThrow(notFoundException);
+
         ResponseEntity<AppealDto> response = appealController.registerAppeal(Long.MAX_VALUE);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -142,15 +145,10 @@ public class AppealControllerTest {
      */
     @Test
     public void testRegisterAppealRepeatedRegistration() {
-        AppealDto appealDto = new AppealDto();
-        appealDto.setAppealStatus(AppealStatus.REGISTERED);
-        appealDto.setStatusChanged(false);
-        when(appealFeignClient.registerAppeal(anyLong())).thenReturn(appealDto);
+        when(appealFeignClient.registerAppeal(anyLong())).thenThrow(badRequestException);
 
         ResponseEntity<AppealDto> response = appealController.registerAppeal(1L);
 
-        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, response.getStatusCode());
-        assertFalse(Objects.requireNonNull(response.getBody()).isStatusChanged());
-        assertEquals(appealDto, response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
