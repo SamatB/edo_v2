@@ -5,6 +5,7 @@ import org.example.entity.Resolution;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface ResolutionService {
     ResolutionDto saveResolution(ResolutionDto resolutionDto);
@@ -17,4 +18,5 @@ public interface ResolutionService {
 
     List<ResolutionDto> findResolution(Boolean archivedType);
 
+    Map<String, String> validateResolution(String resolutionDtoString);
 }

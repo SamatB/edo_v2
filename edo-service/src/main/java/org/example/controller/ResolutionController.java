@@ -9,11 +9,13 @@ import org.example.dto.ResolutionDto;
 import org.example.entity.Resolution;
 import org.example.mapper.ResolutionMapper;
 import org.example.service.ResolutionService;
+import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -111,5 +113,21 @@ public class ResolutionController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(updatedResolutionDto);
+    }
+
+    @PostMapping("/validate")
+    @Operation(summary = "Проверяет корректность полей резолюции")
+    public ResponseEntity<String> validateResolution(
+            @Parameter(description = "Объект DTO резолюции", required = true)
+            @RequestBody String resolutionDtoString) {
+        log.info("Валидация резолюции");
+        Map<String, String> map = resolutionService.validateResolution(resolutionDtoString);
+        if (map.isEmpty()) {
+            log.info("Валидация завершена");
+            return ResponseEntity.ok("");
+        }
+        log.warn("Имеются ошибки");
+        JSONObject jsonObject = new JSONObject(map);
+        return ResponseEntity.badRequest().body(jsonObject.toString());
     }
 }

@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import feign.FeignException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,7 +11,9 @@ import org.example.feign.ResolutionFeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Контроллер для работы с сущностью Resolution.
@@ -83,7 +86,7 @@ public class ResolutionController {
     /**
      * Обновляет данные резолюции.
      *
-     * @param id идентификатор резолюции
+     * @param id            идентификатор резолюции
      * @param resolutionDto объект DTO с новыми данными резолюции
      * @return обновленный объект DTO резолюции
      */
@@ -109,7 +112,7 @@ public class ResolutionController {
      * @return возвращает List сущностей ResolutionDto со статусом 200 если все ОК или 502 Bad Gateway.
      */
     @GetMapping("/find")
-    private ResponseEntity<List<ResolutionDto>> getAll(@RequestParam(name = "archivedStatus") Boolean archived){
+    private ResponseEntity<List<ResolutionDto>> getAll(@RequestParam(name = "archivedStatus") Boolean archived) {
 
         if (archived == null) {
             log.info("Получение всех резолюций");
@@ -118,13 +121,31 @@ public class ResolutionController {
         }
 
         try {
-            List<ResolutionDto> resolutionDtoList = edoServiceClient.findResolutions(archived);
+            List<ResolutionDto> resolutionDtoList = resolutionFeignClient.findResolutions(archived);
             log.info("Список резолюций получен");
             return ResponseEntity.ok(resolutionDtoList);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Возникла ошибка поиска резолюций");
             return ResponseEntity.status(502).build();
+        }
+    }
+
+    @PostMapping("/validate")
+    @Operation(summary = "Проверяет корректность полей резолюции")
+    public ResponseEntity<String> validateResolution(
+            @Parameter(description = "Объект DTO резолюции", required = true)
+            @RequestBody String resolutionDtoString) {
+        log.info("Валидация резолюции");
+        try {
+            resolutionFeignClient.validateResolution(resolutionDtoString);
+            log.info("Валидация завершена");
+            return ResponseEntity.ok("");
+        } catch (FeignException.BadRequest e) {
+            String message = e.getMessage();
+            int startJson = message.indexOf('{');
+            int endJson = message.lastIndexOf('}') + 1;
+            log.warn("Имеются ошибки");
+            return ResponseEntity.badRequest().body(message.substring(startJson, endJson));
         }
     }
 }
