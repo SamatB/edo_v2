@@ -16,6 +16,7 @@ import org.example.repository.AppealRepository;
 import org.example.service.AppealService;
 import org.example.utils.AppealStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -91,6 +92,7 @@ public class AppealServiceImpl implements AppealService {
      * @return объект DTO обращения в случае успешной регистрации.
      */
     @Override
+    @Transactional
     public AppealDto registerAppeal(Long id) {
         Appeal appeal = appealRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ошибка регистрации: обращение с id: " + id + " не найдено"));
