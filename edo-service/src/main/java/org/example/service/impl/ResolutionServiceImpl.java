@@ -178,6 +178,8 @@ public class ResolutionServiceImpl implements ResolutionService {
                 if (id <= 0) {
                     throw new IllegalArgumentException();
                 }
+            } else {
+                throw new IllegalArgumentException();
             }
         } catch (JSONException e) {
             final String SIGNER_ID_NOT_FOUND = "id подписанта(поле signerId) не найдено";
