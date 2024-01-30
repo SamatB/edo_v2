@@ -60,9 +60,9 @@ public interface ResolutionFeignClient {
 
     /**
      *
-     * @param resolutionDtoString объект DTO с резолюцией
+     * @param resolutionDto объект DTO с резолюцией
      * @return json, содержащий, имена и описания некорректно заполненных полей резолюции
      */
     @PostMapping("/resolutions/validate")
-    String validateResolution(@RequestBody String resolutionDtoString);
+    String validateResolution(@RequestBody ResolutionDto resolutionDto);
 }

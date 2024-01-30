@@ -118,29 +118,29 @@ public class ResolutionServiceImpl implements ResolutionService {
      * Проверяет корректность полей резолюции
      * Проверяемые поля: type, serialNumber, signerId
      *
-     * @param resolutionDtoString резолюция
-     * @return маппа, содержащая, имена и описания некорректно заполненных полей resolutionDtoString;
-     *          если не удалось распарсить json, то возвращается {"json":"Некорректный объект резолюции"}
+     * @param resolutionDto резолюция
+     * @return маппа, содержащая, имена и описания некорректно заполненных полей resolutionDto;
+//     *          если не удалось распарсить json, то возвращается {"json":"Некорректный объект резолюции"}
      */
     @Override
-    public Map<String, String> validateResolution(String resolutionDtoString) {
+    public Map<String, String> validateResolution(ResolutionDto resolutionDto) {
         log.info("Валидация резолюции");
 
         Map<String, String> invalidFields = new HashMap<>();
 
-        JSONObject resolutionDtoJson;
-        try {
-            resolutionDtoJson = new JSONObject(resolutionDtoString);
-        } catch (JSONException e) {
-            final String INVALID_JSON = "Некорректный объект резолюции";
-            log.error(INVALID_JSON);
-            invalidFields.put("json", INVALID_JSON);
-            return invalidFields;
-        }
+//        JSONObject resolutionDtoJson;
+//        try {
+//            resolutionDtoJson = new JSONObject(resolutionDtoString);
+//        } catch (JSONException e) {
+//            final String INVALID_JSON = "Некорректный объект резолюции";
+//            log.error(INVALID_JSON);
+//            invalidFields.put("json", INVALID_JSON);
+//            return invalidFields;
+//        }
 
         try {
-            String type = (String) resolutionDtoJson.get("type");
-            ResolutionType.valueOf(type);
+            ResolutionType type = resolutionDto.getType();
+//            ResolutionType.valueOf(type);
         } catch (JSONException e) {
             final String TYPE_NOT_FOUND = "Тип резолюции(поле type) не найден";
             log.error(TYPE_NOT_FOUND);
@@ -151,45 +151,45 @@ public class ResolutionServiceImpl implements ResolutionService {
             invalidFields.put("type", INVALID_TYPE);
         }
 
-        try {
-            int serialNumber = (int) resolutionDtoJson.get("serialNumber");
-            if (serialNumber <= 0) {
-                throw new IllegalArgumentException();
-            }
-        } catch (JSONException e) {
-            final String SERIAL_NUMBER_NOT_FOUND = "Серийный номер(поле serialNumber) не найден";
-            log.error(SERIAL_NUMBER_NOT_FOUND);
-            invalidFields.put("serialNumber", SERIAL_NUMBER_NOT_FOUND);
-        } catch (IllegalArgumentException | ClassCastException e) {
-            final String INVALID_SERIAL_NUMBER = "Некорректный серийный номер";
-            log.error(INVALID_SERIAL_NUMBER);
-            invalidFields.put("serialNumber", INVALID_SERIAL_NUMBER);
-        }
-
-        try {
-            Object signerId = resolutionDtoJson.get("signerId");
-            if (signerId instanceof Integer) {
-                int id = (int) signerId;
-                if (id <= 0) {
-                    throw new IllegalArgumentException();
-                }
-            } else if (signerId instanceof Long) {
-                long id = (long) signerId;
-                if (id <= 0) {
-                    throw new IllegalArgumentException();
-                }
-            } else {
-                throw new IllegalArgumentException();
-            }
-        } catch (JSONException e) {
-            final String SIGNER_ID_NOT_FOUND = "id подписанта(поле signerId) не найдено";
-            log.error(SIGNER_ID_NOT_FOUND);
-            invalidFields.put("signerId", SIGNER_ID_NOT_FOUND);
-        } catch (IllegalArgumentException e) {
-            final String INVALID_SIGNER_ID = "Некорректный id подписанта";
-            log.error(INVALID_SIGNER_ID);
-            invalidFields.put("signerId", INVALID_SIGNER_ID);
-        }
+//        try {
+//            int serialNumber = (int) resolutionDtoJson.get("serialNumber");
+//            if (serialNumber <= 0) {
+//                throw new IllegalArgumentException();
+//            }
+//        } catch (JSONException e) {
+//            final String SERIAL_NUMBER_NOT_FOUND = "Серийный номер(поле serialNumber) не найден";
+//            log.error(SERIAL_NUMBER_NOT_FOUND);
+//            invalidFields.put("serialNumber", SERIAL_NUMBER_NOT_FOUND);
+//        } catch (IllegalArgumentException | ClassCastException e) {
+//            final String INVALID_SERIAL_NUMBER = "Некорректный серийный номер";
+//            log.error(INVALID_SERIAL_NUMBER);
+//            invalidFields.put("serialNumber", INVALID_SERIAL_NUMBER);
+//        }
+//
+//        try {
+//            Object signerId = resolutionDtoJson.get("signerId");
+//            if (signerId instanceof Integer) {
+//                int id = (int) signerId;
+//                if (id <= 0) {
+//                    throw new IllegalArgumentException();
+//                }
+//            } else if (signerId instanceof Long) {
+//                long id = (long) signerId;
+//                if (id <= 0) {
+//                    throw new IllegalArgumentException();
+//                }
+//            } else {
+//                throw new IllegalArgumentException();
+//            }
+//        } catch (JSONException e) {
+//            final String SIGNER_ID_NOT_FOUND = "id подписанта(поле signerId) не найдено";
+//            log.error(SIGNER_ID_NOT_FOUND);
+//            invalidFields.put("signerId", SIGNER_ID_NOT_FOUND);
+//        } catch (IllegalArgumentException e) {
+//            final String INVALID_SIGNER_ID = "Некорректный id подписанта";
+//            log.error(INVALID_SIGNER_ID);
+//            invalidFields.put("signerId", INVALID_SIGNER_ID);
+//        }
         return invalidFields;
     }
 }

@@ -115,4 +115,18 @@ public class ResolutionControllerTest {
         ResponseEntity<ResolutionDto> response = resolutionController.updateResolution(1L, new ResolutionDto());
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
+
+    /**
+     * Тест для метода validateResolution.
+     */
+    @Test
+    public void testValidateResolution() {
+        ResolutionDto resolutionDto = new ResolutionDto();
+
+        when(resolutionFeignClient.validateResolution(resolutionDto)).thenReturn("Okay");
+
+//        ResponseEntity<ResolutionDto> response = resolutionController.getResolution(1L);
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertEquals(resolutionDto, response.getBody());
+    }
 }

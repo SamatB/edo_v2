@@ -119,9 +119,9 @@ public class ResolutionController {
     @Operation(summary = "Проверяет корректность полей резолюции")
     public ResponseEntity<String> validateResolution(
             @Parameter(description = "Объект DTO резолюции", required = true)
-            @RequestBody String resolutionDtoString) {
+            @RequestBody ResolutionDto resolutionDto) {
         log.info("Валидация резолюции");
-        Map<String, String> map = resolutionService.validateResolution(resolutionDtoString);
+        Map<String, String> map = resolutionService.validateResolution(resolutionDto);
         if (map.isEmpty()) {
             log.info("Валидация завершена");
             return ResponseEntity.ok("");

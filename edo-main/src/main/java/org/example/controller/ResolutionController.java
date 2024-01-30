@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
 import org.example.feign.ResolutionFeignClient;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -133,13 +135,14 @@ public class ResolutionController {
     @PostMapping("/validate")
     @Operation(summary = "Проверяет корректность полей резолюции")
     public ResponseEntity<String> validateResolution(
-            @Parameter(description = "Объект DTO резолюции", required = true)
-            @RequestBody String resolutionDtoString) {
+            @Parameter(description = "Объект DTO резолюции", required = false)
+            @RequestBody ResolutionDto resolutionDto) {
         log.info("Валидация резолюции");
         try {
-            resolutionFeignClient.validateResolution(resolutionDtoString);
+            System.out.println(resolutionDto);
+            resolutionFeignClient.validateResolution(resolutionDto);
             log.info("Валидация завершена");
-            return ResponseEntity.ok("");
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (FeignException.BadRequest e) {
             String message = e.getMessage();
             int startJson = message.indexOf('{');
