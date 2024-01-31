@@ -116,7 +116,7 @@ public class ResolutionServiceImpl implements ResolutionService {
      *
      * @param resolutionDto резолюция
      *                      При выявлении некорректных полей метод бросает исключение
-     *                      содержащее некорректные поля.
+     *                      содержащее некорректные поля с описанием ошибок.
      */
     @Override
     public void validateResolution(ResolutionDto resolutionDto) {

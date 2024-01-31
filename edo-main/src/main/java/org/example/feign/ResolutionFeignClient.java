@@ -1,6 +1,5 @@
 package org.example.feign;
 
-import net.minidev.json.JSONObject;
 import org.example.dto.ResolutionDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -65,5 +64,5 @@ public interface ResolutionFeignClient {
      * @return json, содержащий, имена и описания некорректно заполненных полей резолюции
      */
     @PostMapping("/resolutions/validate")
-    JSONObject validateResolution(@RequestBody ResolutionDto resolutionDto);
+    String validateResolution(@RequestBody ResolutionDto resolutionDto);
 }

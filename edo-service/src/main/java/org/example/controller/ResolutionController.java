@@ -7,14 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
 import org.example.service.ResolutionService;
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -109,36 +107,26 @@ public class ResolutionController {
         return ResponseEntity.ok(updatedResolutionDto);
     }
 
-//    /**
-//     * Проверяет корректность полей резолюции
-//     * Проверяемые поля: type, serialNumber, signerId
-//     *
-//     * @param resolutionDto резолюция
-//     * @return мапа, содержащая, имена и описания некорректно заполненных полей resolutionDto;
-//     *         если все проверяемые поля корректные, то возвращается пустая мапа
-//     */
-
     /**
      * Проверяет корректность полей резолюции
      * Проверяемые поля: type, serialNumber, signerId
      *
      * @param resolutionDto резолюция
-     * @return JSON-объект, содержащий имена и описания некорректно заполненных полей resolutionDto;
-     *         если все проверяемые поля корректные, то тело в http-ответе отсутствует
+     * @return имена и описания некорректно заполненных полей resolutionDto
      */
     @PostMapping("/validate")
     @Operation(summary = "Проверяет корректность полей резолюции: type, serialNumber, signerId")
-    public ResponseEntity<JSONObject> validateResolution(
+    public ResponseEntity<String> validateResolution(
             @Parameter(description = "Объект DTO резолюции", required = true)
             @RequestBody ResolutionDto resolutionDto) {
         log.info("Валидация резолюции");
-        Map<String, String> map = resolutionService.validateResolution(resolutionDto);
-        if (map.isEmpty()) {
-            log.info("Некорректные поля не обнаружены");
+        try {
+            resolutionService.validateResolution(resolutionDto);
+            log.info("Ошибки не выявлены.");
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        log.warn("Имеются ошибки");
-        JSONObject jsonObject = new JSONObject(map);
-        return ResponseEntity.ok(jsonObject);
     }
 }

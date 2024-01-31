@@ -23,7 +23,7 @@ class ResolutionServiceImplTest {
      */
     @Test
     void validateResolution() {
-//      Корректные данные
+        // Корректные данные
         ResolutionDto resolutionDto1 = new ResolutionDto();
         resolutionDto1.setType("REQUEST");
         resolutionDto1.setSerialNumber(123);
@@ -67,6 +67,5 @@ class ResolutionServiceImplTest {
             assertTrue(message.contains("Идентификатор подписанта"));
             assertTrue(message.contains("Серийный номер"));
         }
-
     }
 }

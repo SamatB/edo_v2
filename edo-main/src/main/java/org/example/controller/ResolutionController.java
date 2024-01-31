@@ -1,22 +1,17 @@
 package org.example.controller;
 
-import feign.FeignException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
 import org.example.dto.ResolutionDto;
 import org.example.feign.ResolutionFeignClient;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Контроллер для работы с сущностью Resolution.
@@ -133,24 +128,28 @@ public class ResolutionController {
         }
     }
 
+    /**
+     * Проверяет корректность полей резолюции
+     * Проверяемые поля: type, serialNumber, signerId
+     *
+     * @param resolutionDto резолюция
+     * @return имена и описания некорректно заполненных полей resolutionDto
+     */
     @PostMapping("/validate")
     @Operation(summary = "Проверяет корректность полей резолюции")
-    public ResponseEntity<JSONObject> validateResolution(
+    public ResponseEntity<String> validateResolution(
             @Parameter(description = "Объект DTO резолюции", required = false)
             @RequestBody ResolutionDto resolutionDto) {
         log.info("Валидация резолюции");
-        JSONObject invalidFields = resolutionFeignClient.validateResolution(resolutionDto);
-        return ResponseEntity.ok(invalidFields);
-//                try {
-//            resolutionFeignClient.validateResolution(resolutionDto);
-//            log.info("Валидация завершена");
-//            return new ResponseEntity<>(HttpStatus.OK);
-//        } catch (FeignException.BadRequest e) {
-//            String message = e.getMessage();
-//            int startJson = message.indexOf('{');
-//            int endJson = message.lastIndexOf('}') + 1;
-//            log.warn("Имеются ошибки");
-//            return ResponseEntity.badRequest().body(message.substring(startJson, endJson));
-//        }
+        try {
+            resolutionFeignClient.validateResolution(resolutionDto);
+            log.info("Ошибки не выявлены.");
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            String message = e.getMessage();
+            message = message.substring(message.lastIndexOf('[') + 1, message.lastIndexOf(']'));
+            log.error(message);
+            return ResponseEntity.badRequest().body(message);
+        }
     }
 }
