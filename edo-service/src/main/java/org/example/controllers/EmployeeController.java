@@ -70,8 +70,8 @@ public class EmployeeController {
      * @param address адрес в виде строки.
      * @return ответ обновление адреса у Employee
      */
-    @PatchMapping("/update")
-    EmployeeDto updateEmployeeAddress(String address, Long id) {
+    @PatchMapping("/{id}/update")
+    EmployeeDto updateEmployeeAddress(String address, @PathVariable Long id) {
         log.info("Получен запрос на изменение адреса у Employee");
         return employeeService.updateEmployeeAddress(address, id);
     }
