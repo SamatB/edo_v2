@@ -6,10 +6,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
-import org.example.entity.Resolution;
-import org.example.mapper.ResolutionMapper;
 import org.example.service.ResolutionService;
 import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,14 +31,13 @@ public class ResolutionController {
      * @return возвращает List сущностей ResolutionDto со статусом 200 если все ОК или 502 Bad Gateway.
      */
     @GetMapping("/all")
-    private ResponseEntity<Collection<ResolutionDto>> getAll(){
+    private ResponseEntity<Collection<ResolutionDto>> getAll() {
         log.info("Получение всех резолюций");
         try {
             List<ResolutionDto> resolutionList = resolutionService.findResolution(null);
             log.info("Список резолюций получен");
             return ResponseEntity.ok(resolutionList);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Возникла ошибка поиска всех резолюций");
             return ResponseEntity.status(502).build();
         }
@@ -51,20 +49,18 @@ public class ResolutionController {
      * @return возвращает List сущностей ResolutionDto со статусом 200 если все ОК или 502 Bad Gateway.
      */
     @GetMapping("/archived")
-    private ResponseEntity<?> getArchived(){
+    private ResponseEntity<?> getArchived() {
         log.info("Получение архивных резолюций");
         try {
             List<ResolutionDto> resolutionList = resolutionService.findResolution(true);
-            if (resolutionList != null){
+            if (resolutionList != null) {
                 log.info("Список архивных резолюций получен");
                 return ResponseEntity.ok(resolutionList);
-            }
-            else {
+            } else {
                 log.info("Нет резолюций в архиве");
                 return ResponseEntity.ok("Нет резолюций в архиве");
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Возникла ошибка поиска архивных резолюций");
             return ResponseEntity.status(502).build();
         }
@@ -76,20 +72,18 @@ public class ResolutionController {
      * @return возвращает List сущностей ResolutionDto со статусом 200 если все ОК или 502 Bad Gateway.
      */
     @GetMapping("/withoutArchived")
-    private ResponseEntity<?> withoutArchived(){
+    private ResponseEntity<?> withoutArchived() {
         log.info("Получение всех резолюций, кроме архивных");
         try {
             List<ResolutionDto> resolutionList = resolutionService.findResolution(false);
-            if (resolutionList != null){
+            if (resolutionList != null) {
                 log.info("Список всех резолюций, кроме архивных получен");
                 return ResponseEntity.ok(resolutionList);
-            }
-            else {
+            } else {
                 log.info("Все резолюции в архиве");
                 return ResponseEntity.ok("Все резолюции в архиве");
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Возникла ошибка поиска всех резолюций, кроме архивных");
             return ResponseEntity.status(502).build();
         }
@@ -115,19 +109,36 @@ public class ResolutionController {
         return ResponseEntity.ok(updatedResolutionDto);
     }
 
+//    /**
+//     * Проверяет корректность полей резолюции
+//     * Проверяемые поля: type, serialNumber, signerId
+//     *
+//     * @param resolutionDto резолюция
+//     * @return мапа, содержащая, имена и описания некорректно заполненных полей resolutionDto;
+//     *         если все проверяемые поля корректные, то возвращается пустая мапа
+//     */
+
+    /**
+     * Проверяет корректность полей резолюции
+     * Проверяемые поля: type, serialNumber, signerId
+     *
+     * @param resolutionDto резолюция
+     * @return JSON-объект, содержащий имена и описания некорректно заполненных полей resolutionDto;
+     *         если все проверяемые поля корректные, то тело в http-ответе отсутствует
+     */
     @PostMapping("/validate")
-    @Operation(summary = "Проверяет корректность полей резолюции")
-    public ResponseEntity<String> validateResolution(
+    @Operation(summary = "Проверяет корректность полей резолюции: type, serialNumber, signerId")
+    public ResponseEntity<JSONObject> validateResolution(
             @Parameter(description = "Объект DTO резолюции", required = true)
             @RequestBody ResolutionDto resolutionDto) {
         log.info("Валидация резолюции");
         Map<String, String> map = resolutionService.validateResolution(resolutionDto);
         if (map.isEmpty()) {
-            log.info("Валидация завершена");
-            return ResponseEntity.ok("");
+            log.info("Некорректные поля не обнаружены");
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         log.warn("Имеются ошибки");
         JSONObject jsonObject = new JSONObject(map);
-        return ResponseEntity.badRequest().body(jsonObject.toString());
+        return ResponseEntity.ok(jsonObject);
     }
 }

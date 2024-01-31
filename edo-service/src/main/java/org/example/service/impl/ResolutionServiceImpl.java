@@ -9,8 +9,6 @@ import org.example.mapper.ResolutionMapper;
 import org.example.repository.ResolutionRepository;
 import org.example.service.ResolutionService;
 import org.example.utils.ResolutionType;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,8 +117,8 @@ public class ResolutionServiceImpl implements ResolutionService {
      * Проверяемые поля: type, serialNumber, signerId
      *
      * @param resolutionDto резолюция
-     * @return маппа, содержащая, имена и описания некорректно заполненных полей resolutionDto;
-//     *          если не удалось распарсить json, то возвращается {"json":"Некорректный объект резолюции"}
+     * @return мапа, содержащая, имена и описания некорректно заполненных полей resolutionDto;
+     *         если все проверяемые поля корректные, то возвращается пустая мапа
      */
     @Override
     public Map<String, String> validateResolution(ResolutionDto resolutionDto) {
@@ -128,68 +126,41 @@ public class ResolutionServiceImpl implements ResolutionService {
 
         Map<String, String> invalidFields = new HashMap<>();
 
-//        JSONObject resolutionDtoJson;
-//        try {
-//            resolutionDtoJson = new JSONObject(resolutionDtoString);
-//        } catch (JSONException e) {
-//            final String INVALID_JSON = "Некорректный объект резолюции";
-//            log.error(INVALID_JSON);
-//            invalidFields.put("json", INVALID_JSON);
-//            return invalidFields;
-//        }
-
         try {
-            ResolutionType type = resolutionDto.getType();
-//            ResolutionType.valueOf(type);
-        } catch (JSONException e) {
-            final String TYPE_NOT_FOUND = "Тип резолюции(поле type) не найден";
-            log.error(TYPE_NOT_FOUND);
-            invalidFields.put("type", TYPE_NOT_FOUND);
-        } catch (IllegalArgumentException | ClassCastException e) {
+            ResolutionType.valueOf(resolutionDto.getType());
+        } catch (NullPointerException e) {
+            final String TYPE_NULL_ERROR = "Тип резолюции не должен быть NULL";
+            log.error(TYPE_NULL_ERROR);
+            invalidFields.put("type", TYPE_NULL_ERROR);
+        } catch (IllegalArgumentException e) {
             final String INVALID_TYPE = "Некорректный тип резолюции";
             log.error(INVALID_TYPE);
             invalidFields.put("type", INVALID_TYPE);
         }
 
-//        try {
-//            int serialNumber = (int) resolutionDtoJson.get("serialNumber");
-//            if (serialNumber <= 0) {
-//                throw new IllegalArgumentException();
-//            }
-//        } catch (JSONException e) {
-//            final String SERIAL_NUMBER_NOT_FOUND = "Серийный номер(поле serialNumber) не найден";
-//            log.error(SERIAL_NUMBER_NOT_FOUND);
-//            invalidFields.put("serialNumber", SERIAL_NUMBER_NOT_FOUND);
-//        } catch (IllegalArgumentException | ClassCastException e) {
-//            final String INVALID_SERIAL_NUMBER = "Некорректный серийный номер";
-//            log.error(INVALID_SERIAL_NUMBER);
-//            invalidFields.put("serialNumber", INVALID_SERIAL_NUMBER);
-//        }
-//
-//        try {
-//            Object signerId = resolutionDtoJson.get("signerId");
-//            if (signerId instanceof Integer) {
-//                int id = (int) signerId;
-//                if (id <= 0) {
-//                    throw new IllegalArgumentException();
-//                }
-//            } else if (signerId instanceof Long) {
-//                long id = (long) signerId;
-//                if (id <= 0) {
-//                    throw new IllegalArgumentException();
-//                }
-//            } else {
-//                throw new IllegalArgumentException();
-//            }
-//        } catch (JSONException e) {
-//            final String SIGNER_ID_NOT_FOUND = "id подписанта(поле signerId) не найдено";
-//            log.error(SIGNER_ID_NOT_FOUND);
-//            invalidFields.put("signerId", SIGNER_ID_NOT_FOUND);
-//        } catch (IllegalArgumentException e) {
-//            final String INVALID_SIGNER_ID = "Некорректный id подписанта";
-//            log.error(INVALID_SIGNER_ID);
-//            invalidFields.put("signerId", INVALID_SIGNER_ID);
-//        }
+        try {
+            if (resolutionDto.getSignerId() <= 0) {
+                final String INVALID_SIGNER_ID = "id подписанта должно быть положительным числом";
+                log.error(INVALID_SIGNER_ID);
+                invalidFields.put("signerId", INVALID_SIGNER_ID);
+            }
+        } catch (NullPointerException e) {
+            final String SIGNER_ID_NULL_ERROR = "id подписанта не должен быть NULL";
+            log.error(SIGNER_ID_NULL_ERROR);
+            invalidFields.put("signerId", SIGNER_ID_NULL_ERROR);
+        }
+
+        try {
+            if (resolutionDto.getSerialNumber() <= 0) {
+                final String INVALID_SERIAL_NUMBER = "Серийный номер должен быть положительным числом";
+                log.error(INVALID_SERIAL_NUMBER);
+                invalidFields.put("serialNumber", INVALID_SERIAL_NUMBER);
+            }
+        } catch (NullPointerException e) {
+            final String SERIAL_NUMBER_NULL_ERROR = "Серийный номер не должен быть NULL";
+            log.error(SERIAL_NUMBER_NULL_ERROR);
+            invalidFields.put("serialNumber", SERIAL_NUMBER_NULL_ERROR);
+        }
         return invalidFields;
     }
 }

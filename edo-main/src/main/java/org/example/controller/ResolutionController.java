@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.example.dto.ResolutionDto;
 import org.example.feign.ResolutionFeignClient;
 import org.springframework.http.HttpStatus;
@@ -134,21 +135,22 @@ public class ResolutionController {
 
     @PostMapping("/validate")
     @Operation(summary = "Проверяет корректность полей резолюции")
-    public ResponseEntity<String> validateResolution(
+    public ResponseEntity<JSONObject> validateResolution(
             @Parameter(description = "Объект DTO резолюции", required = false)
             @RequestBody ResolutionDto resolutionDto) {
         log.info("Валидация резолюции");
-        try {
-            System.out.println(resolutionDto);
-            resolutionFeignClient.validateResolution(resolutionDto);
-            log.info("Валидация завершена");
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (FeignException.BadRequest e) {
-            String message = e.getMessage();
-            int startJson = message.indexOf('{');
-            int endJson = message.lastIndexOf('}') + 1;
-            log.warn("Имеются ошибки");
-            return ResponseEntity.badRequest().body(message.substring(startJson, endJson));
-        }
+        JSONObject invalidFields = resolutionFeignClient.validateResolution(resolutionDto);
+        return ResponseEntity.ok(invalidFields);
+//                try {
+//            resolutionFeignClient.validateResolution(resolutionDto);
+//            log.info("Валидация завершена");
+//            return new ResponseEntity<>(HttpStatus.OK);
+//        } catch (FeignException.BadRequest e) {
+//            String message = e.getMessage();
+//            int startJson = message.indexOf('{');
+//            int endJson = message.lastIndexOf('}') + 1;
+//            log.warn("Имеются ошибки");
+//            return ResponseEntity.badRequest().body(message.substring(startJson, endJson));
+//        }
     }
 }

@@ -33,7 +33,7 @@ public class ResolutionDto {
     private ZonedDateTime lastActionDate;
 
     @Schema(description = "Тип резолюции")
-    private ResolutionType type;
+    private String type;
 
     @Schema(description = "Идентификатор создателя резолюции")
     private Long creatorId;
