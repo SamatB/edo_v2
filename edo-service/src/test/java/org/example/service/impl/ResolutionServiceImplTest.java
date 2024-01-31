@@ -1,18 +1,12 @@
 package org.example.service.impl;
 
 import org.example.dto.ResolutionDto;
-import org.example.mapper.ResolutionMapper;
-import org.example.repository.ResolutionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ResolutionServiceImplTest {
 
@@ -29,34 +23,50 @@ class ResolutionServiceImplTest {
      */
     @Test
     void validateResolution() {
-        // Корректные данные
+//      Корректные данные
         ResolutionDto resolutionDto1 = new ResolutionDto();
         resolutionDto1.setType("REQUEST");
         resolutionDto1.setSerialNumber(123);
         resolutionDto1.setSignerId(123_456_789_001L);
-
-        Map<String, String> map1 = resolutionService.validateResolution(resolutionDto1);
-
-        assertTrue(map1.isEmpty());
-
-        // Некорректные значения
-        ResolutionDto resolutionDto2 = new ResolutionDto();
-        resolutionDto2.setType("request");
-        resolutionDto2.setSerialNumber(0);
-        resolutionDto2.setSignerId(-123_456_789_001L);
-
-        Map<String, String> map2 = resolutionService.validateResolution(resolutionDto2);
-
-        assertEquals(3, map2.size());
+        try {
+            resolutionService.validateResolution(resolutionDto1);
+        } catch (Exception e) {
+            fail();
+        }
 
         // Некорректные значения - null
+        ResolutionDto resolutionDto2 = new ResolutionDto();
+        resolutionDto2.setType(null);
+        resolutionDto2.setSerialNumber(null);
+        resolutionDto2.setSignerId(null);
+        try {
+            resolutionService.validateResolution(resolutionDto2);
+            fail();
+        } catch (IllegalArgumentException e) {
+            String message = e.getMessage();
+            assertEquals(4, message.split("не null").length);
+            assertTrue(message.contains("Тип резолюции"));
+            assertTrue(message.contains("Идентификатор подписанта"));
+            assertTrue(message.contains("Серийный номер"));
+        }
+
+        // Некорректные значения
+        Integer serialNumber3 = 0;
+        Long signerId3 = -123_456_789_001L;
         ResolutionDto resolutionDto3 = new ResolutionDto();
-        resolutionDto3.setType(null);
-        resolutionDto3.setSerialNumber(null);
-        resolutionDto3.setSignerId(null);
+        resolutionDto3.setType("wrong type");
+        resolutionDto3.setSerialNumber(serialNumber3);
+        resolutionDto3.setSignerId(signerId3);
+        try {
+            resolutionService.validateResolution(resolutionDto3);
+            fail();
+        } catch (IllegalArgumentException e) {
+            String message = e.getMessage();
+            assertTrue(message.contains("значением ResolutionType"));
+            assertEquals(3, message.split("должно быть положительным").length);
+            assertTrue(message.contains("Идентификатор подписанта"));
+            assertTrue(message.contains("Серийный номер"));
+        }
 
-        Map<String, String> map3 = resolutionService.validateResolution(resolutionDto3);
-
-        assertEquals(3, map3.size());
     }
 }

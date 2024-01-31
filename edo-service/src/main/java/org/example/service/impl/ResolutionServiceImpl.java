@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -117,50 +115,69 @@ public class ResolutionServiceImpl implements ResolutionService {
      * Проверяемые поля: type, serialNumber, signerId
      *
      * @param resolutionDto резолюция
-     * @return мапа, содержащая, имена и описания некорректно заполненных полей resolutionDto;
-     *         если все проверяемые поля корректные, то возвращается пустая мапа
+     *                      При выявлении некорректных полей метод бросает исключение
+     *                      содержащее некорректные поля.
      */
     @Override
-    public Map<String, String> validateResolution(ResolutionDto resolutionDto) {
-        log.info("Валидация резолюции");
+    public void validateResolution(ResolutionDto resolutionDto) {
+        log.info("Валидация резолюции.");
 
-        Map<String, String> invalidFields = new HashMap<>();
+        final String NULL_ERROR = "значение должно быть не null.";
+        final String VALUE_TYPE_ERROR = "должен быть значением ResolutionType.";
+        final String VALUE_POSITIVE_ERROR = "значение должно быть положительным.";
+        StringBuilder message = new StringBuilder();
 
+        String type = resolutionDto.getType();
+        final String typeError = String.format("Тип резолюции \"%s\" некорректный - ", type);
         try {
-            ResolutionType.valueOf(resolutionDto.getType());
+            ResolutionType.valueOf(type);
         } catch (NullPointerException e) {
-            final String TYPE_NULL_ERROR = "Тип резолюции не должен быть NULL";
-            log.error(TYPE_NULL_ERROR);
-            invalidFields.put("type", TYPE_NULL_ERROR);
+            log.error(typeError + NULL_ERROR);
+            message.append(typeError)
+                    .append(NULL_ERROR)
+                    .append(System.lineSeparator());
         } catch (IllegalArgumentException e) {
-            final String INVALID_TYPE = "Некорректный тип резолюции";
-            log.error(INVALID_TYPE);
-            invalidFields.put("type", INVALID_TYPE);
+            log.error(typeError + VALUE_TYPE_ERROR);
+            message.append(typeError)
+                    .append(VALUE_TYPE_ERROR)
+                    .append(System.lineSeparator());
         }
 
+        Long signerId = resolutionDto.getSignerId();
+        final String signerIdError = String.format("Идентификатор подписанта \"%d\" некорректный - ", signerId);
         try {
-            if (resolutionDto.getSignerId() <= 0) {
-                final String INVALID_SIGNER_ID = "id подписанта должно быть положительным числом";
-                log.error(INVALID_SIGNER_ID);
-                invalidFields.put("signerId", INVALID_SIGNER_ID);
+            if (signerId <= 0) {
+                log.error(signerIdError + VALUE_POSITIVE_ERROR);
+                message.append(signerIdError)
+                        .append(VALUE_POSITIVE_ERROR)
+                        .append(System.lineSeparator());
             }
         } catch (NullPointerException e) {
-            final String SIGNER_ID_NULL_ERROR = "id подписанта не должен быть NULL";
-            log.error(SIGNER_ID_NULL_ERROR);
-            invalidFields.put("signerId", SIGNER_ID_NULL_ERROR);
+            log.error(signerIdError + NULL_ERROR);
+            message.append(signerIdError)
+                    .append(NULL_ERROR)
+                    .append(System.lineSeparator());
         }
 
+        Integer serialNumber = resolutionDto.getSerialNumber();
+        final String serialNumberError = String.format("Серийный номер \"%d\" некорректный - ", serialNumber);
         try {
-            if (resolutionDto.getSerialNumber() <= 0) {
-                final String INVALID_SERIAL_NUMBER = "Серийный номер должен быть положительным числом";
-                log.error(INVALID_SERIAL_NUMBER);
-                invalidFields.put("serialNumber", INVALID_SERIAL_NUMBER);
+            if (serialNumber <= 0) {
+                log.error(serialNumberError + VALUE_POSITIVE_ERROR);
+                message.append(serialNumberError)
+                        .append(VALUE_POSITIVE_ERROR)
+                        .append(System.lineSeparator());
             }
         } catch (NullPointerException e) {
-            final String SERIAL_NUMBER_NULL_ERROR = "Серийный номер не должен быть NULL";
-            log.error(SERIAL_NUMBER_NULL_ERROR);
-            invalidFields.put("serialNumber", SERIAL_NUMBER_NULL_ERROR);
+            log.error(serialNumberError + NULL_ERROR);
+            message.append(serialNumberError)
+                    .append(NULL_ERROR)
+                    .append(System.lineSeparator());
         }
-        return invalidFields;
+
+        if (!message.isEmpty()) {
+            throw new IllegalArgumentException(message.toString());
+        }
+        log.info("Ошибки не выявлены.");
     }
 }
