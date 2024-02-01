@@ -108,7 +108,8 @@ public class Resolution extends BaseEntity {
     /**
      * Отчет(ы) по резолюции (связь с сущностью Report).
      */
-    @OneToMany(fetch = FetchType.LAZY)
+//    @OneToMany(mappedBy = "resolution", fetch = FetchType.LAZY)
+    @OneToMany
     @JoinTable(
             name = "resolution_report",
             joinColumns = @JoinColumn(name = "resolution_id"),

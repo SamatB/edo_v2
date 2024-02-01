@@ -1,7 +1,0 @@
--- ALTER TABLE resolution
---     ADD COLUMN IF NOT EXISTS executors_id BIGINT,
---     ADD CONSTRAINT fk_executor_resolution FOREIGN KEY (executors_id) REFERENCES resolution_executor (resolution_id);
---
--- ALTER TABLE resolution
---     ADD COLUMN IF NOT EXISTS reports_id BIGINT,
---     ADD CONSTRAINT fk_report_resolution FOREIGN KEY (reports_id) REFERENCES resolution_report (resolution_id);

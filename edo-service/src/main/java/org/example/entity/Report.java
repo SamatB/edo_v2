@@ -53,6 +53,6 @@ public class Report extends BaseEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "resolution_id")
+    @JoinColumn(name = "resolution_id")
     private Resolution resolution;
 }
