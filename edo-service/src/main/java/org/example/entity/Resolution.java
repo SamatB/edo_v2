@@ -81,7 +81,7 @@ public class Resolution extends BaseEntity {
             joinColumns = @JoinColumn(name = "resolution_id"),
             inverseJoinColumns = @JoinColumn(name = "employee_id")
     )
-    private Set<Employee> executor;
+    private Set<Employee> executors;
 
     /**
      * Куратор резолюции (связь с сущностью Employee).
@@ -108,7 +108,7 @@ public class Resolution extends BaseEntity {
     /**
      * Отчет(ы) по резолюции (связь с сущностью Report).
      */
-    @OneToMany(mappedBy = "resolution", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "resolution_report",
             joinColumns = @JoinColumn(name = "resolution_id"),
