@@ -52,4 +52,7 @@ public class ResolutionDto {
 
     @Schema(description = "Идентификатор вопроса")
     private Long questionId;
+
+    @Schema(description = "Идентификаторы отчета(ов) по резолюции")
+    private Set<Long> reportIds;
 }
