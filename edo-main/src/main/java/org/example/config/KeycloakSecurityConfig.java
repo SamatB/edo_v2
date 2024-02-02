@@ -35,13 +35,11 @@ public class KeycloakSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-//                .csrf().ignoringRequestMatchers("/eureka/**");
-                .csrf().disable();
+                .csrf().ignoringRequestMatchers("/eureka/**");
         http
                 .authorizeHttpRequests(c -> c.requestMatchers("/error").permitAll()
                         .requestMatchers("/eureka/**").permitAll()
-//                        .anyRequest().authenticated());
-                .anyRequest().permitAll());
+                        .anyRequest().authenticated());
         http.oauth2Login()
                 .and()
                 .logout()

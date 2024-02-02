@@ -84,7 +84,7 @@ public class ResolutionController {
     /**
      * Обновляет данные резолюции.
      *
-     * @param id            идентификатор резолюции
+     * @param id идентификатор резолюции
      * @param resolutionDto объект DTO с новыми данными резолюции
      * @return обновленный объект DTO резолюции
      */
@@ -110,7 +110,7 @@ public class ResolutionController {
      * @return возвращает List сущностей ResolutionDto со статусом 200 если все ОК или 502 Bad Gateway.
      */
     @GetMapping("/find")
-    private ResponseEntity<List<ResolutionDto>> getAll(@RequestParam(name = "archivedStatus") Boolean archived) {
+    private ResponseEntity<List<ResolutionDto>> getAll(@RequestParam(name = "archivedStatus") Boolean archived){
 
         if (archived == null) {
             log.info("Получение всех резолюций");
@@ -122,7 +122,8 @@ public class ResolutionController {
             List<ResolutionDto> resolutionDtoList = resolutionFeignClient.findResolutions(archived);
             log.info("Список резолюций получен");
             return ResponseEntity.ok(resolutionDtoList);
-        } catch (Exception e) {
+        }
+        catch (Exception e){
             log.error("Возникла ошибка поиска резолюций");
             return ResponseEntity.status(502).build();
         }
@@ -138,7 +139,7 @@ public class ResolutionController {
     @PostMapping("/validate")
     @Operation(summary = "Проверяет корректность полей резолюции")
     public ResponseEntity<String> validateResolution(
-            @Parameter(description = "Объект DTO резолюции", required = false)
+            @Parameter(description = "Объект DTO резолюции", required = true)
             @RequestBody ResolutionDto resolutionDto) {
         log.info("Валидация резолюции");
         try {
