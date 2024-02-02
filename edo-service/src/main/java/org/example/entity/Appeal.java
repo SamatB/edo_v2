@@ -79,9 +79,9 @@ public class Appeal extends BaseEntity {
     )
     private List<Employee> addressee;
     /**
-     * свзязь с сущностью Номенклатура
+     * связь с сущностью Номенклатура
      */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "nomenclature_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nomenclature_id", referencedColumnName = "id")
     private Nomenclature nomenclature;
 }

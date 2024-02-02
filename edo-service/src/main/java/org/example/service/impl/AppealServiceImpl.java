@@ -8,7 +8,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
-
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
 import org.example.service.AppealService;
@@ -38,10 +37,11 @@ public class AppealServiceImpl implements AppealService {
     public AppealDto saveAppeal(AppealDto appealDto) {
         return Optional.ofNullable(appealDto)
                 .map(appealMapper::dtoToEntity)
-                .map(appeal -> {
+                .stream()
+                .peek(appeal -> {
                     appeal.setNumber(nomenclatureService.generateNumberForAppeal(appeal.getNomenclature()));
-                    return appeal;
                 })
+                .findFirst()
                 .map(appealRepository::save)
                 .map(appealMapper::entityToDto)
                 .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения обращения: обращение не должно быть null"));

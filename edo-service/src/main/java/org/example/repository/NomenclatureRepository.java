@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Optional;
 
 @Repository
 public interface NomenclatureRepository extends JpaRepository<Nomenclature, Long> {
@@ -27,7 +26,7 @@ public interface NomenclatureRepository extends JpaRepository<Nomenclature, Long
     @Modifying
     @Transactional
     @Query("UPDATE Nomenclature n SET n.currentValue = n.currentValue + 1 WHERE n.id = :id")
-    void incrementCurrentValue();
+    void incrementCurrentValue(@Param("id") Long id);
 
 }
 
