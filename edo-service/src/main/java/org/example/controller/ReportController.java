@@ -8,6 +8,7 @@ import org.example.dto.ReportDto;
 import org.example.service.ReportService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,9 +31,9 @@ public class ReportController {
     @Operation(summary = "Сохраняет отчет по резолюции в базе данных")
     public ResponseEntity<ReportDto> saveReport(
             @Parameter(description = "Объект отчета резолюции", required = true)
-            ReportDto reportDto) {
+            @RequestBody ReportDto reportDto) {
+        log.info("Сохранение отчета");
         try {
-            log.info("Сохранение отчета");
             return ResponseEntity.ok().body(reportService.saveReport(reportDto));
         } catch (NullPointerException e) {
             log.warn("Ошибка сохранения отчета: отчет не должен быть null");

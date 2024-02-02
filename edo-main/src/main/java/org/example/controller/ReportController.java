@@ -29,7 +29,7 @@ public class ReportController {
      * Сохраняет отчет по резолюции в базе данных.
      *
      * @param reportDto объект DTO отчета
-     * @return сохраненный объект DTO отсета
+     * @return сохраненный объект DTO отчета
      */
     @PostMapping
     @Operation(summary = "Сохраняет отчет по резолюции в базе данных")
@@ -40,6 +40,7 @@ public class ReportController {
         try {
             return ResponseEntity.ok(reportFeignClient.saveReport(reportDto));
         } catch (Exception e) {
+            log.error("Ошибка при сохранении отчета");
             return ResponseEntity.badRequest().build();
         }
     }

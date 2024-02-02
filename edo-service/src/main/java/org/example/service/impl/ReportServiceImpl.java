@@ -1,14 +1,17 @@
 package org.example.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.EmployeeDto;
 import org.example.dto.ReportDto;
 import org.example.entity.Employee;
 import org.example.entity.Report;
+import org.example.entity.Resolution;
 import org.example.mapper.ReportMapper;
 import org.example.repository.EmployeeRepository;
 import org.example.repository.ReportRepository;
+import org.example.repository.ResolutionRepository;
 import org.example.service.ReportService;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +25,8 @@ public class ReportServiceImpl implements ReportService {
 
     private final ReportRepository reportRepository;
     private final EmployeeRepository employeeRepository;
-//    private final ReportMapper;
+    private final ResolutionRepository resolutionRepository;
+    private final ReportMapper reportMapper;
 
     /**
      * Метод для сохранения отчета по резолюции в базе данных.
@@ -32,21 +36,23 @@ public class ReportServiceImpl implements ReportService {
      * @param reportDto объект DTO с отчетом.
      * @return объект DTO отчета.
      */
+    @Transactional
     @Override
     public ReportDto saveReport(ReportDto reportDto) {
-
-        Report report = new Report();
-        report.setComment("Комментарий 100");
-        report.setCreationDate(ZonedDateTime.now());
-        Employee executor = new Employee("An", "Nn", null, null, "email1",
-                null, null, null, null, null, null, null,
-                null, null, null, ZonedDateTime.now(), null, null);
-        report.setExecutor(executor);
-        report.setResult(true);
-
-        Optional<Report> byId = reportRepository.findById(1L);
-        System.out.println();
-        Report report1 = reportRepository.save(report);
+        log.info("Сохранение отчета в базе данных");
+        try {
+            reportRepository.insertReport(
+                    reportDto.getCreationDate(),
+                    reportDto.getComment(),
+                    reportDto.getResult(),
+                    reportDto.getExecutorId(),
+                    reportDto.getResolutionId());
+            Report firstByIdOrderByIdDesc = reportRepository.findFirstByIdOrderByIdDesc(0L);
+            log.info("Отчет сохранен в базе данных");
+        } catch (Exception e) {
+            log.error("Ошибка при сохранении отчета в базе данных");
+            System.out.println(e.getMessage());
+        }
         return new ReportDto();
     }
 }

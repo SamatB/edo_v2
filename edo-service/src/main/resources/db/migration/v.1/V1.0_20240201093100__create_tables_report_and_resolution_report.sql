@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS report
     creation_date TIMESTAMP     NOT NULL,
     comment       VARCHAR(1000),
     result        BOOLEAN,
-    executor_id   BIGINT,
-    resolution_id BIGINT,
+    executor_id   BIGINT        NOT NULL,
+    resolution_id BIGINT        NOT NULL,
     FOREIGN KEY (executor_id) REFERENCES employee(id),
     FOREIGN KEY (resolution_id) REFERENCES resolution(id)
 );
@@ -19,7 +19,6 @@ comment on column report.resolution_id is 'идентификатор резол
 CREATE TABLE IF NOT EXISTS resolution_report (
     resolution_id BIGINT NOT NULL REFERENCES resolution(id),
     report_id BIGINT NOT NULL REFERENCES report(id),
-    PRIMARY KEY (resolution_id, report_id)
 );
 
 COMMENT ON COLUMN resolution_report.resolution_id IS 'Идентификатор резолюции.';
