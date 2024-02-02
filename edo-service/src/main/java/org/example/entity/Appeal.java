@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.example.utils.AppealStatus;
+import org.example.enums.AppealStatus;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;

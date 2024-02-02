@@ -5,7 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.example.entity.Appeal;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
-import org.example.utils.AppealStatus;
+import org.example.enums.AppealStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

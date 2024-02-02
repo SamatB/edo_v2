@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.utils.AppealStatus;
+import org.example.enums.AppealStatus;
 
 
 import java.time.ZonedDateTime;

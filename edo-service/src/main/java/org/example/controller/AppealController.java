@@ -37,7 +37,7 @@ public class AppealController {
         log.info("Сохранение обращения");
         try {
             AppealDto savedAppeal = appealService.saveAppeal(appeal);
-            log.info("Обращение успешно сохранено. id: " + savedAppeal.getId());
+            log.info("Обращение успешно сохранено. id обращения " + savedAppeal.getId());
             return ResponseEntity.ok(savedAppeal);
         } catch (Exception e) {
             log.error("Ошибка сохранения обращения: " + e.getMessage());
@@ -49,16 +49,16 @@ public class AppealController {
      * Получает обращение по id.
      * При ошибке получения возвращается ответ со статусом "Not Found"
      *
-     * @param id идентификатор обращения
+     * @param appealId идентификатор обращения
      * @return объект DTO обращения
      */
-    @GetMapping("/{id}")
+    @GetMapping("/{appealId}")
     @Operation(summary = "Получение обращения по id")
-    public ResponseEntity<AppealDto> getAppealById(@PathVariable Long id) {
-        log.info("Получение обращения с id " + id);
+    public ResponseEntity<AppealDto> getAppealById(@PathVariable Long appealId) {
+        log.info("Получение обращения с id " + appealId);
         try {
-            AppealDto appealDto = appealService.getAppeal(id);
-            log.info("Получено обращение с id " + id);
+            AppealDto appealDto = appealService.getAppeal(appealId);
+            log.info("Получено обращение с id " + appealId);
             return ResponseEntity.ok(appealDto);
         } catch (Exception e) {
             log.warn(e.getMessage());
@@ -71,16 +71,16 @@ public class AppealController {
      * При ошибке получения обращения возвращается ответ со статусом "notFound"
      * При попытке регистрации уже зарегистрированного обращения возвращается ответ со статусом "badRequest"
      *
-     * @param id идентификатор обращения.
+     * @param appealId идентификатор обращения.
      * @return объект DTO обращения в случае успешной регистрации.
      */
-    @PostMapping("/{id}/register")
+    @PostMapping("/{appealId}/register")
     @Operation(summary = "Регистрация обращения по id")
-    public ResponseEntity<AppealDto> registerAppealById(@PathVariable Long id) {
-        log.info("Получение обращения с id " + id);
+    public ResponseEntity<AppealDto> registerAppealById(@PathVariable Long appealId) {
+        log.info("Получение обращения с id " + appealId);
         try {
-            AppealDto appealDto = appealService.registerAppeal(id);
-            log.info("Зарегистрировано обращение с id " + id);
+            AppealDto appealDto = appealService.registerAppeal(appealId);
+            log.info("Зарегистрировано обращение с id " + appealId);
             return ResponseEntity.ok(appealDto);
         } catch (EntityNotFoundException e) {
             log.warn(e.getMessage());
