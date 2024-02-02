@@ -53,7 +53,6 @@ public class AppealController {
         return ResponseEntity.ok(appealDto);
     }
 
-
     /**
      * Сохраняет новое обращение в базу данных.
      * Если обращение равно null, то возвращается ответ со статусом "Bad Request"
@@ -78,7 +77,6 @@ public class AppealController {
         return ResponseEntity.ok(savedAppeal);
     }
 
-
     /**
      * Метод для добавления даты архивации обращения с указанным id.
      * Если обращение по заданному id не найдено, возвращает ответ со статусом "Not Found".
@@ -101,7 +99,6 @@ public class AppealController {
         log.info("Обращение номер: " + archivedAppeal.getNumber() + " успешно заархивировано");
         return ResponseEntity.ok(archivedAppeal);
     }
-
 
     /**
      * Метод для регистрации обращения с указанным appealId.
