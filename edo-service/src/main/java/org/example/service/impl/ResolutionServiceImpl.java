@@ -8,7 +8,7 @@ import org.example.dto.ResolutionDto;
 import org.example.mapper.ResolutionMapper;
 import org.example.repository.ResolutionRepository;
 import org.example.service.ResolutionService;
-import org.example.utils.ResolutionType;
+import org.example.enums.ResolutionType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -125,6 +125,7 @@ public class ResolutionServiceImpl implements ResolutionService {
         final String NULL_ERROR = "значение должно быть не null.";
         final String VALUE_TYPE_ERROR = "должен быть значением ResolutionType.";
         final String VALUE_POSITIVE_ERROR = "значение должно быть положительным.";
+
         StringBuilder message = new StringBuilder();
 
         String type = resolutionDto.getType();

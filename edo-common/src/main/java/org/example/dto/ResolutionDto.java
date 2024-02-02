@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.utils.ResolutionType;
 
 import java.time.ZonedDateTime;
 import java.util.Set;

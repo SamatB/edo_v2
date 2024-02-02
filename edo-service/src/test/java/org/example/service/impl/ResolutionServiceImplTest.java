@@ -36,9 +36,6 @@ class ResolutionServiceImplTest {
 
         // Некорректные значения - null
         ResolutionDto resolutionDto2 = new ResolutionDto();
-        resolutionDto2.setType(null);
-        resolutionDto2.setSerialNumber(null);
-        resolutionDto2.setSignerId(null);
         try {
             resolutionService.validateResolution(resolutionDto2);
             fail();
@@ -51,12 +48,10 @@ class ResolutionServiceImplTest {
         }
 
         // Некорректные значения
-        Integer serialNumber3 = 0;
-        Long signerId3 = -123_456_789_001L;
         ResolutionDto resolutionDto3 = new ResolutionDto();
         resolutionDto3.setType("wrong type");
-        resolutionDto3.setSerialNumber(serialNumber3);
-        resolutionDto3.setSignerId(signerId3);
+        resolutionDto3.setSerialNumber(0);
+        resolutionDto3.setSignerId(-1L);
         try {
             resolutionService.validateResolution(resolutionDto3);
             fail();

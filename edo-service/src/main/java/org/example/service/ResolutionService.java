@@ -1,11 +1,8 @@
 package org.example.service;
 
 import org.example.dto.ResolutionDto;
-import org.example.entity.Resolution;
 
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 
 public interface ResolutionService {
     ResolutionDto saveResolution(ResolutionDto resolutionDto);
