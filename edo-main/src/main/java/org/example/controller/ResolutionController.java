@@ -118,7 +118,7 @@ public class ResolutionController {
         }
 
         try {
-            List<ResolutionDto> resolutionDtoList = edoServiceClient.findResolutions(archived);
+            List<ResolutionDto> resolutionDtoList = resolutionFeignClient.findResolutions(archived);
             log.info("Список резолюций получен");
             return ResponseEntity.ok(resolutionDtoList);
         }
