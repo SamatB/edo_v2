@@ -42,7 +42,7 @@ public class ResolutionDto {
     private Set<Long> executorIds;
 
     @Schema(description = "Идентификаторы отчета(ов) по резолюции")
-    private Set<Long> reportIds;
+    private Set<Long> resolutionReportIds;
 
     @Schema(description = "Идентификатор куратора резолюции")
     private Long curatorId;

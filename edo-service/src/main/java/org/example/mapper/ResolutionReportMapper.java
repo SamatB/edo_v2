@@ -1,7 +1,7 @@
 package org.example.mapper;
 
-import org.example.dto.ReportDto;
-import org.example.entity.Report;
+import org.example.dto.ResolutionReportDto;
+import org.example.entity.ResolutionReport;
 import org.example.mapper.util.AbstractMapper;
 import org.mapstruct.Mapper;
 
@@ -10,5 +10,5 @@ import org.mapstruct.Mapper;
  */
 
 @Mapper(componentModel = "spring", uses = {EmployeeMapper.class, ResolutionMapper.class})
-public interface ReportMapper extends AbstractMapper<Report, ReportDto> {
+public interface ResolutionReportMapper extends AbstractMapper<ResolutionReport, ResolutionReportDto> {
 }

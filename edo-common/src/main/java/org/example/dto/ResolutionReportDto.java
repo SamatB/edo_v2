@@ -16,7 +16,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Отчет по резолюции")
-public class ReportDto {
+public class ResolutionReportDto {
 
     @Schema(description = "Идентификатор отчета")
     private Long id;

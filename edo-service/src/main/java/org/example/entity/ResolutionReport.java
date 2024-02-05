@@ -21,7 +21,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Report extends BaseEntity {
+public class ResolutionReport extends BaseEntity {
 
     /**
      * Дата создания отчета.

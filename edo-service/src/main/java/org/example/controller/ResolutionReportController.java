@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.dto.ReportDto;
-import org.example.service.ReportService;
+import org.example.dto.ResolutionReportDto;
+import org.example.service.ResolutionReportService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,27 +15,27 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/report")
-public class ReportController {
+@RequestMapping("/resolution-report")
+public class ResolutionReportController {
 
-    private final ReportService reportService;
+    private final ResolutionReportService resolutionReportService;
 
     /**
      * Сохраняет резолюцию в базе данных.
      *
-     * @param reportDto объект DTO отчета.
+     * @param resolutionReportDto объект DTO отчета.
      * @return сохраненный объект resolutionDto со статусом 200 в случае успешного выполнения
      * и статусом 400 в случае неудачи.
      */
     @PostMapping()
     @Operation(summary = "Сохраняет отчет по резолюции в базе данных")
-    public ResponseEntity<ReportDto> saveReport(
+    public ResponseEntity<ResolutionReportDto> saveResolutionReport(
             @Parameter(description = "Объект отчета резолюции", required = true)
-            @RequestBody ReportDto reportDto) {
+            @RequestBody ResolutionReportDto resolutionReportDto) {
         log.info("Сохранение отчета");
         try {
             log.info("Отчет сохранен в базе данных");
-            return ResponseEntity.ok().body(reportService.saveReport(reportDto));
+            return ResponseEntity.ok().body(resolutionReportService.saveResolutionReport(resolutionReportDto));
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest().build();

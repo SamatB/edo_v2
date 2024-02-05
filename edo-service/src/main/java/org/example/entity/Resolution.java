@@ -84,7 +84,7 @@ public class Resolution extends BaseEntity {
     private Set<Employee> executors;
 
     /**
-     * Отчет(ы) по резолюции (связь с сущностью Report).
+     * Отчет(ы) по резолюции (связь с сущностью ResolutionReport).
      */
     @OneToMany
     @JoinTable(
@@ -92,7 +92,7 @@ public class Resolution extends BaseEntity {
             joinColumns = @JoinColumn(name = "resolution_id"),
             inverseJoinColumns = @JoinColumn(name = "report_id")
     )
-    private Set<Report> reports;
+    private Set<ResolutionReport> resolutionReports;
 
     /**
      * Куратор резолюции (связь с сущностью Employee).

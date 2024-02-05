@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.dto.ReportDto;
-import org.example.feign.ReportFeignClient;
+import org.example.dto.ResolutionReportDto;
+import org.example.feign.ResolutionReportFeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,29 +17,29 @@ import org.springframework.web.bind.annotation.RestController;
  * Контроллер для работы с сущностью Report.
  */
 @RestController
-@RequestMapping("/report")
+@RequestMapping("/resolution-report")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Report")
-public class ReportController {
+@Tag(name = "ResolutionReport")
+public class ResolutionReportController {
 
-    private final ReportFeignClient reportFeignClient;
+    private final ResolutionReportFeignClient resolutionReportFeignClient;
 
     /**
      * Сохраняет отчет по резолюции в базе данных.
      *
-     * @param reportDto объект DTO отчета
+     * @param resolutionReportDto объект DTO отчета
      * @return сохраненный объект DTO отчета
      */
     @PostMapping
     @Operation(summary = "Сохраняет отчет по резолюции в базе данных")
-    public ResponseEntity<ReportDto> saveReport(
+    public ResponseEntity<ResolutionReportDto> saveReport(
             @Parameter(description = "Объект DTO отчета", required = true)
-            @RequestBody ReportDto reportDto) {
+            @RequestBody ResolutionReportDto resolutionReportDto) {
         log.info("Сохранение отчета");
         try {
             log.info("Отчет сохранен в базе данных");
-            return ResponseEntity.ok(reportFeignClient.saveReport(reportDto));
+            return ResponseEntity.ok(resolutionReportFeignClient.saveResolutionReport(resolutionReportDto));
         } catch (Exception e) {
             log.error("Ошибка при сохранении отчета");
             return ResponseEntity.badRequest().build();
