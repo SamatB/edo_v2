@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.example.controller.ResolutionController;
 import org.example.dto.ResolutionDto;
 import org.example.service.ResolutionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +12,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
