@@ -24,6 +24,10 @@ import java.util.Optional;
 @Slf4j
 public class ResolutionServiceImpl implements ResolutionService {
 
+    private static final String NULL_ERROR = "значение должно быть не null.";
+    private static final String VALUE_TYPE_ERROR = "должен быть значением ResolutionType.";
+    private static final String VALUE_POSITIVE_ERROR = "значение должно быть положительным.";
+
     private final ResolutionRepository resolutionRepository;
     private final ResolutionMapper resolutionMapper;
 
@@ -122,57 +126,52 @@ public class ResolutionServiceImpl implements ResolutionService {
     public void validateResolution(ResolutionDto resolutionDto) {
         log.info("Валидация резолюции.");
 
-        final String NULL_ERROR = "значение должно быть не null.";
-        final String VALUE_TYPE_ERROR = "должен быть значением ResolutionType.";
-        final String VALUE_POSITIVE_ERROR = "значение должно быть положительным.";
-
         StringBuilder message = new StringBuilder();
 
         String type = resolutionDto.getType();
         final String typeError = String.format("Тип резолюции \"%s\" некорректный - ", type);
-        try {
-            ResolutionType.valueOf(type);
-        } catch (NullPointerException e) {
+
+        if (type == null) {
             log.error(typeError + NULL_ERROR);
             message.append(typeError)
                     .append(NULL_ERROR)
                     .append(System.lineSeparator());
-        } catch (IllegalArgumentException e) {
-            log.error(typeError + VALUE_TYPE_ERROR);
-            message.append(typeError)
-                    .append(VALUE_TYPE_ERROR)
-                    .append(System.lineSeparator());
+        } else {
+            try {
+                ResolutionType.valueOf(type);
+            } catch (IllegalArgumentException e) {
+                log.error(typeError + VALUE_TYPE_ERROR);
+                message.append(typeError)
+                        .append(VALUE_TYPE_ERROR)
+                        .append(System.lineSeparator());
+            }
         }
 
         Long signerId = resolutionDto.getSignerId();
         final String signerIdError = String.format("Идентификатор подписанта \"%d\" некорректный - ", signerId);
-        try {
-            if (signerId <= 0) {
-                log.error(signerIdError + VALUE_POSITIVE_ERROR);
-                message.append(signerIdError)
-                        .append(VALUE_POSITIVE_ERROR)
-                        .append(System.lineSeparator());
-            }
-        } catch (NullPointerException e) {
+        if (signerId == null) {
             log.error(signerIdError + NULL_ERROR);
             message.append(signerIdError)
                     .append(NULL_ERROR)
+                    .append(System.lineSeparator());
+        } else if (signerId <= 0) {
+            log.error(signerIdError + VALUE_POSITIVE_ERROR);
+            message.append(signerIdError)
+                    .append(VALUE_POSITIVE_ERROR)
                     .append(System.lineSeparator());
         }
 
         Integer serialNumber = resolutionDto.getSerialNumber();
         final String serialNumberError = String.format("Серийный номер \"%d\" некорректный - ", serialNumber);
-        try {
-            if (serialNumber <= 0) {
-                log.error(serialNumberError + VALUE_POSITIVE_ERROR);
-                message.append(serialNumberError)
-                        .append(VALUE_POSITIVE_ERROR)
-                        .append(System.lineSeparator());
-            }
-        } catch (NullPointerException e) {
+        if (serialNumber == null) {
             log.error(serialNumberError + NULL_ERROR);
             message.append(serialNumberError)
                     .append(NULL_ERROR)
+                    .append(System.lineSeparator());
+        } else if (serialNumber <= 0) {
+            log.error(serialNumberError + VALUE_POSITIVE_ERROR);
+            message.append(serialNumberError)
+                    .append(VALUE_POSITIVE_ERROR)
                     .append(System.lineSeparator());
         }
 
