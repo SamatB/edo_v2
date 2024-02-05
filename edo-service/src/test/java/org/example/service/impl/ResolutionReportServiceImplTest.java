@@ -55,13 +55,13 @@ class ResolutionReportServiceImplTest {
         ResolutionReportDto resolutionReportDto2 = new ResolutionReportDto();
         assertThrows(IllegalArgumentException.class, () -> resolutionReportService.saveResolutionReport(resolutionReportDto2));
 
-        // id резолюции null
+        // Некорректный id резолюции
         ResolutionReportDto resolutionReportDto3 = new ResolutionReportDto();
         resolutionReportDto3.setResolution(new ResolutionDto());
+        resolutionReportDto3.getResolution().setId(Long.MAX_VALUE);
+        assertThrows(IllegalArgumentException.class, () -> resolutionReportService.saveResolutionReport(resolutionReportDto3));
 
-        assertThrows(NoSuchElementException.class, () -> resolutionReportService.saveResolutionReport(resolutionReportDto3));
-
-        // Корректная резолюция
+        // Успешное сохранение отчета
         ResolutionReportDto resolutionReportDto4 = new ResolutionReportDto();
         ResolutionDto resolutionDto4 = new ResolutionDto();
         resolutionDto4.setId(Long.MAX_VALUE);

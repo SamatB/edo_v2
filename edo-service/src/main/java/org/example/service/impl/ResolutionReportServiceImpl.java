@@ -3,10 +3,10 @@ package org.example.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.dto.ResolutionReportDto;
 import org.example.dto.ResolutionDto;
-import org.example.entity.ResolutionReport;
+import org.example.dto.ResolutionReportDto;
 import org.example.entity.Resolution;
+import org.example.entity.ResolutionReport;
 import org.example.mapper.ResolutionReportMapper;
 import org.example.repository.ResolutionReportRepository;
 import org.example.repository.ResolutionRepository;
@@ -50,13 +50,17 @@ public class ResolutionReportServiceImpl implements ResolutionReportService {
             log.error(message);
             throw new IllegalArgumentException(message);
         }
-        Resolution resolution = resolutionRepository.findById(resolutionId).get();
         ResolutionReport resolutionReport = resolutionReportMapper.dtoToEntity(resolutionReportDto);
         ResolutionReport savedResolutionReport = resolutionReportRepository.save(resolutionReport);
+        Resolution resolution = resolutionRepository.findById(resolutionId)
+                .orElseThrow(() -> {
+                    final String message = "Отчет не сохранен в БД - некорректный id резолюции";
+                    log.error(message);
+                    throw new IllegalArgumentException(message);
+                });
         resolution.getResolutionReports().add(savedResolutionReport);
         resolutionRepository.save(resolution);
-        ResolutionReportDto resolutionReportDtoToReturn = resolutionReportMapper.entityToDto(savedResolutionReport);
         log.info("Отчет сохранен в базе данных");
-        return resolutionReportDtoToReturn;
+        return resolutionReportMapper.entityToDto(savedResolutionReport);
     }
 }
