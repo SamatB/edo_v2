@@ -9,7 +9,6 @@ import org.mapstruct.Mapper;
  * Маппер для преобразования между сущностью Report и объектом ReportDto.
  */
 
-
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {EmployeeMapper.class, ResolutionMapper.class})
 public interface ReportMapper extends AbstractMapper<Report, ReportDto> {
 }

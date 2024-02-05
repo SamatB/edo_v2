@@ -50,6 +50,7 @@ public class AppealServiceImpl implements AppealService {
      * @return объект DTO обращения.
      */
     public AppealDto getAppeal(Long id) {
+
         return appealRepository.findById(id)
                 .map(appealMapper::entityToDto)
                 .orElseThrow(() -> new EntityNotFoundException("Ошибка получечния обращения: обращение с указанным id: " + id + " не найдено"));

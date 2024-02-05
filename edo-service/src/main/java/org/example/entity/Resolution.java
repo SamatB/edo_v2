@@ -84,6 +84,18 @@ public class Resolution extends BaseEntity {
     private Set<Employee> executors;
 
     /**
+     * Отчет(ы) по резолюции (связь с сущностью Report).
+     */
+//    @OneToMany(mappedBy = "resolution", fetch = FetchType.LAZY)
+    @OneToMany
+    @JoinTable(
+            name = "resolution_report",
+            joinColumns = @JoinColumn(name = "resolution_id"),
+            inverseJoinColumns = @JoinColumn(name = "report_id")
+    )
+    private Set<Report> reports;
+
+    /**
      * Куратор резолюции (связь с сущностью Employee).
      */
     @NotNull
@@ -104,16 +116,4 @@ public class Resolution extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "question_id")
     private Question question;
-
-    /**
-     * Отчет(ы) по резолюции (связь с сущностью Report).
-     */
-//    @OneToMany(mappedBy = "resolution", fetch = FetchType.LAZY)
-    @OneToMany
-    @JoinTable(
-            name = "resolution_report",
-            joinColumns = @JoinColumn(name = "resolution_id"),
-            inverseJoinColumns = @JoinColumn(name = "report_id")
-    )
-    private Set<Report> reports;
 }

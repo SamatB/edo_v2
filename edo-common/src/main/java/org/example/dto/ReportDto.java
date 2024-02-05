@@ -30,9 +30,9 @@ public class ReportDto {
     @Schema(description = "Итог выполнения")
     private Boolean result;
 
-    @Schema(description = "Идентификатор исполнителя")
-    private Long executorId;
+    @Schema(description = "Исполнитель")
+    private EmployeeDto executor;
 
-    @Schema(description = "Идентификатор резолюции")
-    private Long resolutionId;
+    @Schema(description = "Резолюция")
+    private ResolutionDto resolution;
 }

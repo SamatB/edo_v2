@@ -1,10 +1,7 @@
 package org.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.utils.ResolutionType;
 
 import java.time.ZonedDateTime;
@@ -44,6 +41,9 @@ public class ResolutionDto {
     @Schema(description = "Список идентификаторов исполнителей резолюции")
     private Set<Long> executorIds;
 
+    @Schema(description = "Идентификаторы отчета(ов) по резолюции")
+    private Set<Long> reportIds;
+
     @Schema(description = "Идентификатор куратора резолюции")
     private Long curatorId;
 
@@ -52,7 +52,4 @@ public class ResolutionDto {
 
     @Schema(description = "Идентификатор вопроса")
     private Long questionId;
-
-    @Schema(description = "Идентификаторы отчета(ов) по резолюции")
-    private Set<Long> reportIds;
 }

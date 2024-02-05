@@ -16,9 +16,10 @@ comment on column report.result is 'итог выполнения(выполне
 comment on column report.executor_id is 'идентификатор исполнителя';
 comment on column report.resolution_id is 'идентификатор резолюции';
 
-CREATE TABLE IF NOT EXISTS resolution_report (
+CREATE TABLE IF NOT EXISTS resolution_report
+(
     resolution_id BIGINT NOT NULL REFERENCES resolution(id),
-    report_id BIGINT NOT NULL REFERENCES report(id),
+    report_id     BIGINT NOT NULL REFERENCES report(id)
 );
 
 COMMENT ON COLUMN resolution_report.resolution_id IS 'Идентификатор резолюции.';
