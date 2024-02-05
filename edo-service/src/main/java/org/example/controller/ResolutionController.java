@@ -6,8 +6,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
-import org.example.entity.Resolution;
-import org.example.mapper.ResolutionMapper;
 import org.example.service.ResolutionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

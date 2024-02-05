@@ -1,16 +1,15 @@
 #docker-compose up
-version: "3.3"
+version: "3.9"
 services:
-#  rabbitmq:
-#    privileged: true
-#    container_name: rabbitmq
-#    image: rabbitmq:3.12-management
-#    environment:
-#      RABBITMQ_DEFAULT_USER: "guest"
-#      RABBITMQ_DEFAULT_PASS: "guest"
-#    ports:
-#      - "5672:5672"
-#      - "15672:15672"
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.12-management
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
   minio:
     container_name: minio
     image: minio/minio:latest
@@ -21,13 +20,13 @@ services:
       - "9000:9000"
       - "9090:9090"
     command: server /data --console-address ":9090"
-#  db:
-#    image: postgres:12-alpine
-#    container_name: postgres
-#    ports:
-#      - "5432:5432"
-#    restart: always
-#    environment:
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: postgres
-#      POSTGRES_DB: edo_db
+  db:
+    image: postgres:12.16
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: edo_db
