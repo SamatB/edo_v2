@@ -34,11 +34,11 @@ public class ReportController {
             @RequestBody ReportDto reportDto) {
         log.info("Сохранение отчета");
         try {
+            log.info("Отчет сохранен в базе данных");
             return ResponseEntity.ok().body(reportService.saveReport(reportDto));
-        } catch (NullPointerException e) {
-            log.warn("Ошибка сохранения отчета: отчет не должен быть null");
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
-
 }

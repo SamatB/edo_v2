@@ -38,6 +38,7 @@ public class ReportController {
             @RequestBody ReportDto reportDto) {
         log.info("Сохранение отчета");
         try {
+            log.info("Отчет сохранен в базе данных");
             return ResponseEntity.ok(reportFeignClient.saveReport(reportDto));
         } catch (Exception e) {
             log.error("Ошибка при сохранении отчета");
