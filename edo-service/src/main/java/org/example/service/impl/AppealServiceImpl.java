@@ -4,7 +4,6 @@
 
 package org.example.service.impl;
 
-import jakarta.annotation.PreDestroy;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,11 +11,11 @@ import org.example.dto.AppealDto;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
 import org.example.service.AppealService;
+import org.example.service.NomenclatureService;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +24,8 @@ public class AppealServiceImpl implements AppealService {
 
     private final AppealRepository appealRepository;
     private final AppealMapper appealMapper;
+    private final NomenclatureService nomenclatureService;
+
     /**
      * Метод для сохранения обращения в базе данных.
      * Если обращение равно null, то выбрасывается исключение IllegalArgumentException.
@@ -36,6 +37,11 @@ public class AppealServiceImpl implements AppealService {
     public AppealDto saveAppeal(AppealDto appealDto) {
         return Optional.ofNullable(appealDto)
                 .map(appealMapper::dtoToEntity)
+                .stream()
+                .peek(appeal -> {
+                    appeal.setNumber(nomenclatureService.generateNumberForAppeal(appeal.getNomenclature()));
+                })
+                .findFirst()
                 .map(appealRepository::save)
                 .map(appealMapper::entityToDto)
                 .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения обращения: обращение не должно быть null"));
