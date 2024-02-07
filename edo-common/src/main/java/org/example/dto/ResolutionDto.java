@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.utils.ResolutionType;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -33,7 +32,7 @@ public class ResolutionDto {
     private ZonedDateTime lastActionDate;
 
     @Schema(description = "Тип резолюции")
-    private ResolutionType type;
+    private String type;
 
     @Schema(description = "Идентификатор создателя резолюции")
     private Long creatorId;

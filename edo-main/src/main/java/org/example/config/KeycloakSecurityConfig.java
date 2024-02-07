@@ -39,7 +39,7 @@ public class KeycloakSecurityConfig {
         http
                 .authorizeHttpRequests(c -> c.requestMatchers("/error").permitAll()
                         .requestMatchers("/eureka/**").permitAll()
-                .anyRequest().authenticated());
+                        .anyRequest().authenticated());
         http.oauth2Login()
                 .and()
                 .logout()

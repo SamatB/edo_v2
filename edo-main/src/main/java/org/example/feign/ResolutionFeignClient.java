@@ -58,4 +58,11 @@ public interface ResolutionFeignClient {
     @GetMapping("/resolutions/find")
     List<ResolutionDto> findResolutions(@RequestParam(name = "archiveStatus") Boolean archived);
 
+    /**
+     *
+     * @param resolutionDto объект DTO с резолюцией
+     * @return json, содержащий, имена и описания некорректно заполненных полей резолюции
+     */
+    @PostMapping("/resolutions/validate")
+    String validateResolution(@RequestBody ResolutionDto resolutionDto);
 }

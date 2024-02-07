@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
 import org.example.feign.ResolutionFeignClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -125,6 +126,31 @@ public class ResolutionController {
         catch (Exception e){
             log.error("Возникла ошибка поиска резолюций");
             return ResponseEntity.status(502).build();
+        }
+    }
+
+    /**
+     * Проверяет корректность полей резолюции
+     * Проверяемые поля: type, serialNumber, signerId
+     *
+     * @param resolutionDto резолюция
+     * @return имена и описания некорректно заполненных полей resolutionDto
+     */
+    @PostMapping("/validate")
+    @Operation(summary = "Проверяет корректность полей резолюции")
+    public ResponseEntity<String> validateResolution(
+            @Parameter(description = "Объект DTO резолюции", required = true)
+            @RequestBody ResolutionDto resolutionDto) {
+        log.info("Валидация резолюции");
+        try {
+            resolutionFeignClient.validateResolution(resolutionDto);
+            log.info("Ошибки не выявлены.");
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            String message = e.getMessage();
+            message = message.substring(message.lastIndexOf('[') + 1, message.lastIndexOf(']'));
+            log.error(message);
+            return ResponseEntity.badRequest().body(message);
         }
     }
 }
