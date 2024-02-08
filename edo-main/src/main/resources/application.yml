@@ -6,7 +6,7 @@ spring:
     name: edo-main
   security:
     oauth2:
-      resourceserver:
+      resource-server:
         jwt:
           issuer-uri: http://xn--d1ab2a.space/auth/realms/edo-project-realm
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
@@ -32,6 +32,18 @@ spring:
       routing-key: "common"
       default-receive-queue: "common"
       reply-timeout: 10000
+
+  data:
+    redis:
+      database: 0
+      host: "localhost"
+      port: 6379
+      password: redis
+      client-type: lettuce
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
 
 jwt:
   auth:

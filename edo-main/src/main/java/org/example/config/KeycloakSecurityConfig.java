@@ -21,10 +21,14 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 public class KeycloakSecurityConfig {
     private final JwtAuthConverter jwtAuthConverter;
     private final KeycloakLogoutHandler keycloakLogoutHandler;
+    private final LoginHandler loginHandler;
 
-    public KeycloakSecurityConfig(JwtAuthConverter jwtAuthConverter, KeycloakLogoutHandler keycloakLogoutHandler) {
+    public KeycloakSecurityConfig(JwtAuthConverter jwtAuthConverter,
+                                  KeycloakLogoutHandler keycloakLogoutHandler,
+                                  LoginHandler loginHandler) {
         this.jwtAuthConverter = jwtAuthConverter;
         this.keycloakLogoutHandler = keycloakLogoutHandler;
+        this.loginHandler = loginHandler;
     }
 
     @Bean
@@ -41,6 +45,7 @@ public class KeycloakSecurityConfig {
                         .requestMatchers("/eureka/**").permitAll()
                         .anyRequest().authenticated());
         http.oauth2Login()
+                .successHandler(loginHandler)
                 .and()
                 .logout()
                 .addLogoutHandler(keycloakLogoutHandler)
