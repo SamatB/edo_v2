@@ -14,6 +14,7 @@ import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
 import org.example.service.AppealService;
 import org.example.enums.AppealStatus;
+import org.example.service.NomenclatureService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ public class AppealServiceImpl implements AppealService {
 
     private final AppealRepository appealRepository;
     private final AppealMapper appealMapper;
+    private final NomenclatureService nomenclatureService;
 
     /**
      * Метод для сохранения обращения в базе данных.
@@ -39,10 +41,11 @@ public class AppealServiceImpl implements AppealService {
     public AppealDto saveAppeal(AppealDto appealDto) {
         return Optional.ofNullable(appealDto)
                 .map(appealMapper::dtoToEntity)
-                .map(appeal -> {
-                    appeal.setAppealStatus(AppealStatus.NEW);
-                    return appeal;
+                .stream()
+                .peek(appeal -> {
+                    appeal.setNumber(nomenclatureService.generateNumberForAppeal(appeal.getNomenclature()));
                 })
+                .findFirst()
                 .map(appealRepository::save)
                 .map(appealMapper::entityToDto)
                 .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения обращения: обращение не должно быть null"));

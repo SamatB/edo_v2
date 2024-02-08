@@ -1,9 +1,7 @@
 package org.example.service;
 
 import org.example.dto.ResolutionDto;
-import org.example.entity.Resolution;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface ResolutionService {
@@ -17,4 +15,5 @@ public interface ResolutionService {
 
     List<ResolutionDto> findResolution(Boolean archivedType);
 
+    void validateResolution(ResolutionDto resolutionDto);
 }

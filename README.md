@@ -350,6 +350,42 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.12-ma
 - client: edo-project-client
 2. Конфигурация в edo-main > config > KeycloakSecurityConfig.java
 3. Креды тестовых пользователей: user1/user1, user2/user2.
+4. Для отправки запросов через постман необходимо:
+- создать новую коллекцию в постмане
+- перейдя во вкладку Pre-request Script, вставить туда:
+
+```
+var server       = "http://www.едо.space";
+var realm        = "edo-project-realm";
+var grantType    = "password";
+var clientId     = "edo-project-client";
+var clientSecret = "";
+var username     = "admin"; 
+var password     = "admin";
+
+var url  = `${server}/auth/realms/${realm}/protocol/openid-connect/token`;
+var data = `grant_type=${grantType}&client_id=${clientId}&username=${username}&password=${password}`;
+
+pm.sendRequest({
+    url: url,
+    method: 'POST',
+    header: { 'Content-Type': 'application/x-www-form-urlencoded'},
+    body: {
+        mode: 'raw',
+        raw: data
+    }
+},  function(err, response) {
+    var response_json = response.json();
+    var token = response_json.access_token;
+    pm.environment.set('token', token);
+    console.log(token);
+});
+pm.globals.set("variable_key", "variable_value");
+pm.globals.set("variable_key", "variable_value");
+```
+- во вкладке Authorization выбрать тип Bearer Token и в поле Token вместе с фигурными скобками вставить {{token}}
+- все последующие запросы создавать в этой коллекции и во вкладках Authorization выбирать тип Inherit auth from parent
+
 
 ### MinIO
 
