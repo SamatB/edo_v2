@@ -5,7 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.example.entity.Appeal;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
-import org.example.enums.AppealStatus;
+import org.example.enums.StatusType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -40,12 +40,12 @@ class AppealServiceImplTest {
     @Test
     public void testRegisterAppeal() {
         Appeal appeal = mock(Appeal.class);
-        appeal.setAppealStatus(AppealStatus.REGISTERED);
+        appeal.setStatusType(StatusType.REGISTERED);
         when(appealRepository.findById(anyLong())).thenReturn(Optional.of(appeal));
 
         appealService.registerAppeal(1L);
 
-        verify(appeal, times(2)).setAppealStatus(AppealStatus.REGISTERED);
+        verify(appeal, times(2)).setStatusType(StatusType.REGISTERED);
     }
 
     /**
@@ -62,7 +62,7 @@ class AppealServiceImplTest {
     @Test
     public void testRegisterAppealRepeatedRegistration() {
         Appeal appeal = new Appeal();
-        appeal.setAppealStatus(AppealStatus.REGISTERED);
+        appeal.setStatusType(StatusType.REGISTERED);
         when(appealRepository.findById(anyLong())).thenReturn(Optional.of(appeal));
 
         assertThrows(EntityExistsException.class, () -> appealService.registerAppeal(1L));
