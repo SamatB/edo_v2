@@ -59,7 +59,7 @@ public class Appeal extends BaseEntity {
     /**
      * Статус обращения
      */
-    @Column(name = "appeal_status")
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private StatusType statusType;
 
