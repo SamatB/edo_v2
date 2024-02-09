@@ -13,7 +13,7 @@ import org.example.entity.Appeal;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
 import org.example.service.AppealService;
-import org.example.enums.AppealStatus;
+import org.example.enums.StatusType;
 import org.example.service.NomenclatureService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +44,7 @@ public class AppealServiceImpl implements AppealService {
                 .stream()
                 .peek(appeal -> {
                     appeal.setNumber(nomenclatureService.generateNumberForAppeal(appeal.getNomenclature()));
+                    appeal.setStatusType(StatusType.NOT_REGISTERED);
                 })
                 .findFirst()
                 .map(appealRepository::save)
@@ -77,7 +78,7 @@ public class AppealServiceImpl implements AppealService {
         return appealRepository.findById(id)
                 .map(appeal -> {
                     appeal.setArchivedDate(ZonedDateTime.now());
-                    appeal.setAppealStatus(AppealStatus.ARCHIVED);
+                    appeal.setStatusType(StatusType.ARCHIVE);
                     return appeal;
                 })
                 .map(appealRepository::save)
@@ -97,11 +98,11 @@ public class AppealServiceImpl implements AppealService {
     public AppealDto registerAppeal(Long id) {
         Appeal appeal = appealRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ошибка регистрации: обращение с id: " + id + " не найдено"));
-        if (appeal.getAppealStatus() == AppealStatus.REGISTERED) {
+        if (appeal.getStatusType() == StatusType.REGISTERED) {
             throw new EntityExistsException("Ошибка регистрации: обращение с id: " + id + " ранее зарегистрировано");
         }
         appeal.setRegistrationDate(ZonedDateTime.now());
-        appeal.setAppealStatus(AppealStatus.REGISTERED);
+        appeal.setStatusType(StatusType.REGISTERED);
         appealRepository.save(appeal);
         return appealMapper.entityToDto(appeal);
     }
