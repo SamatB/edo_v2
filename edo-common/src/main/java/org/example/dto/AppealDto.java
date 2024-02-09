@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.enums.AppealStatus;
+import org.example.enums.StatusType;
 
 
 import java.time.ZonedDateTime;
@@ -42,7 +42,7 @@ public class AppealDto {
     private String annotation;
 
     @Schema(description = "Статус обращения")
-    private AppealStatus appealStatus;
+    private StatusType statusType;
 
     @Schema(description = "Исполнители")
     private List<EmployeeDto> singers;

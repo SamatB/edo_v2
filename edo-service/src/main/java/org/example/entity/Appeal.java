@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.example.enums.AppealStatus;
+import org.example.enums.StatusType;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
@@ -61,7 +61,7 @@ public class Appeal extends BaseEntity {
      */
     @Column(name = "appeal_status")
     @Enumerated(EnumType.STRING)
-    private AppealStatus appealStatus;
+    private StatusType statusType;
 
     /**
      * свзязь один ко многим к таблице Employee
