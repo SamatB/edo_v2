@@ -1,13 +1,6 @@
 package org.example.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -85,4 +78,10 @@ public class Appeal extends BaseEntity {
             , inverseJoinColumns = @JoinColumn(name = "id_employee")
     )
     private List<Employee> addressee;
+    /**
+     * связь с сущностью Номенклатура
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nomenclature_id", referencedColumnName = "id")
+    private Nomenclature nomenclature;
 }

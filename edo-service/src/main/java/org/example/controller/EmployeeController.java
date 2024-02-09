@@ -1,4 +1,4 @@
-package org.example.controllers;
+package org.example.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,10 +10,7 @@ import org.example.service.EmployeeService;
 import org.example.service.RabbitmqSender;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -62,5 +59,20 @@ public class EmployeeController {
                 .map(EmployeeDto::getEmail)
                 .filter(s -> !s.isEmpty())
                 .toList();
+    }
+
+    /**
+     * Метод выполняет Обновление адреса для Employee.
+     * Метод, которому можно передать адрес в виде строки "Ленина 1" и идентификатор
+     * Пердусмотрен ввод ошибочных данных из-за забытой смены раскладки "Ktybyf" == "Ленина"
+     *
+     * @param id      идентификатор Employee.
+     * @param address адрес в виде строки.
+     * @return ответ обновление адреса у Employee
+     */
+    @PatchMapping("/{id}/update")
+    EmployeeDto updateEmployeeAddress(String address, @PathVariable Long id) {
+        log.info("Получен запрос на изменение адреса у Employee");
+        return employeeService.updateEmployeeAddress(address, id);
     }
 }
