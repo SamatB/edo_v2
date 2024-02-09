@@ -90,6 +90,7 @@ public class AppealServiceImpl implements AppealService {
      * Метод для регистрации обращения с указанным id.
      * Если обращение с указанным id не найдено, выбрасывает исключение EntityNotFoundException.
      * Если обращение уже ранее было зарегистрировано, выбрасывает исключение EntityExistsException.
+     *
      * @param id идентификатор регистрируемого обращения.
      * @return объект DTO обращения в случае успешной регистрации.
      */
