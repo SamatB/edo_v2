@@ -34,7 +34,6 @@ public class ResolutionReportController {
             @RequestBody ResolutionReportDto resolutionReportDto) {
         log.info("Сохранение отчета");
         try {
-            log.info("Отчет сохранен в базе данных");
             return ResponseEntity.ok().body(resolutionReportService.saveResolutionReport(resolutionReportDto));
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage());

@@ -38,7 +38,6 @@ public class ResolutionReportController {
             @RequestBody ResolutionReportDto resolutionReportDto) {
         log.info("Сохранение отчета");
         try {
-            log.info("Отчет сохранен в базе данных");
             return ResponseEntity.ok(resolutionReportFeignClient.saveResolutionReport(resolutionReportDto));
         } catch (Exception e) {
             log.error("Ошибка при сохранении отчета");
