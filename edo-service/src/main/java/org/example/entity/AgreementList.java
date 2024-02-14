@@ -1,17 +1,14 @@
 package org.example.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
+
 /**
  * Класс, представляющий Листа согласования.
  */
@@ -74,4 +71,31 @@ public class AgreementList extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appeal_id")
     private Appeal appeal;
+
+
+    /**
+     * Инициатор запуска листа согласования
+     */
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "initiator_id")
+    private Participant initiator;
+
+
+    /**
+     * Блоки подписантов
+     */
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "matching_block_signatory_id")
+    private Set<MatchingBlock> signatory;
+
+
+    /**
+     * Блоки согласующих
+     */
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "matching_block_coordinating_id")
+    private Set<MatchingBlock> coordinating;
 }

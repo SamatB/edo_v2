@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.utils.MatchingBlockType;
 
+import java.util.Set;
+
 
 /**
  * DTO для сущности MatchingBlock
@@ -25,5 +27,11 @@ public class MatchingBlockDto {
 
     @Schema(description = "Тип блока согласования")
     private MatchingBlockType matchingBlockType;
+
+    @Schema(description = "Участники согласования")
+    private Set<ParticipantDto> participants;
+
+    @Schema(description = "Лист согласования")
+    private AgreementListDto agreementList;
 
 }

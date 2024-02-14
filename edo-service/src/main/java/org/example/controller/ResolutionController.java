@@ -138,6 +138,47 @@ public class ResolutionController {
         }
     }
 
+    @PostMapping()
+    @Operation(summary = "Сохраняет новую резолюцию в базе данных")
+    public ResponseEntity<?> saveResolution(
+            @Parameter(description = "Объект DTO резолюции", required = true)
+            ResolutionDto resolutionDto) {
+        try {
+            log.info("Сохранение новой резолюции");
+            return ResponseEntity.ok().body(resolutionService.saveResolution(resolutionDto));
+        } catch (Exception e) {
+            log.error("Ошибка сохранения резолюции в БД");
+            return ResponseEntity.badRequest().body(e);
+        }
+
+    }
+
+    /**
+     * Обновляет данные резолюции.
+     *
+     * @param id            идентификатор резолюции
+     * @param resolutionDto объект DTO с новыми данными резолюции
+     * @return обновленный объект resolutionDto со статусом 200 в случае успешного выполнения,
+     * и статусом 400 в случае не удачи.
+     */
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Обновляет данные резолюции")
+    public ResponseEntity<?> updateResolution(
+            @Parameter(description = "Идентификатор резолюции", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "Объект DTO с новыми данными резолюции", required = true)
+            @RequestBody ResolutionDto resolutionDto) {
+
+        try {
+            log.info("Обновление резолюции в БД");
+            return ResponseEntity.ok().body(resolutionService.updateResolution(id, resolutionDto));
+        } catch (Exception e) {
+            log.error("Ошибка обновления резолюции в БД");
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
     /**
      * Переносит резолюцию в архив.
      *
@@ -157,6 +198,29 @@ public class ResolutionController {
             return ResponseEntity.ok().body(resolutionService.archiveResolution(id));
         } catch (Exception e) {
             log.error("Ошибка архивации резолюции в БД");
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
+
+    /**
+     * Возвращает резолюцию по идентификатору.
+     *
+     * @param id идентификатор резолюции
+     * @return объект resolutionDto со статусом 200 в случае успешного выполнения,
+     * и статусом 400 в случае не удачи.
+     */
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Возвращает резолюцию по идентификатору")
+    public ResponseEntity<?> getResolution(
+            @Parameter(description = "Идентификатор резолюции", required = true)
+            @PathVariable Long id) {
+        try {
+            log.info("Поиск резолюции по идентификатору");
+            return ResponseEntity.ok().body(resolutionService.getResolution(id));
+        } catch (Exception e) {
+            log.error("Ошибка поиска резолюции  по идентификатору в БД");
             return ResponseEntity.badRequest().body(e);
         }
     }
@@ -208,6 +272,78 @@ public class ResolutionController {
         } catch (IllegalArgumentException e) {
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * Сохраняет резолюцию в базе данных.
+     *
+     * @param resolutionDto объект DTO резолюции
+     * @return сохраненный объект resolutionDto со статусом 200 в случае успешного выполнения
+     * и статусом 400 в случае не удачи.
+     */
+
+    @PostMapping()
+    @Operation(summary = "Сохраняет новую резолюцию в базе данных")
+    public ResponseEntity<?> saveResolution(
+            @Parameter(description = "Объект DTO резолюции", required = true)
+            ResolutionDto resolutionDto) {
+        try {
+            log.info("Сохранение новой резолюции");
+            return ResponseEntity.ok().body(resolutionService.saveResolution(resolutionDto));
+        } catch (Exception e) {
+            log.error("Ошибка сохранения резолюции в БД");
+            return ResponseEntity.badRequest().body(e);
+        }
+
+    }
+
+    /**
+     * Возвращает резолюцию по идентификатору.
+     *
+     * @param id идентификатор резолюции
+     * @return объект resolutionDto со статусом 200 в случае успешного выполнения,
+     * и статусом 400 в случае не удачи.
+     */
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Возвращает резолюцию по идентификатору")
+    public ResponseEntity<?> getResolution(
+            @Parameter(description = "Идентификатор резолюции", required = true)
+            @PathVariable Long id) {
+        try {
+            log.info("Поиск резолюции по идентификатору");
+            return ResponseEntity.ok().body(resolutionService.getResolution(id));
+        } catch (Exception e) {
+            log.error("Ошибка поиска резолюции  по идентификатору в БД");
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
+
+    /**
+     * Обновляет данные резолюции.
+     *
+     * @param id            идентификатор резолюции
+     * @param resolutionDto объект DTO с новыми данными резолюции
+     * @return обновленный объект resolutionDto со статусом 200 в случае успешного выполнения,
+     * и статусом 400 в случае не удачи.
+     */
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Обновляет данные резолюции")
+    public ResponseEntity<?> updateResolution(
+            @Parameter(description = "Идентификатор резолюции", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "Объект DTO с новыми данными резолюции", required = true)
+            @RequestBody ResolutionDto resolutionDto) {
+
+        try {
+            log.info("Обновление резолюции в БД");
+            return ResponseEntity.ok().body(resolutionService.updateResolution(id, resolutionDto));
+        } catch (Exception e) {
+            log.error("Ошибка обновления резолюции в БД");
+            return ResponseEntity.badRequest().body(e);
         }
     }
 }

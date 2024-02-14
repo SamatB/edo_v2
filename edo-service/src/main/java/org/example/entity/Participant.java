@@ -12,6 +12,7 @@ import org.example.utils.ParticipantType;
 
 import java.time.ZonedDateTime;
 
+
 /**
  * Сущность Participant представляет участника согласования
  */
@@ -22,13 +23,13 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Participant extends BaseEntity{
+public class Participant extends BaseEntity {
 
     /**
      * Тип участника согласования
      */
     @NotNull
-    @Column(name="type")
+    @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private ParticipantType type;
 
