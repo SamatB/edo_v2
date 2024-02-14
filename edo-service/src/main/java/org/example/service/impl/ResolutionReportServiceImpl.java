@@ -5,13 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
 import org.example.dto.ResolutionReportDto;
-import org.example.entity.Resolution;
 import org.example.entity.ResolutionReport;
 import org.example.mapper.ResolutionReportMapper;
 import org.example.repository.ResolutionReportRepository;
-import org.example.repository.ResolutionRepository;
 import org.example.service.ResolutionReportService;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,13 +19,11 @@ import org.springframework.stereotype.Service;
 public class ResolutionReportServiceImpl implements ResolutionReportService {
 
     private final ResolutionReportRepository resolutionReportRepository;
-    private final ResolutionRepository resolutionRepository;
     private final ResolutionReportMapper resolutionReportMapper;
 
     /**
      * Метод для сохранения отчета по резолюции в базе данных.
      * Если отчет равен null или резолюция в отчете равна null, то выбрасывается IllegalArgumentException.
-     * Метод выполняет сохранение используя ReportRepository.
      *
      * @param resolutionReportDto объект DTO отчета c id = 0.
      * @return объект DTO отчета с присвоенным id (значения ленивых полей - null)
@@ -34,32 +32,14 @@ public class ResolutionReportServiceImpl implements ResolutionReportService {
     @Override
     public ResolutionReportDto saveResolutionReport(ResolutionReportDto resolutionReportDto) {
         log.info("Сохранение отчета в базе данных");
-        ResolutionDto resolutionDto;
-        try {
-            resolutionDto = resolutionReportDto.getResolution();
-        } catch (NullPointerException e) {
-            final String message = "Отчет не сохранен в БД - отчет не должен быть null";
-            log.error(message);
-            throw new IllegalArgumentException(message);
-        }
-        Long resolutionId;
-        try {
-            resolutionId = resolutionDto.getId();
-        } catch (NullPointerException e) {
-            final String message = "Отчет не сохранен в БД - ссылка на резолюцию не должна быть null";
-            log.error(message);
-            throw new IllegalArgumentException(message);
-        }
+        ResolutionDto resolutionDto =
+                Optional.ofNullable(resolutionReportDto)
+                        .orElseThrow(() -> new IllegalArgumentException("Отчет не сохранен в БД - отчет не должен быть null"))
+                        .getResolution();
+        Optional.ofNullable(resolutionDto)
+                .orElseThrow(() -> new IllegalArgumentException("Отчет не сохранен в БД - ссылка на резолюцию не должна быть null"));
         ResolutionReport resolutionReport = resolutionReportMapper.dtoToEntity(resolutionReportDto);
         ResolutionReport savedResolutionReport = resolutionReportRepository.save(resolutionReport);
-        Resolution resolution = resolutionRepository.findById(resolutionId)
-                .orElseThrow(() -> {
-                    final String message = "Отчет не сохранен в БД - некорректный id резолюции";
-                    log.error(message);
-                    throw new IllegalArgumentException(message);
-                });
-        resolution.getResolutionReports().add(savedResolutionReport);
-        resolutionRepository.save(resolution);
         log.info("Отчет сохранен в базе данных");
         return resolutionReportMapper.entityToDto(savedResolutionReport);
     }

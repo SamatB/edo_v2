@@ -86,12 +86,7 @@ public class Resolution extends BaseEntity {
     /**
      * Отчет(ы) по резолюции (связь с сущностью ResolutionReport).
      */
-    @OneToMany
-    @JoinTable(
-            name = "resolution_report",
-            joinColumns = @JoinColumn(name = "resolution_id"),
-            inverseJoinColumns = @JoinColumn(name = "report_id")
-    )
+    @OneToMany(mappedBy = "resolution")
     private Set<ResolutionReport> resolutionReports;
 
     /**
