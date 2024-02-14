@@ -1,25 +1,20 @@
 /**
- *  Контроллер для сохранения, получения и архивации Appeal
+ * Контроллер для сохранения, получения, регистрации и архивации Appeal
  */
 
 package org.example.controller;
 
+import feign.FeignException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PreDestroy;
-import lombok.extern.slf4j.Slf4j;
-import org.example.feign.AppealFeignClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
+import org.example.feign.AppealFeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,18 +26,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Tag(name = "Appeal")
 public class AppealController {
 
-private final AppealFeignClient appealFeignClient;
-private final AtomicInteger countOfRequestsToAppeal = new AtomicInteger(0);
+    private final AppealFeignClient appealFeignClient;
+    private final AtomicInteger countOfRequestsToAppeal = new AtomicInteger(0);
 
-/**
- * Возвращает обращение из базы данных.
- * Если обращение по заданному id не найдено, возвращает ответ со статусом "Not Found".
- * Метод выполняет поиск обращения с помощью AppealFeignClient.
- *
- * @param id идентификатор вызываемого обращения.
- * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
- *
- */
+    /**
+     * Возвращает обращение из базы данных.
+     * Если обращение по заданному id не найдено, возвращает ответ со статусом "Not Found".
+     * Метод выполняет поиск обращения с помощью AppealFeignClient.
+     *
+     * @param id идентификатор вызываемого обращения.
+     * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Возвращает обращение по идентификатору")
     public ResponseEntity<AppealDto> getAppeal(
@@ -104,6 +98,33 @@ private final AtomicInteger countOfRequestsToAppeal = new AtomicInteger(0);
         }
         log.info("Обращение номер: " + archivedAppeal.getNumber() + " успешно заархивировано");
         return ResponseEntity.ok(archivedAppeal);
+    }
+
+    /**
+     * Метод для регистрации обращения с указанным appealId.
+     * Если обращение с указанным appealId не найдено, возвращает ответ со статусом "notFound".
+     * Если обращение уже было зарегистрировано, возвращает ответ со статусом "badRequest".
+     *
+     * @param appealId идентификатор регистрируемого обращения.
+     * @return ответ с Dto объектом обращения в виде ResponseEntity<AppealDto>
+     */
+    @PatchMapping("/{appealId}/register")
+    @Operation(summary = "Регистрирует обращение")
+    public ResponseEntity<AppealDto> registerAppeal(
+            @Parameter(description = "Идентификатор обращения", required = true)
+            @PathVariable Long appealId) {
+        log.info("Регистрация обращения с appealId " + appealId + " ...");
+        try {
+            AppealDto registeredAppeal = appealFeignClient.registerAppeal(appealId);
+            log.info("Обращение c номером " + registeredAppeal.getNumber() + " зарегистрировано");
+            return ResponseEntity.ok(registeredAppeal);
+        } catch (FeignException.NotFound e) {
+            log.warn("Ошибка получения обращения: обращение с id " + appealId + " не найдено");
+            return ResponseEntity.notFound().build();
+        } catch (FeignException.BadRequest e) {
+            log.warn("Ошибка получения обращения: обращение с id " + appealId + " ранее зарегистрировано");
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     /**

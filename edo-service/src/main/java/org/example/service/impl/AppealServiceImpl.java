@@ -4,15 +4,19 @@
 
 package org.example.service.impl;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
+import org.example.entity.Appeal;
 import org.example.mapper.AppealMapper;
 import org.example.repository.AppealRepository;
 import org.example.service.AppealService;
+import org.example.enums.StatusType;
 import org.example.service.NomenclatureService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -40,6 +44,7 @@ public class AppealServiceImpl implements AppealService {
                 .stream()
                 .peek(appeal -> {
                     appeal.setNumber(nomenclatureService.generateNumberForAppeal(appeal.getNomenclature()));
+                    appeal.setStatusType(StatusType.NOT_REGISTERED);
                 })
                 .findFirst()
                 .map(appealRepository::save)
@@ -58,12 +63,12 @@ public class AppealServiceImpl implements AppealService {
     public AppealDto getAppeal(Long id) {
         return appealRepository.findById(id)
                 .map(appealMapper::entityToDto)
-                .orElseThrow(() -> new EntityNotFoundException("Ошибка получечния обращения: обращение с указанным id: " + id + " не найдено"));
+                .orElseThrow(() -> new EntityNotFoundException("Ошибка получения обращения: обращение с указанным id: " + id + " не найдено"));
     }
 
     /**
      * Метод для добавления даты архивации обращения с указанным id.
-     * Если обращение по заданному id не найдено, выбрасывает исключение EntityNotFoundException.
+     * Если обращение с указанным id не найдено, выбрасывает исключение EntityNotFoundException.
      * Метод выполняет поиск обращения по его id используя AppealRepository.
      *
      * @param id идентификатор архивируемого обращения.
@@ -73,10 +78,33 @@ public class AppealServiceImpl implements AppealService {
         return appealRepository.findById(id)
                 .map(appeal -> {
                     appeal.setArchivedDate(ZonedDateTime.now());
+                    appeal.setStatusType(StatusType.ARCHIVE);
                     return appeal;
                 })
                 .map(appealRepository::save)
                 .map(appealMapper::entityToDto)
                 .orElseThrow(() -> new EntityNotFoundException("Ошибка архивации: обращение с id: " + id + "не найдено"));
+    }
+
+    /**
+     * Метод для регистрации обращения с указанным id.
+     * Если обращение с указанным id не найдено, выбрасывает исключение EntityNotFoundException.
+     * Если обращение уже ранее было зарегистрировано, выбрасывает исключение EntityExistsException.
+     *
+     * @param id идентификатор регистрируемого обращения.
+     * @return объект DTO обращения в случае успешной регистрации.
+     */
+    @Override
+    @Transactional
+    public AppealDto registerAppeal(Long id) {
+        Appeal appeal = appealRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Ошибка регистрации: обращение с id: " + id + " не найдено"));
+        if (appeal.getStatusType() == StatusType.REGISTERED) {
+            throw new EntityExistsException("Ошибка регистрации: обращение с id: " + id + " ранее зарегистрировано");
+        }
+        appeal.setRegistrationDate(ZonedDateTime.now());
+        appeal.setStatusType(StatusType.REGISTERED);
+        appealRepository.save(appeal);
+        return appealMapper.entityToDto(appeal);
     }
 }

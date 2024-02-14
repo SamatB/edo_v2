@@ -8,4 +8,6 @@ public interface AppealService {
     AppealDto getAppeal(Long id);
 
     AppealDto archiveAppeal(Long id);
+
+    AppealDto registerAppeal(Long id);
 }
