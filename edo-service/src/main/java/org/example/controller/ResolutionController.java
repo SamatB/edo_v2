@@ -153,28 +153,25 @@ public class ResolutionController {
 
     }
 
+
     /**
-     * Обновляет данные резолюции.
+     * Возвращает резолюцию по идентификатору.
      *
-     * @param id            идентификатор резолюции
-     * @param resolutionDto объект DTO с новыми данными резолюции
-     * @return обновленный объект resolutionDto со статусом 200 в случае успешного выполнения,
+     * @param id идентификатор резолюции
+     * @return объект resolutionDto со статусом 200 в случае успешного выполнения,
      * и статусом 400 в случае не удачи.
      */
 
-    @PutMapping("/{id}")
-    @Operation(summary = "Обновляет данные резолюции")
-    public ResponseEntity<?> updateResolution(
+    @GetMapping("/{id}")
+    @Operation(summary = "Возвращает резолюцию по идентификатору")
+    public ResponseEntity<?> getResolution(
             @Parameter(description = "Идентификатор резолюции", required = true)
-            @PathVariable Long id,
-            @Parameter(description = "Объект DTO с новыми данными резолюции", required = true)
-            @RequestBody ResolutionDto resolutionDto) {
-
+            @PathVariable Long id) {
         try {
-            log.info("Обновление резолюции в БД");
-            return ResponseEntity.ok().body(resolutionService.updateResolution(id, resolutionDto));
+            log.info("Поиск резолюции по идентификатору");
+            return ResponseEntity.ok().body(resolutionService.getResolution(id));
         } catch (Exception e) {
-            log.error("Ошибка обновления резолюции в БД");
+            log.error("Ошибка поиска резолюции  по идентификатору в БД");
             return ResponseEntity.badRequest().body(e);
         }
     }
@@ -198,29 +195,6 @@ public class ResolutionController {
             return ResponseEntity.ok().body(resolutionService.archiveResolution(id));
         } catch (Exception e) {
             log.error("Ошибка архивации резолюции в БД");
-            return ResponseEntity.badRequest().body(e);
-        }
-    }
-
-
-    /**
-     * Возвращает резолюцию по идентификатору.
-     *
-     * @param id идентификатор резолюции
-     * @return объект resolutionDto со статусом 200 в случае успешного выполнения,
-     * и статусом 400 в случае не удачи.
-     */
-
-    @GetMapping("/{id}")
-    @Operation(summary = "Возвращает резолюцию по идентификатору")
-    public ResponseEntity<?> getResolution(
-            @Parameter(description = "Идентификатор резолюции", required = true)
-            @PathVariable Long id) {
-        try {
-            log.info("Поиск резолюции по идентификатору");
-            return ResponseEntity.ok().body(resolutionService.getResolution(id));
-        } catch (Exception e) {
-            log.error("Ошибка поиска резолюции  по идентификатору в БД");
             return ResponseEntity.badRequest().body(e);
         }
     }
