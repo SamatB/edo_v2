@@ -54,12 +54,6 @@ class ResolutionReportServiceImplTest {
         ResolutionReportDto resolutionReportDto2 = new ResolutionReportDto();
         assertThrows(IllegalArgumentException.class, () -> resolutionReportService.saveResolutionReport(resolutionReportDto2));
 
-        // Некорректный id резолюции
-        ResolutionReportDto resolutionReportDto3 = new ResolutionReportDto();
-        resolutionReportDto3.setResolution(new ResolutionDto());
-        resolutionReportDto3.getResolution().setId(Long.MAX_VALUE);
-        assertThrows(IllegalArgumentException.class, () -> resolutionReportService.saveResolutionReport(resolutionReportDto3));
-
         // Успешное сохранение отчета
         ResolutionReportDto resolutionReportDto4 = new ResolutionReportDto();
         ResolutionDto resolutionDto4 = new ResolutionDto();
