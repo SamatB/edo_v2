@@ -46,7 +46,7 @@ public class EmployeeSessionServiceImpl implements EmployeeSessionService {
     public int getOnlineUsersNumber() {
         log.info("Подсчет пользователей в redis");
         Map<String, String> allSessions = hashOperations.entries(EMPLOYEE_SESSION_KEY);
-        Set<String> allSessionIds = new HashSet<>(allSessions.values());
-        return allSessionIds.size();
+        Set<String> allUsernames = new HashSet<>(allSessions.values());
+        return allUsernames.size();
     }
 }
