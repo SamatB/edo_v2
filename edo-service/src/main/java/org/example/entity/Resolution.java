@@ -1,15 +1,6 @@
 package org.example.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -90,7 +81,13 @@ public class Resolution extends BaseEntity {
             joinColumns = @JoinColumn(name = "resolution_id"),
             inverseJoinColumns = @JoinColumn(name = "employee_id")
     )
-    private Set<Employee> executor;
+    private Set<Employee> executors;
+
+    /**
+     * Отчет(ы) по резолюции (связь с сущностью ResolutionReport).
+     */
+    @OneToMany(mappedBy = "resolution")
+    private Set<ResolutionReport> resolutionReports;
 
     /**
      * Куратор резолюции (связь с сущностью Employee).
