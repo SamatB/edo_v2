@@ -10,4 +10,6 @@ public interface EmailService {
     /** метод отправки почты
      */
     SimpleMailMessage sendEmail(String to);
+
+    SimpleMailMessage sendEmail(String to, String subject, String text);
 }
