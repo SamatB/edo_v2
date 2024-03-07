@@ -3,8 +3,6 @@ package org.example.service;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
 /** Сервис отправки почты
 */
 @Service
