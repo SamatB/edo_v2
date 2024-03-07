@@ -4,6 +4,7 @@ import io.minio.*;
 import io.minio.errors.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.compress.utils.IOUtils;
+import org.example.util.ConvertFileToPDF;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -83,7 +84,7 @@ public class FileStorageServiceImpl implements FileStorageService {
         // Создание бакета в MinIO, если его не существует.
         createBuketInMinioIfNotExist(bucketName);
         // Сохранение файла в бакет MinIO
-        try (InputStream inputStream = file.getInputStream()) {
+        try (InputStream inputStream = ConvertFileToPDF.docToPdf(file)) {
             String filename = file.getOriginalFilename();
             if (filename == null) {
                 log.error("Ошибка при сохранении файла: имя файла не может быть null");
