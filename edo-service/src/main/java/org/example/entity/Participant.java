@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.example.utils.ParticipantStatusType;
 import org.example.utils.ParticipantType;
 
 import java.time.ZonedDateTime;
@@ -32,6 +33,14 @@ public class Participant extends BaseEntity {
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private ParticipantType type;
+
+    /**
+     * Статус участника согласования
+     */
+    @NotNull
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private ParticipantStatusType status;
 
     /**
      * Дата создания участнкиа
