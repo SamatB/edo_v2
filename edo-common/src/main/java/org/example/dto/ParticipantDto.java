@@ -20,6 +20,9 @@ public class ParticipantDto implements Serializable {
     @Schema(description = "Тип участника согласования")
     private String type;
 
+    @Schema(description = "Статус участника согласования")
+    private String status;
+
     @Schema(description = "Дата создания участника")
     private ZonedDateTime createDate;
 
