@@ -18,11 +18,11 @@ import org.example.service.AddressParser;
 import org.example.service.DepartmentService;
 import org.example.service.EmployeeService;
 import org.example.utils.CheckingLayout;
+import org.example.utils.SortEmployeeByLastName;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -114,5 +114,27 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else {
             throw new RuntimeException("Обновление адреса прошло неудачно.");
         }
+    }
+
+    /**
+     * Получает строку символов для поиска Employee
+     * Метод осуществляет получения списка Employee, у которых в ФИО содержится строка,
+     * и осуществляет сортировку по LastName - Фамилии
+     *
+     * @param name - строка символов.
+     * @return список EmployeeDto.
+     */
+
+    @Override
+    public List<EmployeeDto> getEmployeeSearchByText(String name) {
+        String changedName = CheckingLayout.fixLayout(name).toLowerCase().replace('ё', 'е');
+        return employeeRepository.findAll().stream()
+                .filter(e ->
+                        e.getFioDative().replace('ё', 'e').toLowerCase().contains(changedName) ||
+                                e.getFioGenitive().replace('ё', 'e').toLowerCase().contains(changedName) ||
+                                e.getFioNominative().replace('ё', 'e').toLowerCase().contains(changedName))
+                .sorted(new SortEmployeeByLastName())
+                .map(employeeMapper::entityToDto)
+                .toList();
     }
 }
