@@ -5,20 +5,25 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.service.AgreementListService;
+import org.example.dto.AgreementListDto;
+import org.example.feign.AgreementListFeignClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Контроллер для работы с сущностью AgreementList - Листа согласования.
  */
-@Slf4j
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/agreement-list")
+@RequestMapping("/agreement-lists")
+@RequiredArgsConstructor
+@Slf4j
 @Tag(name = "AgreementList")
 public class AgreementListController {
-    private final AgreementListService agreementListService;
+    private final AgreementListFeignClient agreementListFeignClient;
 
     /**
      * Отправляет лист согласования всем заинтересованным лицам.
@@ -29,15 +34,17 @@ public class AgreementListController {
      */
     @PutMapping("/send/{id}")
     @Operation(summary = "Отправляет лист согласования всем заинтересованным лицам")
-    public ResponseEntity<?> sendAgreementList(
+    public ResponseEntity<AgreementListDto> sendAgreementList(
             @Parameter(description = "Идентификатор листа согласования", required = true)
             @PathVariable Long id) {
-        try {
-            log.info("Отправка листа согласования всем заинтересованным лицам");
-            return ResponseEntity.ok().body(agreementListService.sendAgreementList(id));
-        } catch (Exception e) {
-            log.error("Ошибка отправки листа согласования всем заинтересованным лицам в БД");
-            return ResponseEntity.badRequest().body(e);
+        log.info("Отправка листа согласования с идентификатором {} всем заинтересованным лицам", id);
+        AgreementListDto agreementListDto = agreementListFeignClient.sendAgreementList(id);
+        if (agreementListDto == null) {
+            log.warn("Лист согласования с идентификатором {} не найден", id);
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(agreementListDto);
     }
 }
