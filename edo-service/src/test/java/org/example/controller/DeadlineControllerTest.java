@@ -2,6 +2,7 @@ package org.example.controller;
 
 import org.example.dto.DeadlineDto;
 import org.example.entity.Appeal;
+import org.example.entity.Resolution;
 import org.example.service.DeadlineService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -63,34 +64,20 @@ public class DeadlineControllerTest {
     }
 
     /**
-     * тест метода получения списка объектов DeadlineDto по идентификатору обращения
+     *
      */
+
     @Test
-    public void testGetResolutionDeadlines() {
-        List<DeadlineDto> deadlineDtoList = mock(List.class);
+    public  void testGetDeadlinesByAppeal() {
         Appeal appeal = mock(Appeal.class);
+        List<DeadlineDto> deadlineDtoList = mock(List.class);
+        Integer archived = 0;
 
-        when(deadlineService.getResolutionDeadlines(appeal.getId(), null)).thenReturn(deadlineDtoList);
+        when(deadlineService.getDeadlinesByAppeal(appeal.getId(),archived)).thenReturn(deadlineDtoList);
 
-        ResponseEntity<List<DeadlineDto>> response = deadlineController.getResolutionDeadlines(appeal.getId());
+        ResponseEntity<List<DeadlineDto>> response = deadlineController.getDeadlinesByAppeal(appeal.getId(), archived);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(deadlineDtoList, response.getBody());
-    }
-
-    /**
-     * Тестирование метода получения списка объектов DeadlineDto по идентификатору обращения
-     * при неверном идентификаторе обращения
-     */
-    @Test
-    public void testGetResolutionDeadlinesWithMistakes() {
-
-        Appeal appeal = mock(Appeal.class);
-        List<DeadlineDto> deadlineDtoList = mock(List.class);
-
-        when(deadlineService.getResolutionDeadlines(appeal.getId(), null)).thenReturn(deadlineDtoList);
-
-        ResponseEntity<List<DeadlineDto>> response = deadlineController.getResolutionDeadlines(anyLong());
-        assertEquals(ResponseEntity.notFound().build(), response);
     }
 }

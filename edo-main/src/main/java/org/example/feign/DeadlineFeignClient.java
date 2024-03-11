@@ -35,7 +35,8 @@ public interface DeadlineFeignClient {
     @GetMapping("/deadline/getAllOnAppeal/{id}")
     @Operation( summary = "Получает дедлайн резолюции по идентификатору обращения",
                 description = "Обращение должно существовать")
-    List<DeadlineDto> getResolutionDeadlines(@PathVariable("id")Long appealId,
-                                             @RequestParam Boolean archived);
+    List<DeadlineDto> getDeadlinesByAppeal(@PathVariable("id")Long appealId,
+                                           @Parameter(description = "0 - все резолюции, 1 - архивные, 2 - не в архиве")
+                                           @RequestParam Integer archived);
 
 }

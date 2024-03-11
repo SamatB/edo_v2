@@ -32,9 +32,7 @@ public class DeadlineController {
      */
     @PostMapping({"/setdeadline/{id}"})
     @Operation(summary = "Задает или изменяет дату дедлайна")
-    public ResponseEntity<DeadlineDto> setOrUpdateDeadline(@PathVariable("id") Long resolutionId,
-                                                           @Parameter(description = "объект DTO дедлайна", required = true)
-                                                           @RequestBody DeadlineDto deadlineDto) {
+    public ResponseEntity<DeadlineDto> setOrUpdateDeadline(@PathVariable("id") Long resolutionId, @Parameter(description = "объект DTO дедлайна", required = true) @RequestBody DeadlineDto deadlineDto) {
         log.info("Изменение даты дедлайна....");
         try {
             DeadlineDto savedDeadline = deadlineService.setOrUpdateDeadline(resolutionId, deadlineDto);
@@ -46,77 +44,57 @@ public class DeadlineController {
         }
     }
 
-    /**
-     * Получение дедлайнов всех резолюциий по идентификатору обращения.
-     *
-     * @param appealId - идентификатор обращения.
-     * @return ответ со списком дедлайнов всех резолюций, найденных по идентификатору обращения.
-     */
-    @GetMapping("/getAllOnAppeal/{id}")
-    @Operation(summary = "Получает дедлайны всех резолюций по идентификатору обращения",
-            description = "Обращение должно существовать")
-    public ResponseEntity<List<DeadlineDto>> getResolutionDeadlines(@PathVariable("id") Long appealId) {
-        log.info("Получение всех дедлайнов");
-        try {
-            List<DeadlineDto> deadlineDtoList = deadlineService.getResolutionDeadlines(appealId, null);
-            log.info("Дедлайны резолюций получены");
-            return ResponseEntity.ok(deadlineDtoList);
-        } catch (Exception e) {
-            log.warn("Получение дедлайнов завершено с ошибкой" + e);
-            return ResponseEntity.notFound().build();
-        }
-    }
 
-    /**
-     * Получение дедлайнов архивных резолюциий по идентификатору обращения.
-     *
-     * @param appealId - идентификатор обращения.
-     * @return ответ со списком дедлайнов архивных резолюций, найденных по идентификатору обращения.
-     */
-    @GetMapping("/getArchivedOnAppeal/{id}")
-    @Operation(summary = "Получает дедлайны архивных резолюций по идентификатору обращения",
-            description = "Обращение должно существовать")
-    public ResponseEntity<List<DeadlineDto>> getArchivedResolutionDeadlines(@PathVariable("id") Long appealId) {
-        log.info("Получение дедлайнов архивных резолюций");
-        try {
-            List<DeadlineDto> deadlineDtoList = deadlineService.getResolutionDeadlines(appealId, true);
-            if (deadlineDtoList != null) {
-                log.info("Дедлайны архивных резолюций получены");
-                return ResponseEntity.ok(deadlineDtoList);
-            } else {
-                log.info("Нет резолюций в архиве");
-                return ResponseEntity.status(204).build();
+    @GetMapping("/getDeadlinesByAppeal/{id}")
+    @Operation(summary = "Получает дедлайны всех резолюций по идентификатору обращения", description = "Обращение должно существовать")
+    public ResponseEntity<List<DeadlineDto>> getDeadlinesByAppeal(@PathVariable("id") Long appealId,
+                                                                  @Parameter(description = "0 - все резолюции, 1 - архивные, 2 - не в архиве")
+                                                                  @RequestParam Integer archived) {
+        log.info("Получение дедлайнов...");
+        if (archived == 1) {
+            log.info("Получение дедлайнов резолюций, находящихся в архиве...");
+            try {
+                List<DeadlineDto> deadlineDtoList = deadlineService.getDeadlinesByAppeal(appealId, archived);
+                if (deadlineDtoList != null) {
+                    log.info("Дедлайны архивных резолюций получены");
+                    return ResponseEntity.ok(deadlineDtoList);
+                } else {
+                    log.info("Нет резолюций в архиве");
+                    return ResponseEntity.status(204).build();
+                }
+            } catch (Exception e) {
+                log.warn("Получение дедлайнов завершено с ошибкой" + e);
+                return ResponseEntity.status(502).build();
             }
-        } catch (Exception e) {
-            log.warn("Получение дедлайнов завершено с ошибкой" + e);
-            return ResponseEntity.status(502).build();
-        }
-    }
+        } else if (archived == 2) {
+            log.info("Получение дедлайнов резолюций, находящихся не в архиве...");
+            try {
+                List<DeadlineDto> deadlineDtoList = deadlineService.getDeadlinesByAppeal(appealId, archived);
+                if (deadlineDtoList != null) {
+                    log.info("Дедлайны резолюций, находящихся не в архиве, получены");
+                    return ResponseEntity.ok(deadlineDtoList);
+                } else {
+                    log.info("Все резолюции в архиве");
+                    return ResponseEntity.status(204).build();
+                }
+            } catch (Exception e) {
+                log.warn("Получение дедлайнов завершено с ошибкой" + e);
+                return ResponseEntity.status(502).build();
+            }
+        } else if (archived == 0) {
+            log.info("Получение дедлайнов всех резолюций...");
+            try {
+                List<DeadlineDto> deadlineDtoList = deadlineService.getDeadlinesByAppeal(appealId, archived);
+                log.info("Дедлайны резолюций получены");
+                return ResponseEntity.ok(deadlineDtoList);
+            } catch (Exception e) {
+                log.warn("Получение дедлайнов завершено с ошибкой" + e);
+                return ResponseEntity.notFound().build();
+            }
+        } else
+            log.warn("Получение дедлайнов завершено с ошибкой");
+        return ResponseEntity.notFound().build();
 
-    /**
-     * Получение дедлайнов резолюциий, находящихся не в архиве, по идентификатору обращения.
-     *
-     * @param appealId - идентификатор обращения.
-     * @return ответ со списком дедлайнов всех найденных по идентификатору обращения резолюций, находящихся не в архиве.
-     */
-    @GetMapping("/getNotArchivedOnAppeal/{id}")
-    @Operation(summary = "Получает дедлайны архивных резолюций по идентификатору обращения",
-            description = "Обращение должно существовать")
-    public ResponseEntity<List<DeadlineDto>> getNotArchivedResolutionDeadlines(@PathVariable("id") Long appealId) {
-        log.info("Получение дедлайнов резолюций, находящихся не в архиве.");
-        try {
-            List<DeadlineDto> deadlineDtoList = deadlineService.getResolutionDeadlines(appealId, false);
-            if (deadlineDtoList != null) {
-                log.info("Дедлайны резолюций, находящихся не в архиве, получены");
-                return ResponseEntity.ok(deadlineDtoList);
-            } else {
-                log.info("Все резолюции в архиве");
-                return ResponseEntity.status(204).build();
-            }
-        } catch (Exception e) {
-            log.warn("Получение дедлайнов завершено с ошибкой" + e);
-            return ResponseEntity.status(502).build();
-        }
     }
 
 }

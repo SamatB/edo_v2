@@ -52,19 +52,17 @@ public class DeadlineServiceImpl implements DeadlineService {
         }
     }
 
+
     /**
      * Метод возвращает список объектов DeadlineDto  по идентификатору обращения с учетом нахождения резолюций в архиве.
-     *
-     * @param appealId - идентификатор обращенияб
-     * @param archived - параметр, показывающий находится ли резолюция в архиве,
-     * @return Список объектов DeadlineDto
+     * @param appealId
+     * @param archived
+     * @return
      */
     @Override
-    public List<DeadlineDto> getResolutionDeadlines(Long appealId, Boolean archived) {
+    public List<DeadlineDto> getDeadlinesByAppeal(Long appealId, Integer archived) {
 
         return (List<DeadlineDto>) deadlineMapper.entityListToDtoList(
-                deadlineRepository.findByResolutionIn(
-                        resolutionService.findAllByAppealIdAndArchivedType(appealId, archived))
-        );
+                deadlineRepository.getDeadlinesByAppeal(appealId,archived));
     }
 }

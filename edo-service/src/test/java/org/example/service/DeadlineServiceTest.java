@@ -63,24 +63,22 @@ public class DeadlineServiceTest {
     }
 
     /**
-     * Тест для проверки получения списка объектов DeadlineDto по идентификатору обращения
+     *
      */
     @Test
-    public void testGetResolutionDeadlines() {
+    public void testGetAllByResolution_Question_Appeal_Id() {
+
         List<DeadlineDto> deadlineDtoList = mock(List.class);
         Appeal appeal = mock(Appeal.class);
 
-
         when(deadlineMapper.entityListToDtoList(
-                deadlineRepository.findByResolutionIn(
-                        resolutionService.findAllByAppealIdAndArchivedType(appeal.getId(),null))))
+                deadlineRepository.getDeadlinesByAppeal(appeal.getId(), 0)))
                 .thenReturn(deadlineDtoList);
 
-        List<DeadlineDto> deadlineDtos = deadlineService.getResolutionDeadlines(appeal.getId(),null);
+
+        List<DeadlineDto> deadlineDtos = deadlineService.getDeadlinesByAppeal(2L, 0);
 
         assertEquals(deadlineDtoList, deadlineDtos);
-
-
     }
 
 }

@@ -28,8 +28,4 @@ public interface ResolutionRepository extends JpaRepository<Resolution, Long> {
     List<ResolutionDto> findResolutions(Boolean archived);
 
 
-
-    List<Resolution> findByQuestionIn(List<Question> questionList);
-
-    List<Resolution> findByQuestionInAndArchivedDateIsTrue(List<Question> questionList, Boolean archived);
 }

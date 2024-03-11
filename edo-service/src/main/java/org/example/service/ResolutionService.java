@@ -20,8 +20,4 @@ public interface ResolutionService {
 
     void validateResolution(ResolutionDto resolutionDto);
 
-    List<Resolution> findAllByAppealIdAndArchivedType(Long appealId, Boolean archived);
-
-
-
 }

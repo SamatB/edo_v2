@@ -63,12 +63,13 @@ public class DeadlineControllerTest {
      * тест метода получения списка объектов DeadlineDto по идентификатору обращения
      */
     @Test
-    public void testGetResolutionDeadlines() {
+    public void testGetDeadlinesByAppeal() {
         List<DeadlineDto> deadlineDtoList = mock(List.class);
 
-        when(deadlineFeignClient.getResolutionDeadlines(1L, null)).thenReturn(deadlineDtoList);
 
-        ResponseEntity<List<DeadlineDto>> response = deadlineController.getResolutionDeadlines(1L, null);
+        when(deadlineFeignClient.getDeadlinesByAppeal(1L, 0)).thenReturn(deadlineDtoList);
+
+        ResponseEntity<List<DeadlineDto>> response = deadlineController.getDeadlinesByAppeal(1L, 0);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(deadlineDtoList, response.getBody());
     }
@@ -81,9 +82,9 @@ public class DeadlineControllerTest {
     public void testGetResolutionDeadlinesWithMistakes() {
         List<DeadlineDto> deadlineDtoList = mock(List.class);
 
-        when(deadlineFeignClient.getResolutionDeadlines(1L, null)).thenReturn(deadlineDtoList);
+        when(deadlineFeignClient.getDeadlinesByAppeal(1L, 0)).thenReturn(deadlineDtoList);
 
-        ResponseEntity<List<DeadlineDto>> response = deadlineController.getResolutionDeadlines(anyLong(), null);
+        ResponseEntity<List<DeadlineDto>> response = deadlineController.getDeadlinesByAppeal(anyLong(), 0);
         assertEquals(ResponseEntity.notFound().build(), response);
     }
 }
