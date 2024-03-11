@@ -181,4 +181,17 @@ public class RabbitConfiguration {
     public Binding fanoutBindingDepartment() {
         return BindingBuilder.bind(departmentQueue()).to(fanoutExchange()); }
 
+    /**
+     * Очередь и ключ для отправки листа согласования
+     */
+    public static final String SEND_AGREEMENT_LIST_ROUTING_KEY = "sendAgreementList";
+    @Bean
+    public Queue sendAgreementListQueue() {
+        return new Queue(SEND_AGREEMENT_LIST_ROUTING_KEY);
+    }
+    @Bean
+    public Binding sendAgreementListBinding() {
+        return BindingBuilder.bind(sendAgreementListQueue()).to(directExchange()).with(SEND_AGREEMENT_LIST_ROUTING_KEY);
+    }
+
 }
