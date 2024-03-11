@@ -5,8 +5,12 @@ import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
+import org.example.entity.Appeal;
+import org.example.entity.Question;
+import org.example.entity.Resolution;
 import org.example.mapper.ResolutionMapper;
 import org.example.repository.ResolutionRepository;
+import org.example.service.QuestionService;
 import org.example.service.ResolutionService;
 import org.example.enums.ResolutionType;
 import org.springframework.stereotype.Service;
@@ -30,6 +34,8 @@ public class ResolutionServiceImpl implements ResolutionService {
 
     private final ResolutionRepository resolutionRepository;
     private final ResolutionMapper resolutionMapper;
+
+    private final QuestionService questionService;
 
     /**
      * Сохраняет резолюцию в базе данных.
@@ -100,6 +106,25 @@ public class ResolutionServiceImpl implements ResolutionService {
                 .map(resolutionRepository::save)
                 .map(resolutionMapper::entityToDto)
                 .orElseThrow(() -> new EntityNotFoundException("Resolution with id " + id + " not found"));
+    }
+
+    /**
+     * Возвращает список объектов Resolution по идентификатору обращения
+     *
+     * @param appealId - идентификатор обращения
+     * @return
+     */
+    @Override
+    public List<Resolution> findAllByAppealIdAndArchivedType(Long appealId, Boolean archived) {
+        if (archived == null) {
+            return resolutionRepository.findByQuestionIn(questionService.getQuestions(appealId));
+        }
+
+        return resolutionRepository.findByQuestionInAndArchivedDateIsTrue(
+                questionService.getQuestions(appealId),
+                archived
+        );
+
     }
 
     /**

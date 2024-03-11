@@ -8,8 +8,10 @@ import org.example.entity.Resolution;
 import org.example.mapper.DeadlineMapper;
 import org.example.repository.DeadlineRepository;
 import org.example.service.DeadlineService;
+import org.example.service.ResolutionService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,6 +19,9 @@ import java.util.Optional;
 public class DeadlineServiceImpl implements DeadlineService {
     private final DeadlineRepository deadlineRepository;
     private final DeadlineMapper deadlineMapper;
+
+    private final ResolutionService resolutionService;
+
 
     /**
      * Устанавливает или изменяет дату дедлайна, может быть добавлено описание причины переноса.
@@ -45,5 +50,21 @@ public class DeadlineServiceImpl implements DeadlineService {
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при изменении даты дедлайна в БД");
         }
+    }
+
+    /**
+     * Метод возвращает список объектов DeadlineDto  по идентификатору обращения с учетом нахождения резолюций в архиве.
+     *
+     * @param appealId - идентификатор обращенияб
+     * @param archived - параметр, показывающий находится ли резолюция в архиве,
+     * @return Список объектов DeadlineDto
+     */
+    @Override
+    public List<DeadlineDto> getResolutionDeadlines(Long appealId, Boolean archived) {
+
+        return (List<DeadlineDto>) deadlineMapper.entityListToDtoList(
+                deadlineRepository.findByResolutionIn(
+                        resolutionService.findAllByAppealIdAndArchivedType(appealId, archived))
+        );
     }
 }

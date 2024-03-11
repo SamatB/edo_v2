@@ -3,7 +3,9 @@
  */
 package org.example.repository;
 
+import org.example.dto.DeadlineDto;
 import org.example.entity.Deadline;
+import org.example.entity.Resolution;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 public interface DeadlineRepository extends JpaRepository<Deadline, Long> {
 
@@ -30,4 +33,6 @@ public interface DeadlineRepository extends JpaRepository<Deadline, Long> {
      * Поиск в БД строк по идентификатору резолюции
      */
     Deadline findByResolutionId(Long resolutionId);
+
+    List<Deadline> findByResolutionIn(List<Resolution> resolutionList);
 }

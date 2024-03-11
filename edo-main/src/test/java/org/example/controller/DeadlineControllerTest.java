@@ -10,6 +10,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -54,5 +56,34 @@ public class DeadlineControllerTest {
 
         ResponseEntity<DeadlineDto> response = deadlineController.setOrUpdateDeadline(1L, new DeadlineDto());
         assertEquals(ResponseEntity.status(503).build(), response);
+    }
+
+
+    /**
+     * тест метода получения списка объектов DeadlineDto по идентификатору обращения
+     */
+    @Test
+    public void testGetResolutionDeadlines() {
+        List<DeadlineDto> deadlineDtoList = mock(List.class);
+
+        when(deadlineFeignClient.getResolutionDeadlines(1L, null)).thenReturn(deadlineDtoList);
+
+        ResponseEntity<List<DeadlineDto>> response = deadlineController.getResolutionDeadlines(1L, null);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(deadlineDtoList, response.getBody());
+    }
+
+    /**
+     * Тестирование метода получения списка объектов DeadlineDto по идентификатору обращения
+     * при неверном идентификаторе обращения
+     */
+    @Test
+    public void testGetResolutionDeadlinesWithMistakes() {
+        List<DeadlineDto> deadlineDtoList = mock(List.class);
+
+        when(deadlineFeignClient.getResolutionDeadlines(1L, null)).thenReturn(deadlineDtoList);
+
+        ResponseEntity<List<DeadlineDto>> response = deadlineController.getResolutionDeadlines(anyLong(), null);
+        assertEquals(ResponseEntity.notFound().build(), response);
     }
 }

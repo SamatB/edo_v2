@@ -3,9 +3,16 @@ package org.example.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
 import org.example.dto.ResolutionDto;
+import org.example.entity.Appeal;
+import org.example.entity.Question;
 import org.example.entity.Resolution;
+import org.example.mapper.AppealMapper;
 import org.example.mapper.ResolutionMapper;
+import org.example.repository.AppealRepository;
+import org.example.repository.QuestionRepository;
 import org.example.repository.ResolutionRepository;
+import org.example.service.impl.AppealServiceImpl;
+import org.example.service.impl.QuestionServiceImpl;
 import org.example.service.impl.ResolutionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,11 +21,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,6 +45,10 @@ public class ResolutionServiceTest {
 
     @InjectMocks
     private ResolutionServiceImpl resolutionService;
+
+    @Mock
+    private QuestionServiceImpl questionService;
+
 
     @BeforeEach
     public void setUp() {
@@ -106,9 +119,9 @@ public class ResolutionServiceTest {
         when(resolutionService.findResolution(false)).thenReturn(notArchivedResolutions);
         when(resolutionService.findResolution(null)).thenReturn(allResolutions);
 
-        List<ResolutionDto> resultListArchivedResolutions =  resolutionService.findResolution(true);
-        List<ResolutionDto> resultListNotArchivedResolutions =  resolutionService.findResolution(false);
-        List<ResolutionDto> resultListAllResolutions =  resolutionService.findResolution(null);
+        List<ResolutionDto> resultListArchivedResolutions = resolutionService.findResolution(true);
+        List<ResolutionDto> resultListNotArchivedResolutions = resolutionService.findResolution(false);
+        List<ResolutionDto> resultListAllResolutions = resolutionService.findResolution(null);
 
 
         assertEquals(archivedResolutions, resultListArchivedResolutions);
@@ -174,4 +187,40 @@ public class ResolutionServiceTest {
 
         assertThrows(EntityNotFoundException.class, () -> resolutionService.updateResolution(id, resolutionDto));
     }
+
+    /**
+     * Тест для метода поиска резолюций по идентификатору обращения с учетом нахождения резолюций в архиве.
+     */
+    @Test
+    public void testFindAllByAppealIdAndArchivedType() {
+
+        Appeal appeal1 = mock(Appeal.class);
+
+        Question question1 = mock(Question.class);
+
+        Resolution resolution1 = mock(Resolution.class);
+        Resolution resolution2 = mock(Resolution.class);
+        Resolution resolution3 = mock(Resolution.class);
+
+
+        List<Resolution> allResolutions = List.of(resolution1, resolution2, resolution3);
+        List<Resolution> archivedResolutions = List.of(resolution1, resolution2);
+        List<Resolution> notArchivedResolutions = List.of(resolution3);
+
+
+        when(resolutionRepository.findByQuestionIn(questionService.getQuestions(appeal1.getId()))).thenReturn(allResolutions);
+        when(resolutionRepository.findByQuestionInAndArchivedDateIsTrue(questionService.getQuestions(appeal1.getId()), true)).thenReturn(archivedResolutions);
+        when(resolutionRepository.findByQuestionInAndArchivedDateIsTrue(questionService.getQuestions(appeal1.getId()), false)).thenReturn(notArchivedResolutions);
+
+
+        List<Resolution> resultAllResolutionList = resolutionService.findAllByAppealIdAndArchivedType(appeal1.getId(), null);
+        List<Resolution> resultArchivedResolutionList = resolutionService.findAllByAppealIdAndArchivedType(appeal1.getId(), true);
+        List<Resolution> resultNotArchivedResolutionList = resolutionService.findAllByAppealIdAndArchivedType(appeal1.getId(), false);
+
+        assertEquals(allResolutions, resultAllResolutionList);
+        assertEquals(archivedResolutions, resultArchivedResolutionList);
+        assertEquals(notArchivedResolutions, resultNotArchivedResolutionList);
+    }
+
+
 }

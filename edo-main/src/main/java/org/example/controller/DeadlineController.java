@@ -10,6 +10,8 @@ import org.example.feign.DeadlineFeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Контроллер для работы установки и изменения дедлайна.
  */
@@ -43,4 +45,31 @@ public class DeadlineController {
             return ResponseEntity.status(503).build();
         }
     }
+
+    /**
+     * Получение дедлайнов всех резолюций по идентификатору Обращения
+     *
+     * @param appealId - идентификатор обращения
+     */
+    @GetMapping("/getResolutionDeadlinesOnAppeal/{id}")
+    @Operation(summary = "Получает дедлайн резолюции по идентификатору обращения",
+            description = "Обращение должно существовать")
+    public ResponseEntity<List<DeadlineDto>> getResolutionDeadlines(@PathVariable("id") Long appealId,
+                                                                    @RequestParam Boolean archived) {
+        if (archived == null) {
+            log.info("Получение дедлайнов всех резолюций найденных по обращению");
+        } else {
+            log.info("Получение {} резолюций", (archived ? "архивных" : "не архивных"));
+        }
+
+        try {
+            List<DeadlineDto> deadlineDtoList = deadlineFeignClient.getResolutionDeadlines(appealId, archived);
+            log.info("Дедлайны резолюций получены");
+            return ResponseEntity.ok(deadlineDtoList);
+        } catch (Exception e) {
+            log.warn("Получение дедлайнов завершено с ошибкой" + e);
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

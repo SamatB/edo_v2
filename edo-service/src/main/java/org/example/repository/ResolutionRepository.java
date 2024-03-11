@@ -1,6 +1,7 @@
 package org.example.repository;
 
 import org.example.dto.ResolutionDto;
+import org.example.entity.Question;
 import org.example.entity.Resolution;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,4 +26,10 @@ public interface ResolutionRepository extends JpaRepository<Resolution, Long> {
             "OR (:archived = true AND e.archivedDate IS NOT NULL) " +
             "OR (:archived = false AND e.archivedDate IS NULL))")
     List<ResolutionDto> findResolutions(Boolean archived);
+
+
+
+    List<Resolution> findByQuestionIn(List<Question> questionList);
+
+    List<Resolution> findByQuestionInAndArchivedDateIsTrue(List<Question> questionList, Boolean archived);
 }
