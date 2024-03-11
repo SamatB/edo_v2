@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
  * сущность Region представляет регион и федеральный округ
  */
 @Entity
-@Table(name = "regions")
+@Table(name = "region")
 @Getter
 @Setter
 @NoArgsConstructor

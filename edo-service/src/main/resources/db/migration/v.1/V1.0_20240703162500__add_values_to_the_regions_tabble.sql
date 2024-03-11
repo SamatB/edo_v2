@@ -1,7 +1,7 @@
 /*
 Добавление тестовых данных в таблицу регионов
 */
-INSERT INTO regions (region_name, federal_district_name)
+INSERT INTO region (region_name, federal_district_name)
 VALUES ('Москва','Центральный федеральный округ'),
        ('Нижний Новгород','Приволжский федеральный округ'),
        ('Екатеринбург','Уральский федеральный округ'),
