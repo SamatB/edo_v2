@@ -11,5 +11,5 @@ public interface EmailService {
      */
     SimpleMailMessage sendEmail(String to);
 
-    SimpleMailMessage sendEmail(String to, String subject, String text);
+    SimpleMailMessage sendAgreementListEmail(String to, String subject, String text);
 }

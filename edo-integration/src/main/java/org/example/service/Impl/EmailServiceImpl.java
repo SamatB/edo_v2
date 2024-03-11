@@ -49,7 +49,7 @@ public class EmailServiceImpl implements EmailService {
      * @return SimpleMailMessage модель письма для отправки.
      */
     @Override
-    public SimpleMailMessage sendEmail(String to, String subject, String text) {
+    public SimpleMailMessage sendAgreementListEmail(String to, String subject, String text) {
         if (to == null) {
             throw new IllegalArgumentException("Отправитель не может быть null");
         }

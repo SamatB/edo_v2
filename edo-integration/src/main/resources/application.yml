@@ -2,8 +2,8 @@ spring:
   mail:
     host: "app.debugmail.io"
     port: 25
-    username: "a5ae3681-2cee-4604-b9e1-1c31e8fdba67"
-    password: "d71639cd-4d78-4344-af83-ddeb90f46c6c"
+    username: "46d9d802-c701-4a6b-81b0-f644aad9abec"
+    password: "97340181-f6e0-4e5b-bb23-ca7a900248c9"
     protocol: smtp
     properties.mail.smtp:
       auth: true
