@@ -90,4 +90,30 @@ public class AppealController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    /**
+     * Резервирует номер для обращения.
+     * При ошибке получения обращения возвращается ответ со статусом "notFound"
+     * При попытке резервации номера для обращения с уже зарезервированным номером возвращается ответ со статусом "badRequest"
+     *
+     * @param appealNumber номер обращения.
+     * @return объект DTO обращения в случае успешной резервации.
+     */
+    @PatchMapping("/reserve-number/{appealNumber}")
+    @Operation(summary = "Резервирование номера для обращения")
+    public ResponseEntity<AppealDto> reserveNumberForAppeal(@PathVariable String appealNumber) {
+        log.info("Получение обращения с номером {}", appealNumber);
+
+        try {
+            AppealDto appealDto = appealService.reserveNumberForAppeal(appealNumber);
+            log.info("Номер {} успешно зарезервирован", appealNumber);
+            return ResponseEntity.ok(appealDto);
+        } catch (EntityNotFoundException e) {
+            log.warn(e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (EntityExistsException e) {
+            log.warn(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
