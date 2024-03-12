@@ -9,9 +9,14 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "edo-service")
+import java.util.List;
+
+@FeignClient(name = "edo-service", path = "/employee")
 public interface EmployeeFeignClient {
 
-    @GetMapping("/employee")
-    EmployeeDto getByUsername(@RequestParam String username);
+    @GetMapping("")
+    EmployeeDto getByUsername(@RequestParam(name = "username", required = false) String username);
+
+    @GetMapping("")
+    List<EmployeeDto> getEmployeeSearchByText(@RequestParam(name = "name", required = false) String name);
 }
