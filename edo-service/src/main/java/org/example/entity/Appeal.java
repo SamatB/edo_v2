@@ -2,6 +2,7 @@ package org.example.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,6 +50,14 @@ public class Appeal extends BaseEntity {
     @NotNull
     @Column(name = "number")
     private String number;
+
+
+    /**
+     * Зарезервированный номер обращения
+     */
+//    @Pattern(regexp = "^[\\w&&[^\\d]&&[^_]]+-[0-9]{4}//[0-9]+-[0-9]+$", message = "Неверный формат номера обращения")
+    @Column(name = "reserved_number", unique = true, length = 50)
+    private String reservedNumber;
 
     /**
      * Описание обращения
