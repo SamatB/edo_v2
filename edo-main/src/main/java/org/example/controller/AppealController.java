@@ -128,6 +128,33 @@ public class AppealController {
     }
 
     /**
+     * Метод для резервирования номера обращения с указанным appealNumber.
+     * Если обращение с указанным appealNumber не найдено, возвращает ответ со статусом "notFound".
+     * Если для обращения уже был зарезервирован номер, возвращает ответ со статусом "badRequest".
+     *
+     * @param appealNumber номер обращения, для которого необходимо резервировать номер.
+     * @return ответ с Dto объектом обращения в виде ResponseEntity<AppealDto>
+     */
+    @PatchMapping("/reserve-number/{appealNumber}")
+    @Operation(summary = "Резервирует номер для обращения")
+    public ResponseEntity<AppealDto> reserveNumberForAppeal(
+            @Parameter(description = "Номер обращения", required = true)
+            @PathVariable String appealNumber) {
+        log.info("Резервирование номера для обращения с appealNumber {} ...", appealNumber);
+        try {
+            AppealDto registeredAppeal = appealFeignClient.reserveNumberForAppeal(appealNumber);
+            log.info("Для обращение c номером {} зарезервирован номер: {}", appealNumber,registeredAppeal.getReservedNumber());
+            return ResponseEntity.ok(registeredAppeal);
+        } catch (FeignException.NotFound e) {
+            log.warn("Ошибка резервирования номера для обращения: обращение с номером {} не найдено", appealNumber);
+            return ResponseEntity.notFound().build();
+        } catch (FeignException.BadRequest e) {
+            log.warn("Ошибка резервирования номера для обращения: к обращению с appealNumber {} ранее зарезервирован номер", appealNumber);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
      * Метод для вывода в лог количества обращений к Appeal перед завершением приложения.
      *
      * @return кол-во обращений к Appeal
