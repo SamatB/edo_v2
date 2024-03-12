@@ -1,16 +1,13 @@
 package org.example.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.example.enums.StatusType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -41,6 +38,13 @@ public class Question extends BaseEntity {
     @Column(name = "archived_date")
     @UpdateTimestamp
     ZonedDateTime archivedDate;
+
+    /**
+     * Статус вопроса
+     */
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private StatusType statusType;
 
     /**
      * Содержание вопроса

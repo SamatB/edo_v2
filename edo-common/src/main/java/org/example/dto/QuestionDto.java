@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 import jakarta.validation.constraints.NotNull;
+import org.example.enums.StatusType;
 
 import java.time.ZonedDateTime;
 
@@ -24,6 +25,9 @@ public class QuestionDto {
 
     @Schema(description = "Дата архивирования вопроса")
     private ZonedDateTime archivedDate;
+
+    @Schema(description = "Статус вопроса")
+    private StatusType statusType;
 
     @Schema(description = "Содержание вопроса")
     private String summary;
