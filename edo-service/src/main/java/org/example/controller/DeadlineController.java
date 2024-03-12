@@ -44,7 +44,12 @@ public class DeadlineController {
         }
     }
 
-
+    /**
+     * Метод возвращает список объектов DeadlineDto  по идентификатору обращения с учетом нахождения резолюций в архиве.
+     * @param appealId - идентификатор обращения
+     * @param archived - флаг, указывающий на архивацию "0 - все резолюции, 1 - архивные, 2 - не в архиве"
+     * @return
+     */
     @GetMapping("/getDeadlinesByAppeal/{id}")
     @Operation(summary = "Получает дедлайны всех резолюций по идентификатору обращения", description = "Обращение должно существовать")
     public ResponseEntity<List<DeadlineDto>> getDeadlinesByAppeal(@PathVariable("id") Long appealId,

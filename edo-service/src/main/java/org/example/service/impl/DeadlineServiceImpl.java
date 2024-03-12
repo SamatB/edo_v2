@@ -55,9 +55,9 @@ public class DeadlineServiceImpl implements DeadlineService {
 
     /**
      * Метод возвращает список объектов DeadlineDto  по идентификатору обращения с учетом нахождения резолюций в архиве.
-     * @param appealId
-     * @param archived
-     * @return
+     * @param appealId - идентификатор обращения
+     * @param archived - флаг, указывающий на архивацию "0 - все резолюции, 1 - архивные, 2 - не в архиве"
+     * @return Список объектов DeadlineDto
      */
     @Override
     public List<DeadlineDto> getDeadlinesByAppeal(Long appealId, Integer archived) {
