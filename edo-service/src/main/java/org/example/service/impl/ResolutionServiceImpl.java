@@ -5,6 +5,8 @@ import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
+import org.example.entity.Resolution;
+import org.example.enums.StatusType;
 import org.example.mapper.ResolutionMapper;
 import org.example.repository.ResolutionRepository;
 import org.example.service.ResolutionService;
@@ -32,10 +34,14 @@ public class ResolutionServiceImpl implements ResolutionService {
     private final ResolutionMapper resolutionMapper;
 
     /**
-     * Сохраняет резолюцию в базе данных.
+     * Сохраняет резолюцию в базе данных, обновляя даты создания и последнего действия на текущее время.
+     * Статусы связанных вопросов и апелляций также обновляются перед сохранением.
+     * В случае успешного сохранения возвращает DTO обновленной резолюции.
+     * Если переданное DTO резолюции равно null, метод выбрасывает исключение IllegalArgumentException.
      *
-     * @param resolutionDto объект DTO резолюции
-     * @return сохраненный объект DTO резолюции
+     * @param resolutionDto DTO резолюции, которую необходимо сохранить. Не должно быть null.
+     * @return ResolutionDto DTO обновленной резолюции после сохранения.
+     * @throws IllegalArgumentException если переданное DTO резолюции равно null.
      */
     @Override
     public ResolutionDto saveResolution(ResolutionDto resolutionDto) {
@@ -44,11 +50,35 @@ public class ResolutionServiceImpl implements ResolutionService {
                 .map(resolution -> {
                     resolution.setCreationDate(ZonedDateTime.now());
                     resolution.setLastActionDate(ZonedDateTime.now());
+                    updateStatusQuestionAndAppeal(resolution);
                     return resolution;
                 })
                 .map(resolutionRepository::save)
                 .map(resolutionMapper::entityToDto)
                 .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения резолюции: резолюция не должна быть null"));
+    }
+
+
+    /**
+     * Обновляет статусы вопроса и связанной апелляции, если они существуют и статус вопроса является "Не зарегистрирован".
+     * Статус устанавливается в "На рассмотрении" для обеих сущностей.
+     *
+     * @param resolution Резолюция, содержащая вопрос, статус которого необходимо обновить.
+     *                   Если вопрос связан с апелляцией, статус апелляции также будет обновлен.
+     */
+    private void updateStatusQuestionAndAppeal(Resolution resolution) {
+        Optional.ofNullable(resolution)
+                .map(Resolution::getQuestion)
+                .filter(question -> question.getStatusType() == StatusType.NOT_REGISTERED)
+                .ifPresent(question -> {
+                    question.setStatusType(StatusType.ON_THE_CARPET);
+                    log.info("Статус Question изменился \"На рассмотрении\"");
+                    Optional.ofNullable(question.getAppeal())
+                            .ifPresent(appeal -> {
+                                appeal.setStatusType(StatusType.ON_THE_CARPET);
+                                log.info("Статус Appeal изменился на \"На рассмотрении\"");
+                            });
+                });
     }
 
     /**
@@ -83,11 +113,15 @@ public class ResolutionServiceImpl implements ResolutionService {
     }
 
     /**
-     * Обновляет данные резолюции.
+     * Обновляет существующую резолюцию по ID, используя данные из переданного DTO.
+     * Дата последнего действия обновляется на текущее время. Также обновляются статусы связанных вопросов и апелляций.
+     * В случае успешного обновления возвращает DTO обновленной резолюции.
+     * Если резолюция с указанным ID не найдена, метод выбрасывает исключение EntityNotFoundException.
      *
-     * @param id            идентификатор резолюции
-     * @param resolutionDto объект DTO с новыми данными резолюции
-     * @return обновленный объект DTO резолюции
+     * @param id ID резолюции, которую необходимо обновить. Должно соответствовать существующей записи в базе данных.
+     * @param resolutionDto DTO с новыми данными для обновления резолюции. Не должно быть null.
+     * @return ResolutionDto DTO обновленной резолюции после сохранения.
+     * @throws EntityNotFoundException если резолюция с указанным ID не найдена в базе данных.
      */
     @Override
     public ResolutionDto updateResolution(Long id, ResolutionDto resolutionDto) {
@@ -95,6 +129,7 @@ public class ResolutionServiceImpl implements ResolutionService {
                 .map(resolution -> {
                     resolutionMapper.updateEntity(resolutionDto, resolution);
                     resolution.setLastActionDate(ZonedDateTime.now());
+                    updateStatusQuestionAndAppeal(resolution);
                     return resolution;
                 })
                 .map(resolutionRepository::save)
