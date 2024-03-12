@@ -37,6 +37,6 @@ public interface DeadlineFeignClient {
                 description = "Обращение должно существовать")
     List<DeadlineDto> getDeadlinesByAppeal(@PathVariable("id")Long appealId,
                                            @Parameter(description = "0 - все резолюции, 1 - архивные, 2 - не в архиве")
-                                           @RequestParam Integer archived);
+                                           @RequestParam(defaultValue = "0") Integer archived);
 
 }

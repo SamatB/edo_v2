@@ -57,7 +57,7 @@ public class DeadlineController {
             description = "Обращение должно существовать")
     public ResponseEntity<List<DeadlineDto>> getDeadlinesByAppeal(@PathVariable("id") Long appealId,
                                                                     @Parameter(description = "0 - все резолюции, 1 - архивные, 2 - не в архиве")
-                                                                    @RequestParam Integer archived) {
+                                                                    @RequestParam(defaultValue = "0") Integer archived) {
 
         log.info("Получение дедлайнов...");
         if (archived == 1) {

@@ -118,6 +118,7 @@ public class ResolutionServiceTest {
         assertEquals(archivedResolutions, resultListArchivedResolutions);
         assertEquals(notArchivedResolutions, resultListNotArchivedResolutions);
         assertEquals(allResolutions, resultListAllResolutions);
+
         verify(resolutionRepository).findResolutions(true);
         verify(resolutionRepository).findResolutions(false);
         verify(resolutionRepository).findResolutions(null);

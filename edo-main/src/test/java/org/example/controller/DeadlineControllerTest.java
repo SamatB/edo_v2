@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get   ;
 
 import java.util.List;
 
@@ -16,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Тесты для класса DeadlineController.
@@ -28,6 +31,7 @@ public class DeadlineControllerTest {
 
     @InjectMocks
     private DeadlineController deadlineController;
+
 
     @BeforeEach
     public void setUp() {
@@ -63,7 +67,7 @@ public class DeadlineControllerTest {
      * тест метода получения списка объектов DeadlineDto по идентификатору обращения
      */
     @Test
-    public void testGetDeadlinesByAppeal() {
+    public void testGetDeadlinesByAppeal() throws Exception {
         List<DeadlineDto> deadlineDtoList = mock(List.class);
 
 
@@ -72,6 +76,8 @@ public class DeadlineControllerTest {
         ResponseEntity<List<DeadlineDto>> response = deadlineController.getDeadlinesByAppeal(1L, 0);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(deadlineDtoList, response.getBody());
+
+
     }
 
     /**
