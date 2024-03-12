@@ -38,6 +38,9 @@ public class AppealDto {
     @Schema(description = "Номер обращения")
     private String number;
 
+    @Schema(description = "Зарезервированный номер обращения")
+    private String reservedNumber;
+
     @Schema(description = "Описание обращения")
     private String annotation;
 
