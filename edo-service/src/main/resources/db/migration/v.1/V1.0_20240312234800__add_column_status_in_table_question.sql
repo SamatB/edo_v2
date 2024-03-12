@@ -1,0 +1,2 @@
+ALTER TABLE question
+    ADD COLUMN IF NOT EXISTS status VARCHAR(255);
