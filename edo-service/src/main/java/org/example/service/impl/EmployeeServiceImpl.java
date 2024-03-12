@@ -128,11 +128,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeDto> getEmployeeSearchByText(String name) {
         String changedName = CheckingLayout.fixLayout(name).toLowerCase().replace('ё', 'е');
-        return employeeRepository.findAll().stream()
-                .filter(e ->
-                        e.getFioDative().replace('ё', 'e').toLowerCase().contains(changedName) ||
-                                e.getFioGenitive().replace('ё', 'e').toLowerCase().contains(changedName) ||
-                                e.getFioNominative().replace('ё', 'e').toLowerCase().contains(changedName))
+        return employeeRepository.findEmployeeSearchByText(changedName).stream()
                 .sorted(new SortEmployeeByLastName())
                 .map(employeeMapper::entityToDto)
                 .toList();
