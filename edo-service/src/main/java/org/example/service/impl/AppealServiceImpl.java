@@ -107,4 +107,26 @@ public class AppealServiceImpl implements AppealService {
         appealRepository.save(appeal);
         return appealMapper.entityToDto(appeal);
     }
+
+    /**
+     * Метод для резервирования номера обращения по указанному номеру.
+     * Если обращение с указанным номеров не найдено, выбрасывает исключение EntityNotFoundException.
+     * Если у обращения уже ранее был зарезервирован номер, выбрасывает исключение EntityExistsException.
+     *
+     * @param appealNumber номер обращения, для которого резервируется номер.
+     * @return объект DTO обращения в случае успешной резервации.
+     */
+    @Override
+    @Transactional
+    public AppealDto reserveNumberForAppeal(String appealNumber) {
+        Appeal appeal = appealRepository.findAllByNumber(appealNumber)
+                .stream().findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Ошибка резервирования номера: обращение с номером: " + appealNumber + " не найдено"));
+        if (appeal.getReservedNumber() != null) {
+            throw new EntityExistsException("Ошибка резервирования номера: у обращения с номером " + appealNumber + " был ранее зарезервирован номер " + appeal.getReservedNumber());
+        }
+        appeal.setReservedNumber(nomenclatureService.generateNumberForAppeal(appeal.getNomenclature()));
+        appealRepository.save(appeal);
+        return appealMapper.entityToDto(appeal);
+    }
 }
