@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.Collection;
 
 public interface DeadlineRepository extends JpaRepository<Deadline, Long> {
 
@@ -38,10 +38,10 @@ public interface DeadlineRepository extends JpaRepository<Deadline, Long> {
      * @param archived - флаг, указывающий на архивацию "0 - все резолюции, 1 - архивные, 2 - не в архиве"
      * @return Список дедлайнов резолюций
      */
-    @Query("SELECT dl FROM Deadline dl WHERE (dl.resolution.question.appeal.id = :appealId AND (0 = :archived ) " +
-            "OR (dl.resolution.question.appeal.id = :appealId AND (1 = :archived AND dl.resolution.archivedDate IS NOT NULL))" +
-            "OR (dl.resolution.question.appeal.id = :appealId AND (2 = :archived AND dl.resolution.archivedDate IS NULL)))")
-    List<Deadline> getDeadlinesByAppeal(Long appealId, Integer archived);
+    @Query("SELECT dl FROM Deadline dl WHERE (dl.resolution.question.appeal.id = :appealId AND (:archived IS NULL " +
+            "OR (:archived = true AND dl.resolution.archivedDate IS NOT NULL)" +
+            "OR (:archived = false AND dl.resolution.archivedDate IS NULL)))")
+    Collection<Deadline> getDeadlinesByAppeal(Long appealId, Boolean archived);
 
 
 }

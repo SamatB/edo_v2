@@ -10,7 +10,7 @@ import org.example.feign.DeadlineFeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Контроллер для работы установки и изменения дедлайна.
@@ -49,60 +49,86 @@ public class DeadlineController {
     /**
      * Метод возвращает список объектов DeadlineDto  по идентификатору обращения с учетом нахождения резолюций в архиве.
      * @param appealId - идентификатор обращения
-     * @param archived - флаг, указывающий на архивацию "0 - все резолюции, 1 - архивные, 2 - не в архиве"
+     * @param archived - флаг, указывающий на архивацию "null - все резолюции, true - архивные, false - не в архиве"
      * @return ответ со списком объектов DeadlineDto
      */
     @GetMapping("/getDeadlinesByAppeal/{id}")
     @Operation(summary = "Получает дедлайн резолюции по идентификатору обращения",
             description = "Обращение должно существовать")
-    public ResponseEntity<List<DeadlineDto>> getDeadlinesByAppeal(@PathVariable("id") Long appealId,
-                                                                    @Parameter(description = "0 - все резолюции, 1 - архивные, 2 - не в архиве")
-                                                                    @RequestParam(defaultValue = "0") Integer archived) {
+    public ResponseEntity<Collection<DeadlineDto>> getDeadlinesByAppeal(@PathVariable("id") Long appealId,
+                                                                        @Parameter(description = "null - все резолюции, true - архивные, false - не в архиве")
+                                                                        @RequestParam(required = false) Boolean archived) {
 
-        log.info("Получение дедлайнов...");
-        if (archived == 1) {
-            log.info("Получение дедлайнов резолюций, находящихся в архиве...");
-            try {
-                List<DeadlineDto> deadlineDtoList = deadlineFeignClient.getDeadlinesByAppeal(appealId, archived);
-                if (deadlineDtoList != null) {
-                    log.info("Дедлайны архивных резолюций получены");
-                    return ResponseEntity.ok(deadlineDtoList);
-                } else {
-                    log.info("Нет резолюций в архиве");
-                    return ResponseEntity.status(204).build();
-                }
-            } catch (Exception e) {
-                log.warn("Получение дедлайнов завершено с ошибкой" + e);
-                return ResponseEntity.status(502).build();
-            }
-        } else if (archived == 2) {
-            log.info("Получение дедлайнов резолюций, находящихся не в архиве...");
-            try {
-                List<DeadlineDto> deadlineDtoList = deadlineFeignClient.getDeadlinesByAppeal(appealId, archived);
-                if (deadlineDtoList != null) {
-                    log.info("Дедлайны резолюций, находящихся не в архиве, получены");
-                    return ResponseEntity.ok(deadlineDtoList);
-                } else {
-                    log.info("Все резолюции в архиве");
-                    return ResponseEntity.status(204).build();
-                }
-            } catch (Exception e) {
-                log.warn("Получение дедлайнов завершено с ошибкой" + e);
-                return ResponseEntity.status(502).build();
-            }
-        } else if (archived == 0) {
-            log.info("Получение дедлайнов всех резолюций...");
-            try {
-                List<DeadlineDto> deadlineDtoList = deadlineFeignClient.getDeadlinesByAppeal(appealId, archived);
+
+        try {
+            if (archived == null) {
+                log.info("Получение всех дедлайнов...");
+                Collection<DeadlineDto> deadlineDtoList = deadlineFeignClient.getDeadlinesByAppeal(appealId, archived);
                 log.info("Дедлайны резолюций получены");
                 return ResponseEntity.ok(deadlineDtoList);
-            } catch (Exception e) {
-                log.warn("Получение дедлайнов завершено с ошибкой" + e);
-                return ResponseEntity.notFound().build();
+            } else {
+                log.info("Получение дедлайнов {}", (archived ? "резолюций, находящихся в архиве" : "находящихся не в архиве"));
+                Collection<DeadlineDto> deadlineDtoList = deadlineFeignClient.getDeadlinesByAppeal(appealId, archived);
+                if (deadlineDtoList != null) {
+                    log.info("Получены дедлайны {}", (archived ? "резолюций, находящихся в архиве" : "находящихся не в архиве"));
+                    return ResponseEntity.ok(deadlineDtoList);
+                } else {
+                    log.info("{}", (archived ? "Нет резолюций в архиве" : "Все резолюции в архиве"));
+                    return ResponseEntity.status(204).build();
+                }
             }
-        } else
-            log.warn("Получение дедлайнов завершено с ошибкой");
-        return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.warn("Получение дедлайнов завершено с ошибкой" + e);
+            return ResponseEntity.notFound().build();
+        }
     }
+
+
+
+//        log.info("Получение дедлайнов...");
+//        if (archived == 1) {
+//            log.info("Получение дедлайнов резолюций, находящихся в архиве...");
+//            try {
+//                Collection<DeadlineDto> deadlineDtoList = deadlineFeignClient.getDeadlinesByAppeal(appealId, archived);
+//                if (deadlineDtoList != null) {
+//                    log.info("Дедлайны архивных резолюций получены");
+//                    return ResponseEntity.ok(deadlineDtoList);
+//                } else {
+//                    log.info("Нет резолюций в архиве");
+//                    return ResponseEntity.status(204).build();
+//                }
+//            } catch (Exception e) {
+//                log.warn("Получение дедлайнов завершено с ошибкой" + e);
+//                return ResponseEntity.status(502).build();
+//            }
+//        } else if (archived == 2) {
+//            log.info("Получение дедлайнов резолюций, находящихся не в архиве...");
+//            try {
+//                Collection<DeadlineDto> deadlineDtoList = deadlineFeignClient.getDeadlinesByAppeal(appealId, archived);
+//                if (deadlineDtoList != null) {
+//                    log.info("Дедлайны резолюций, находящихся не в архиве, получены");
+//                    return ResponseEntity.ok(deadlineDtoList);
+//                } else {
+//                    log.info("Все резолюции в архиве");
+//                    return ResponseEntity.status(204).build();
+//                }
+//            } catch (Exception e) {
+//                log.warn("Получение дедлайнов завершено с ошибкой" + e);
+//                return ResponseEntity.status(502).build();
+//            }
+//        } else if (archived == 0) {
+//            log.info("Получение дедлайнов всех резолюций...");
+//            try {
+//                Collection<DeadlineDto> deadlineDtoList = deadlineFeignClient.getDeadlinesByAppeal(appealId, archived);
+//                log.info("Дедлайны резолюций получены");
+//                return ResponseEntity.ok(deadlineDtoList);
+//            } catch (Exception e) {
+//                log.warn("Получение дедлайнов завершено с ошибкой" + e);
+//                return ResponseEntity.notFound().build();
+//            }
+//        } else
+//            log.warn("Получение дедлайнов завершено с ошибкой");
+//        return ResponseEntity.notFound().build();
+//    }
 
 }

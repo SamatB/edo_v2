@@ -2,11 +2,11 @@ package org.example.service;
 
 import org.example.dto.DeadlineDto;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface DeadlineService {
 
     DeadlineDto setOrUpdateDeadline(Long resolutionId, DeadlineDto deadlineDto);
 
-    List<DeadlineDto> getDeadlinesByAppeal(Long appealId, Integer archived);
+    Collection<DeadlineDto> getDeadlinesByAppeal(Long appealId, Boolean archived);
 }

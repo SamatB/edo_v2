@@ -8,10 +8,9 @@ import org.example.entity.Resolution;
 import org.example.mapper.DeadlineMapper;
 import org.example.repository.DeadlineRepository;
 import org.example.service.DeadlineService;
-import org.example.service.ResolutionService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -19,8 +18,6 @@ import java.util.Optional;
 public class DeadlineServiceImpl implements DeadlineService {
     private final DeadlineRepository deadlineRepository;
     private final DeadlineMapper deadlineMapper;
-
-    private final ResolutionService resolutionService;
 
 
     /**
@@ -56,13 +53,13 @@ public class DeadlineServiceImpl implements DeadlineService {
     /**
      * Метод возвращает список объектов DeadlineDto  по идентификатору обращения с учетом нахождения резолюций в архиве.
      * @param appealId - идентификатор обращения
-     * @param archived - флаг, указывающий на архивацию "0 - все резолюции, 1 - архивные, 2 - не в архиве"
+     * @param archived - флаг, указывающий на архивацию "null - все резолюции, true - архивные, false - не в архиве"
      * @return Список объектов DeadlineDto
      */
     @Override
-    public List<DeadlineDto> getDeadlinesByAppeal(Long appealId, Integer archived) {
+    public Collection<DeadlineDto> getDeadlinesByAppeal(Long appealId, Boolean archived) {
 
-        return (List<DeadlineDto>) deadlineMapper.entityListToDtoList(
+        return  deadlineMapper.entityListToDtoList(
                 deadlineRepository.getDeadlinesByAppeal(appealId,archived));
     }
 }

@@ -10,7 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -65,12 +65,12 @@ public class DeadlineControllerTest {
      */
     @Test
     public void testGetDeadlinesByAppeal() throws Exception {
-        List<DeadlineDto> deadlineDtoList = mock(List.class);
+        Collection<DeadlineDto> deadlineDtoList = mock(Collection.class);
 
 
-        when(deadlineFeignClient.getDeadlinesByAppeal(1L, 0)).thenReturn(deadlineDtoList);
+        when(deadlineFeignClient.getDeadlinesByAppeal(1L, null)).thenReturn(deadlineDtoList);
 
-        ResponseEntity<List<DeadlineDto>> response = deadlineController.getDeadlinesByAppeal(1L, 0);
+        ResponseEntity<Collection<DeadlineDto>> response = deadlineController.getDeadlinesByAppeal(1L, null);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(deadlineDtoList, response.getBody());
 
@@ -83,11 +83,11 @@ public class DeadlineControllerTest {
      */
     @Test
     public void testGetResolutionDeadlinesWithMistakes() {
-        List<DeadlineDto> deadlineDtoList = mock(List.class);
+        Collection<DeadlineDto> deadlineDtoList = mock(Collection.class);
 
-        when(deadlineFeignClient.getDeadlinesByAppeal(1L, 0)).thenReturn(deadlineDtoList);
+        when(deadlineFeignClient.getDeadlinesByAppeal(1L, null)).thenReturn(deadlineDtoList);
 
-        ResponseEntity<List<DeadlineDto>> response = deadlineController.getDeadlinesByAppeal(anyLong(), 0);
+        ResponseEntity<Collection<DeadlineDto>> response = deadlineController.getDeadlinesByAppeal(anyLong(), null);
         assertEquals(ResponseEntity.notFound().build(), response);
     }
 }

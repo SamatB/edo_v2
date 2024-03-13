@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Клиент для для отправки запросов к edo-service, работа с сущностью Deadline.
@@ -31,11 +31,11 @@ public interface DeadlineFeignClient {
     /**
     * Получение дедлайнов всех резолюций по идентификатору Обращения
      */
-    @GetMapping("/deadline/getAllOnAppeal/{id}")
+    @GetMapping("/deadline/getDeadlinesByAppeal/{id}")
     @Operation( summary = "Получает дедлайн резолюции по идентификатору обращения",
                 description = "Обращение должно существовать")
-    List<DeadlineDto> getDeadlinesByAppeal(@PathVariable("id")Long appealId,
-                                           @Parameter(description = "0 - все резолюции, 1 - архивные, 2 - не в архиве")
-                                           @RequestParam(defaultValue = "0") Integer archived);
+    Collection<DeadlineDto> getDeadlinesByAppeal(@PathVariable("id")Long appealId,
+                                                 @Parameter(description = "null - все резолюции, true - архивные, false - не в архиве")
+                                                 @RequestParam(required = false) Boolean archived);
 
 }

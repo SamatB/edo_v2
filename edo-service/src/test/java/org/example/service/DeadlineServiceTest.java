@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,15 +66,15 @@ public class DeadlineServiceTest {
     @Test
     public void testGetAllByResolution_Question_Appeal_Id() {
 
-        List<DeadlineDto> deadlineDtoList = mock(List.class);
+        Collection<DeadlineDto> deadlineDtoList = mock(List.class);
         Appeal appeal = mock(Appeal.class);
 
         when(deadlineMapper.entityListToDtoList(
-                deadlineRepository.getDeadlinesByAppeal(appeal.getId(), 0)))
+                deadlineRepository.getDeadlinesByAppeal(appeal.getId(), null)))
                 .thenReturn(deadlineDtoList);
 
 
-        List<DeadlineDto> deadlineDtos = deadlineService.getDeadlinesByAppeal(2L, 0);
+        Collection<DeadlineDto> deadlineDtos = deadlineService.getDeadlinesByAppeal(2L, null);
 
         assertEquals(deadlineDtoList, deadlineDtos);
     }
