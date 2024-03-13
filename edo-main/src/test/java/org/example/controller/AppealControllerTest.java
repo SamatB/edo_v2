@@ -12,9 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Тесты для класса AppealController.
@@ -149,6 +148,70 @@ public class AppealControllerTest {
 
         ResponseEntity<AppealDto> response = appealController.registerAppeal(1L);
 
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    /**
+     * Тест для метода reserveNumberForAppeal.
+     */
+    @Test
+    public void testReserveNumberForAppeal_Ok() {
+        AppealDto appealDto = new AppealDto();
+        AppealDto expected = new AppealDto();
+        expected.setReservedNumber("АБВ-12345");
+        when(appealFeignClient.reserveNumberForAppeal(any(AppealDto.class))).thenReturn(expected);
+        ResponseEntity<AppealDto> response = appealController.reserveNumberForAppeal(appealDto);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expected, response.getBody());
+        verify(appealFeignClient, times(1)).reserveNumberForAppeal(appealDto);
+    }
+
+    /**
+     * Тест для метода reserveNumberForAppeal с нулевым обращением.
+     */
+    @Test
+    public void testReserveNumberForAppeal_NullAppeal_BadRequest() {
+        AppealDto appealDto = new AppealDto();
+        when(appealFeignClient.reserveNumberForAppeal(eq(null))).thenThrow(badRequestException);
+
+        ResponseEntity<AppealDto> response = appealController.reserveNumberForAppeal(appealDto);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    /**
+     * Тест для метода reserveNumberForAppeal с нулевым nomenclature.
+     */
+    @Test
+    public void testReserveNumberForAppeal_NullNomenclature_BadRequest() {
+        AppealDto appealDto = new AppealDto();
+        appealDto.setNomenclature(null);
+        when(appealFeignClient.reserveNumberForAppeal(appealDto)).thenThrow(badRequestException);
+        ResponseEntity<AppealDto> response = appealController.reserveNumberForAppeal(appealDto);
+        System.err.println(response.toString());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    /**
+     * Тест для метода reserveNumberForAppeal с уже существующим номером.
+     */
+    @Test
+    public void testReserveNumberForAppeal_ExistingNumber_BadRequest() {
+        AppealDto appealDto = new AppealDto();
+        appealDto.setNumber("АБВ-12345");
+        when(appealFeignClient.reserveNumberForAppeal(appealDto)).thenThrow(badRequestException);
+        ResponseEntity<AppealDto> response = appealController.reserveNumberForAppeal(appealDto);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    /**
+     * Тест для метода reserveNumberForAppeal с уже зарезервированным номером.
+     */
+    @Test
+    public void testReserveNumberForAppeal_ExistingReservedNumber_BadRequest() {
+        AppealDto appealDto = new AppealDto();
+        appealDto.setReservedNumber("АБВ-12345");
+        when(appealFeignClient.reserveNumberForAppeal(appealDto)).thenThrow(badRequestException);
+        ResponseEntity<AppealDto> response = appealController.reserveNumberForAppeal(appealDto);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

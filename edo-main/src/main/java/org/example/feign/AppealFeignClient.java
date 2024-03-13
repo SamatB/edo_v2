@@ -41,9 +41,9 @@ public interface AppealFeignClient {
     /**
      * Метод для резервирования номера обращения
      *
-     * @param  appealNumber   номер обращения
+     * @param  appeal   номер обращения
      * @return                обновленное AppealDto
      */
-    @PatchMapping("/appeal/reserve-number/{appealNumber}")
-    AppealDto reserveNumberForAppeal(@PathVariable String appealNumber);
+    @PostMapping("/appeal/reserve-number")
+    AppealDto reserveNumberForAppeal(@RequestBody AppealDto appeal);
 }
