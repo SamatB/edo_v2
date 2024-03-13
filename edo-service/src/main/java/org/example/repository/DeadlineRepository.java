@@ -3,9 +3,7 @@
  */
 package org.example.repository;
 
-import org.example.dto.DeadlineDto;
 import org.example.entity.Deadline;
-import org.example.entity.Resolution;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

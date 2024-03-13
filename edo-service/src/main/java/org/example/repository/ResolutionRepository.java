@@ -1,14 +1,12 @@
 package org.example.repository;
 
 import org.example.dto.ResolutionDto;
-import org.example.entity.Question;
 import org.example.entity.Resolution;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 

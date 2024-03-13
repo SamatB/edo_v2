@@ -1,9 +1,6 @@
 package org.example.service;
 
 import org.example.dto.ResolutionDto;
-import org.example.entity.Appeal;
-import org.example.entity.Question;
-import org.example.entity.Resolution;
 
 import java.util.List;
 

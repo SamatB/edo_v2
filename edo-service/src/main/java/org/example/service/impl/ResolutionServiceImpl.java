@@ -5,7 +5,6 @@ import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.ResolutionDto;
-import org.example.entity.Resolution;
 import org.example.mapper.ResolutionMapper;
 import org.example.repository.ResolutionRepository;
 import org.example.service.ResolutionService;
