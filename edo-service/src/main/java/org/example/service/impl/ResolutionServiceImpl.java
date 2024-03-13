@@ -69,7 +69,7 @@ public class ResolutionServiceImpl implements ResolutionService {
     private void updateStatusQuestionAndAppeal(Resolution resolution) {
         Optional.ofNullable(resolution)
                 .map(Resolution::getQuestion)
-                .filter(question -> question.getStatusType() == null || question.getStatusType() == StatusType.NOT_REGISTERED)
+                .filter(question -> question.getStatusType() == null || question.getStatusType().equals(StatusType.NOT_REGISTERED))
                 .ifPresent(question -> {
                     question.setStatusType(StatusType.ON_THE_CARPET);
                     log.info("Статус Question изменился \"На рассмотрении\"");
