@@ -11,5 +11,5 @@ public interface AppealService {
 
     AppealDto registerAppeal(Long id);
 
-    AppealDto reserveNumberForAppeal(String appealNumber);
+    AppealDto reserveNumberForAppeal(AppealDto appealDto);
 }

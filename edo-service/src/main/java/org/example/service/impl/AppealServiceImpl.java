@@ -39,12 +39,16 @@ public class AppealServiceImpl implements AppealService {
      * @return объект DTO обращения.
      */
     public AppealDto saveAppeal(AppealDto appealDto) {
+        log.info("Сохранение обращения: {}", appealDto);
         return Optional.ofNullable(appealDto)
                 .map(appealMapper::dtoToEntity)
                 .stream()
                 .peek(appeal -> {
-                    appeal.setNumber(nomenclatureService.generateNumberForAppeal(appeal.getNomenclature()));
-                    appeal.setStatusType(StatusType.NOT_REGISTERED);
+                    if (appeal.getId() == null) {
+                        log.info("Обращение не содержит id, создание нового обращения");
+                        appeal.setCreationDate(ZonedDateTime.now());
+                        appeal.setStatusType(StatusType.NOT_REGISTERED);
+                    }
                 })
                 .findFirst()
                 .map(appealRepository::save)
@@ -109,24 +113,37 @@ public class AppealServiceImpl implements AppealService {
     }
 
     /**
-     * Метод для резервирования номера обращения по указанному номеру.
-     * Если обращение с указанным номеров не найдено, выбрасывает исключение EntityNotFoundException.
-     * Если у обращения уже ранее был зарезервирован номер, выбрасывает исключение EntityExistsException.
+     * Метод для резервирования номера обращения с использованием nomenclatureService.
+     * Если у обращения уже ранее был зарезервирован номер или имеется номер, выбрасывает исключение EntityExistsException.
+     * Если нет поля номенклатуры или нет объекта обращения, выбрасывает исключение IllegalArgumentException.
      *
-     * @param appealNumber номер обращения, для которого резервируется номер.
+     * @param appealDto объект обращения, для которого резервируется номер.
      * @return объект DTO обращения в случае успешной резервации.
      */
-    @Override
     @Transactional
-    public AppealDto reserveNumberForAppeal(String appealNumber) {
-        Appeal appeal = appealRepository.findAllByNumber(appealNumber)
-                .stream().findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Ошибка резервирования номера: обращение с номером: " + appealNumber + " не найдено"));
-        if (appeal.getReservedNumber() != null) {
-            throw new EntityExistsException("Ошибка резервирования номера: у обращения с номером " + appealNumber + " был ранее зарезервирован номер " + appeal.getReservedNumber());
-        }
-        appeal.setReservedNumber(nomenclatureService.generateNumberForAppeal(appeal.getNomenclature()));
-        appealRepository.save(appeal);
-        return appealMapper.entityToDto(appeal);
+    public AppealDto reserveNumberForAppeal(AppealDto appealDto) {
+        log.info("Резервирование номера для обращения: {}", appealDto);
+        return Optional.ofNullable(appealDto)
+                .map(appealMapper::dtoToEntity)
+                .stream()
+                .peek(appeal -> {
+                    if (appeal.getReservedNumber() != null || appeal.getNumber() != null) {
+                        log.warn("Ошибка резервирования номера обращения: у обращения был ранее зарезервирован номер: {}", (appeal.getNumber() != null
+                                ? appeal.getNumber()
+                                : appeal.getReservedNumber()));
+                        throw new EntityExistsException("Ошибка резервирования номера обращения: у обращения был ранее зарезервирован номер " + (appeal.getNumber() != null
+                                ? appeal.getNumber()
+                                : appeal.getReservedNumber()));
+                    }
+                    if (appeal.getNomenclature() == null) {
+                        log.warn("Ошибка резервирования номера обращения: номенклатура не должна быть null");
+                        throw new IllegalArgumentException("Ошибка резервирования номера обращения: номенклатура не должна быть null");
+                    }
+                    appeal.setReservedNumber(nomenclatureService.generateNumberForAppeal(appeal.getNomenclature()));
+                })
+                .findFirst()
+                .map(appealRepository::save)
+                .map(appealMapper::entityToDto)
+                .orElseThrow(() -> new IllegalArgumentException("Ошибка резервирования номера обращения: обращение не должно быть null"));
     }
 }

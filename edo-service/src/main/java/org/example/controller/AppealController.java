@@ -93,25 +93,26 @@ public class AppealController {
 
     /**
      * Резервирует номер для обращения.
-     * При ошибке получения обращения возвращается ответ со статусом "notFound"
-     * При попытке резервации номера для обращения с уже зарезервированным номером возвращается ответ со статусом "badRequest"
+     * При попытке резервации номера для обращения с уже зарезервированным номером
+     * или существующим номером,
+     * или отсутствующим полем nomenclature
+     * возвращается ответ со статусом "badRequest"
      *
-     * @param appealNumber номер обращения.
+     * @param appeal номер обращения.
      * @return объект DTO обращения в случае успешной резервации.
      */
-    @PatchMapping("/reserve-number/{appealNumber}")
+    @PostMapping("/reserve-number")
     @Operation(summary = "Резервирование номера для обращения")
-    public ResponseEntity<AppealDto> reserveNumberForAppeal(@PathVariable String appealNumber) {
-        log.info("Получение обращения с номером {}", appealNumber);
+    public ResponseEntity<AppealDto> reserveNumberForAppeal(@RequestBody AppealDto appeal) {
+        log.info("Резервирование номера  для обращения...");
 
         try {
-            AppealDto appealDto = appealService.reserveNumberForAppeal(appealNumber);
-            log.info("Номер {} успешно зарезервирован", appealNumber);
+            AppealDto appealDto = appealService.reserveNumberForAppeal(appeal);
+            log.info("Номер {} успешно зарезервирован", appealDto.getReservedNumber() != null
+                    ? appealDto.getReservedNumber()
+                    : null);
             return ResponseEntity.ok(appealDto);
-        } catch (EntityNotFoundException e) {
-            log.warn(e.getMessage());
-            return ResponseEntity.notFound().build();
-        } catch (EntityExistsException e) {
+        } catch (EntityExistsException | IllegalArgumentException e) {
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
