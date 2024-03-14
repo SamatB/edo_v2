@@ -5,9 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
+
+import static org.example.entity.MatchingBlock.APPROVAL_BLOCK_PARTICIPANTS;
+import static org.example.entity.MatchingBlock.APPROVAL_BLOCK_SIGNERS;
 
 /**
  * Класс, представляющий Листа согласования.
@@ -86,8 +90,8 @@ public class AgreementList extends BaseEntity {
      * Блоки подписантов
      */
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "matching_block_signatory_id")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "agreementList")
+    @Where(clause = APPROVAL_BLOCK_SIGNERS)
     private Set<MatchingBlock> signatory;
 
 
@@ -95,7 +99,7 @@ public class AgreementList extends BaseEntity {
      * Блоки согласующих
      */
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "matching_block_coordinating_id")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "agreementList")
+    @Where(clause = APPROVAL_BLOCK_PARTICIPANTS)
     private Set<MatchingBlock> coordinating;
 }

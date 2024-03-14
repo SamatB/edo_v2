@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.enums.ApprovalBlockParticipantType;
 import org.example.utils.MatchingBlockType;
 
 import java.util.Set;
@@ -34,4 +35,6 @@ public class MatchingBlockDto {
     @Schema(description = "Лист согласования")
     private AgreementListDto agreementList;
 
+    @Schema(description = "Тип блока в листе согласования")
+    private ApprovalBlockParticipantType approvalBlockType;
 }

@@ -76,4 +76,10 @@ public class Participant extends BaseEntity {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
+    /**
+     * Связь с блоком согласующих
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "matching_block_id")
+    private MatchingBlock matchingBlock;
 }

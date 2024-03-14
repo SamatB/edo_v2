@@ -7,10 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.example.enums.ApprovalBlockParticipantType;
 import org.example.utils.MatchingBlockType;
 
 
 import java.util.Set;
+
+import static jakarta.persistence.EnumType.STRING;
 
 /**
  * Блок согласования
@@ -26,11 +29,19 @@ import java.util.Set;
 public class MatchingBlock extends BaseEntity {
 
     /**
+     * Блок участников согласования
+     */
+    public static final String APPROVAL_BLOCK_PARTICIPANTS = "approval_block_type = 'PARTICIPANT_BLOCK'";
+
+    /**
+     * Блок подписантов
+     */
+    public static final String APPROVAL_BLOCK_SIGNERS = "approval_block_type = 'SIGNER_BLOCK'";
+
+    /**
      * Участники согласования
      */
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "participant_id")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "matchingBlock")
     private Set<Participant> participants;
 
     /**
@@ -47,7 +58,7 @@ public class MatchingBlock extends BaseEntity {
      */
 
     @NotNull
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @Column(name = "type")
     private MatchingBlockType matchingBlockType;
 
@@ -60,4 +71,10 @@ public class MatchingBlock extends BaseEntity {
     @JoinColumn(name = "agreement_list_id")
     private AgreementList agreementList;
 
+    /**
+     * Тип блока в листе согласования
+     */
+    @Column(name = "approval_block_type")
+    @Enumerated(STRING)
+    private ApprovalBlockParticipantType approvalBlockType;
 }
