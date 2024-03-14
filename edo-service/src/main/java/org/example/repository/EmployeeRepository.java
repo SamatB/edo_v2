@@ -27,10 +27,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
      * с учётом, что е==ё.
      * @param changedName - строка с символами для поиска сотрудников по FIO.
      */
-    @Query(value = "SELECT * FROM \"edo-2\".employee WHERE LOWER(REPLACE(fio_dative, 'ё', 'e')) LIKE LOWER(CONCAT('%', :changedName, '%')) " +
+    @Query(value = "SELECT * FROM employee WHERE LOWER(REPLACE(fio_dative, 'ё', 'e')) LIKE LOWER(CONCAT('%', :changedName, '%')) " +
             "OR LOWER(REPLACE(fio_genitive, 'ё', 'e')) LIKE LOWER(CONCAT('%', :changedName, '%')) " +
             "OR LOWER(REPLACE(fio_nominative, 'ё', 'e')) LIKE LOWER(CONCAT('%', :changedName, '%'))",
         nativeQuery = true)
-
     List<Employee> findEmployeeSearchByText(@Param("changedName") String changedName);
 }
