@@ -18,7 +18,6 @@ import org.example.service.AddressParser;
 import org.example.service.DepartmentService;
 import org.example.service.EmployeeService;
 import org.example.utils.CheckingLayout;
-import org.example.utils.SortEmployeeByLastName;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,9 +126,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<EmployeeDto> getEmployeeSearchByText(String name) {
-        String changedName = CheckingLayout.fixLayout(name).toLowerCase().replace('ё', 'е');
+        String changedName = CheckingLayout.fixLayout(name).toLowerCase().replace("ё", "е");
         return employeeRepository.findEmployeeSearchByText(changedName).stream()
-                .sorted(new SortEmployeeByLastName())
                 .map(employeeMapper::entityToDto)
                 .toList();
     }
