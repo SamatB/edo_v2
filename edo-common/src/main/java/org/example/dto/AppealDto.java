@@ -55,4 +55,8 @@ public class AppealDto {
 
     @Schema(description = "Адресаты")
     private List<EmployeeDto> addressee;
+
+    @NotNull
+    @Schema(description = "Номенклатура")
+    private NomenclatureDto nomenclature;
 }

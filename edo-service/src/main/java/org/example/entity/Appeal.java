@@ -2,7 +2,6 @@ package org.example.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,7 +46,6 @@ public class Appeal extends BaseEntity {
     /**
      * Номер обращения
      */
-    @NotNull
     @Column(name = "number")
     private String number;
 
@@ -55,7 +53,6 @@ public class Appeal extends BaseEntity {
     /**
      * Зарезервированный номер обращения
      */
-//    @Pattern(regexp = "^[\\w&&[^\\d]&&[^_]]+-[0-9]{4}//[0-9]+-[0-9]+$", message = "Неверный формат номера обращения")
     @Column(name = "reserved_number", unique = true, length = 50)
     private String reservedNumber;
 
@@ -104,6 +101,7 @@ public class Appeal extends BaseEntity {
     /**
      * связь с сущностью Номенклатура
      */
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nomenclature_id", referencedColumnName = "id")
     private Nomenclature nomenclature;
