@@ -98,4 +98,11 @@ public class Appeal extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nomenclature_id", referencedColumnName = "id")
     private Nomenclature nomenclature;
+
+    /**
+     * связь с сущностью Регион (у одного обращения Appeal может быть один регион Region)
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", referencedColumnName = "id")
+    private Region region;
 }
