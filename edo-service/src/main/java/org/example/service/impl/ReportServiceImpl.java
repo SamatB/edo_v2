@@ -1,5 +1,6 @@
 package org.example.service.impl;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.Appeal;
@@ -8,6 +9,7 @@ import org.example.service.ReportService;
 import org.example.utils.AppealExcelExporter;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -39,6 +41,23 @@ public class ReportServiceImpl implements ReportService {
         try {
             log.info("Запись в XLSX файл {}", fileName);
             appealExcelExporter.export(fileName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Загрузка XLSX файла
+     *
+     * @return ByteArrayInputStream
+     */
+    public ByteArrayInputStream getAppealsXlsxReport() {
+        log.info("Получение списка обращений из базы данных");
+        List<Appeal> appeals = appealRepository.findAll();
+        appealExcelExporter.createNewWorkBook(appeals);
+        try {
+            log.info("Загрузка XLSX файла...");
+            return appealExcelExporter.exportAppealsToXlsx();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
