@@ -8,8 +8,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
 import org.example.service.AppealService;
+import org.example.service.ReportService;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Контроллер для работы с сущностью Appeal.
@@ -22,7 +32,7 @@ import org.springframework.web.bind.annotation.*;
 public class AppealController {
 
     private final AppealService appealService;
-
+    private final ReportService reportService;
 
     /**
      * Сохраняет новое обращение в базу данных.
@@ -115,6 +125,50 @@ public class AppealController {
         } catch (EntityExistsException | IllegalArgumentException e) {
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+    /**
+     * Возвращает список обращений.
+     *
+     * @return список обращений
+     */
+    @GetMapping
+    @Operation(summary = "Получение списка обращений")
+    public ResponseEntity<List<AppealDto>> getAllAppeals() {
+        log.info("Получение списка обращений");
+        List<AppealDto> appealDtos = appealService.getAllAppeals();
+        if (appealDtos.isEmpty()) {
+            log.warn("Список обращений пуст");
+            return ResponseEntity.noContent().build();
+        }
+        log.info("Получено " + (!appealDtos.isEmpty() ? appealDtos.size() : 0) + " обращений");
+        return ResponseEntity.ok(appealDtos);
+    }
+
+    @GetMapping("/export/excel")
+    @Operation(summary = "Экспорт обращений в Excel")
+    public ResponseEntity<Resource> downloadAppealsXlsxReport() {
+        log.info("Экспорт обращений в Excel");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+        String filename = "appeals_" + currentDateTime + ".xlsx";
+        try {
+            ByteArrayResource file = new ByteArrayResource(reportService.getAppealsXlsxReport().readAllBytes());
+            if (file.contentLength() == 0) {
+                log.warn("Ошибка получения списка обращений: файл не существует");
+                return ResponseEntity.notFound().build();
+            }
+            log.info("Список обращений отправлен");
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(file.contentLength())
+                    .body(file);
+        } catch (Exception e) {
+            log.warn("Ошибка получения списка обращений: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
     }
 }
