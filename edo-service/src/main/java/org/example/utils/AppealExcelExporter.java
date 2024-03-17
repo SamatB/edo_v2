@@ -16,6 +16,8 @@ import org.example.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -121,14 +123,17 @@ public class AppealExcelExporter {
         }
     }
 
-    public void export(HttpServletResponse response) throws IOException {
+    public ByteArrayInputStream exportAppealsToXlsx() throws IOException {
         writeHeaderLine();
         writeDataLines();
-
-        ServletOutputStream outputStream = response.getOutputStream();
-        workbook.write(outputStream);
-        workbook.close();
-
-        outputStream.close();
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            workbook.write(out);
+            workbook.close();
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            log.error("Ошибка записи в XLSX файл", e);
+            return null;
+        }
     }
 }

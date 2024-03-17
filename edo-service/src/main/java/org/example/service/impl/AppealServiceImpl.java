@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,16 @@ public class AppealServiceImpl implements AppealService {
     private final AppealRepository appealRepository;
     private final AppealMapper appealMapper;
     private final NomenclatureService nomenclatureService;
+
+    /**
+     * Метод для получения всех обращений в базе данных
+     */
+    public List<AppealDto> getAllAppeals() {
+        return appealRepository.findAll()
+                .stream()
+                .map(appealMapper::entityToDto)
+                .collect(Collectors.toList());
+    }
 
     /**
      * Метод для сохранения обращения в базе данных.
@@ -54,7 +66,7 @@ public class AppealServiceImpl implements AppealService {
 
     /**
      * Метод для поиска обращения по его id.
-     * Если обращение по заданному id не найдено, выбрасывает исключение EntityNotFoundException.
+     * Если обращение по-заданному id не найдено, выбрасывает исключение EntityNotFoundException.
      * Метод выполняет поиск обращения по его id используя AppealRepository.
      *
      * @param id идентификатор обращения.
