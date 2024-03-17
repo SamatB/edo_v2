@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.example.dto.AppealDto;
 import org.example.service.AppealService;
@@ -25,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@Slf4j
 class AppealControllerTest {
     @Mock
     AppealService appealService;
@@ -76,9 +74,7 @@ class AppealControllerTest {
     @Test
     void downloadAppealsXlsxReport_returnsOk() throws IOException {
         File testXlsx = new File(OUTPUT_DIR + "appeals_2024-03-17_16_03_38.xlsx");
-        log.info("Got file from disk: " + testXlsx.getAbsolutePath());
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testXlsx));
-        log.info("File size: " + mockInputStream.available());
 
         when(reportService.getAppealsXlsxReport()).thenReturn(mockInputStream);
 
@@ -140,7 +136,6 @@ class AppealControllerTest {
     @Test
     void downloadAppealsXlsxReport_returnsNotFound() {
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(new byte[0]);
-        log.info("File size: " + mockInputStream.available());
         when(reportService.getAppealsXlsxReport()).thenReturn(mockInputStream);
 
         ResponseEntity<?> response = appealController.downloadAppealsXlsxReport();
