@@ -26,7 +26,7 @@ public class EmployeeListener {
             log.info("Коллекция employeeDtoIDs успешно получен из очереди");
             employeeService.getEmailsByIds(employeeDtoId)
                     .parallelStream()
-                    .forEach(emailService::sendEmail);
+                    .forEach(e -> emailService.sendEmail(e, "Hello", "Hello world"));
         } catch (Exception e) {
             log.error("Ошибка при обработке сообщения из RabbitMQ: " + e.getMessage());
         }
