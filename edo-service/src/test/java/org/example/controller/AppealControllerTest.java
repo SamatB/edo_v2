@@ -2,10 +2,7 @@ package org.example.controller;
 
 import jakarta.persistence.EntityExistsException;
 import org.example.dto.AppealDto;
-import org.example.service.impl.AppealServiceImpl;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.example.dto.AppealDto;
 import org.example.service.AppealService;
 import org.example.service.ReportService;
 import org.junit.jupiter.api.BeforeEach;
