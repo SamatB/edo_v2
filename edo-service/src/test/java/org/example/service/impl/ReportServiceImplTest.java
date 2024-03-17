@@ -35,7 +35,7 @@ class ReportServiceImplTest {
      * Проверяет существование файла
      */
     @Test
-    void writeAppealsToCsv_fileExists() {
+    void writeAppealsToXlsx_fileExists() {
         String fileName = OUTPUT_DIR + "test.xlsx";
         reportService.writeAppealsToXlsx(fileName);
 
@@ -46,7 +46,7 @@ class ReportServiceImplTest {
      * Тестирует что название файла заканчивается на .xlsx
      */
     @Test
-    void writeAppealsToCsv_fileHasSuffix() {
+    void writeAppealsToXlsx_fileHasSuffix() {
         String fileName = OUTPUT_DIR + "test.xlsx";
         String wrongSuffix = ".txt";
         reportService.writeAppealsToXlsx(fileName + wrongSuffix);
