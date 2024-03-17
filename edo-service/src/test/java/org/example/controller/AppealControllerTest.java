@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
  */
 class AppealControllerTest {
     @Mock
-    private AppealServiceImpl appealService;
+    AppealService appealService;
     @Mock
     ReportService reportService;
     @InjectMocks
@@ -148,9 +148,7 @@ class AppealControllerTest {
     @Test
     void downloadAppealsXlsxReport_returnsOk() throws IOException {
         File testXlsx = new File(OUTPUT_DIR + "appeals_2024-03-17_16_03_38.xlsx");
-        log.info("Got file from disk: " + testXlsx.getAbsolutePath());
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testXlsx));
-        log.info("File size: " + mockInputStream.available());
 
         when(reportService.getAppealsXlsxReport()).thenReturn(mockInputStream);
 
@@ -212,7 +210,6 @@ class AppealControllerTest {
     @Test
     void downloadAppealsXlsxReport_returnsNotFound() {
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(new byte[0]);
-        log.info("File size: " + mockInputStream.available());
         when(reportService.getAppealsXlsxReport()).thenReturn(mockInputStream);
 
         ResponseEntity<?> response = appealController.downloadAppealsXlsxReport();
