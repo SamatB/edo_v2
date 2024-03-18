@@ -2,33 +2,28 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.example.entity.Appeal;
-import org.example.entity.Question;
 import org.example.repository.AppealRepository;
-import org.example.repository.QuestionRepository;
 import org.example.service.ReportService;
+import org.example.utils.AppealCsvHelper;
 import org.springframework.stereotype.Service;
 
-import java.io.FileWriter;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ReportServiceImpl implements ReportService {
     private final AppealRepository appealRepository;
-    private final QuestionRepository questionRepository;
+    private final AppealCsvHelper appealCsvHelper;
 
     /**
      * Запись в CSV файл
      * Если название файла не заканчивается на .csv, то добавляется
      *
-     * @param fileName название файла, в который будет записан файл
+     * @param fileName название файла для записи в формате абсолютного пути
      */
     public void writeAppealsToCsv(String fileName) {
         log.info("Запись в CSV файл");
@@ -40,28 +35,30 @@ public class ReportServiceImpl implements ReportService {
         log.info("Получение списка обращений из базы данных");
         List<Appeal> appeals = appealRepository.findAll();
 
-        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(fileName), CSVFormat.DEFAULT)) {
-            log.info("Запись заголовка в CSV файл");
-            csvPrinter.printRecord("Номер обращения", "Дата создания", "ФИО создателя", "Список вопросов обращения", "Статус обращения");
-            for (Appeal appeal : appeals) {
-                log.info("Получение списка вопросов обращения из базы данных");
-                String questions = questionRepository.findAllByAppealId(appeal.getId())
-                        .stream()
-                        .map(Question::getSummary)
-                        .collect(Collectors.joining(", "));
-                log.info("Запись обращения {} в CSV файл", appeal.getNumber() != null
-                        ? appeal.getNumber()
-                        : appeal.getId());
-                csvPrinter.printRecord((appeal.getNumber() != null
-                        ? appeal.getNumber()
-                        : appeal.getId()),
-                        DateTimeFormatter.ofPattern("dd.MM.yyyy").format(appeal.getCreationDate()),
-                        appeal.getCreator().getFioNominative(),
-                        questions,
-                        appeal.getStatusType().getRusStatusType());
-            }
+        try {
+            log.info("Создание CSV файла...");
+//            appealCsvHelper.setFormatter(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
+//            appealCsvHelper.setQuestionsSeparator("; ");
+            appealCsvHelper.appealsToCsv(appeals, fileName);
         } catch (IOException e) {
-            log.error("Ошибка записи в CSV ", e);
+            throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Скачивание CSV файла
+     *
+     * @return ByteArrayInputStream
+     */
+    public ByteArrayInputStream downloadAppealsCsvReport() {
+        log.info("Получение списка обращений из базы данных");
+        List<Appeal> appeals = appealRepository.findAll();
+        try {
+            log.info("Загрузка CSV файла...");
+            return appealCsvHelper.appealsToCsv(appeals);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
