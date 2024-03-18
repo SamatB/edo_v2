@@ -5,9 +5,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.configuration.RabbitConfiguration;
+import org.example.dto.EmailDto;
 import org.example.dto.EmployeeDto;
 import org.example.service.EmployeeService;
 import org.example.service.RabbitmqSender;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,24 +25,25 @@ import java.util.List;
 public class EmployeeController {
     private final EmployeeService employeeService;
     private final RabbitmqSender rabbitmqSender;
+    private final RabbitTemplate rabbitTemplate;
 
     /**
-     * контроллер который принимает на вход коллекцию ID EmployeeDTO
-     * и отправляет коллекцию в очередь
+     * контроллер который принимает на вход EmailDTO
+     * и отправляет в очередь для рассылки сообщений
      *
-     * @param idsEmployeeDTO Коллекция id пользователей.
+     * @param emailDto Содержит в себе коллекцию email сотрудников, тему и текст для сообщения
      * @return ok
      */
     @PostMapping("/ids")
     @Operation(summary = "Получает коллекцию ID EmployeeDTO и отправляет в очередь")
-    public ResponseEntity<String> sendEmployeeDtoId(@RequestBody Collection<Long> idsEmployeeDTO) {
+    public ResponseEntity<String> sendEmailDTO(@RequestBody EmailDto emailDto) {
         try {
-            rabbitmqSender.send(RabbitConfiguration.EMPLOYEE_DTO_ID, idsEmployeeDTO);
+            rabbitTemplate.convertAndSend(RabbitConfiguration.GET_EMAIL_DTO, emailDto);
             return ResponseEntity.ok("ok");
         } catch (Exception e) {
             System.err.println("Ошибка при добавлении в очередь: " + e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("employeeDtoId не добавилась в очередь");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("emailDto не добавилась в очередь");
     }
 
     /**
