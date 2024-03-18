@@ -8,8 +8,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
 import org.example.service.AppealService;
+import org.example.service.ReportService;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Контроллер для работы с сущностью Appeal.
@@ -115,6 +124,31 @@ public class AppealController {
         } catch (EntityExistsException | IllegalArgumentException e) {
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/export/csv")
+    @Operation(summary = "Экспорт обращений в CSV")
+    public ResponseEntity<Resource> downloadAppealsCsvReport() {
+        log.info("Экспорт обращений в CSV");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+        String filename = "appeals_" + currentDateTime + ".csv";
+        try {
+            ByteArrayResource file = new ByteArrayResource(reportService.downloadAppealsCsvReport().readAllBytes());
+            if (file.contentLength() == 0) {
+                log.warn("Ошибка получения списка обращений: файл не существует");
+                return ResponseEntity.notFound().build();
+            }
+            log.info("Список обращений отправлен");
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(file.contentLength())
+                    .body(file);
+        } catch (Exception e) {
+            log.warn("Ошибка получения списка обращений: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

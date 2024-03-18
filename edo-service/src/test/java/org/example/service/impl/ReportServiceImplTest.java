@@ -27,12 +27,14 @@ class ReportServiceImplTest {
     @BeforeEach
     void setUp() throws IOException {
         Files.deleteIfExists(Paths.get(OUTPUT_DIR + "test.csv"));
+        Files.deleteIfExists(Paths.get(OUTPUT_DIR + "test.csv.txt.csv"));
     }
 
     /**
      * Тестирует запись в CSV файл
      * Проверяет существование файла
      */
+
     @Test
     void writeAppealsToCsv_fileExists() {
         String fileName = OUTPUT_DIR + "test.csv";
