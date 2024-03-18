@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import feign.FeignException;
+import org.apache.commons.io.FileUtils;
 import org.example.dto.AppealDto;
 import org.example.feign.AppealFeignClient;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -31,6 +38,8 @@ public class AppealControllerTest {
 
     @Mock
     FeignException.BadRequest badRequestException;
+
+    private static final String OUTPUT_DIR = "src/test/resources/";
 
     @BeforeEach
     public void setUp() {
@@ -213,5 +222,83 @@ public class AppealControllerTest {
         when(appealFeignClient.reserveNumberForAppeal(appealDto)).thenThrow(badRequestException);
         ResponseEntity<AppealDto> response = appealController.reserveNumberForAppeal(appealDto);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    /**
+     * Тест для метода downloadAppealsCsvReport.
+     * Возвращает статус 200, если файл был получен.
+     */
+    @Test
+    void downloadAppealsCsvReport_returnsOk() throws IOException {
+        File testCsv = new File(OUTPUT_DIR + "appeals_2024-03-18_19_25_07.csv");
+        ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testCsv));
+        byte[] bytes = mockInputStream.readAllBytes();
+
+        when(appealFeignClient.downloadAppealsCsvReport()).thenReturn(bytes);
+
+        ResponseEntity<?> response = appealController.getAllAppealsAsCsv();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    /**
+     * Тест для метода downloadAppealsCsvReport
+     * Проверяет, что тело ответа содержит правильную длину
+     */
+    @Test
+    void downloadAppealsCsvReport_responseHasBodyWithCorrectContentLength() throws IOException {
+        File testCsv = new File(OUTPUT_DIR + "appeals_2024-03-18_19_25_07.csv");
+        ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testCsv));
+        int size = mockInputStream.available();
+        byte[] bytes = mockInputStream.readAllBytes();
+
+        when(appealFeignClient.downloadAppealsCsvReport()).thenReturn(bytes);
+
+        ResponseEntity<?> response = appealController.getAllAppealsAsCsv();
+        assertEquals(size, response.getHeaders().getContentLength());
+        assertThat(response.getBody()).isNotNull();
+    }
+
+    /**
+     * Тест для метода downloadAppealsCsvReport.
+     * Проверяет формат имени файла
+     */
+    @Test
+    void downloadAppealsCsvReport_fileHasSuffix() throws IOException {
+        File testCsv = new File(OUTPUT_DIR + "appeals_2024-03-18_19_25_07.csv");
+        ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testCsv));
+        when(appealFeignClient.downloadAppealsCsvReport()).thenReturn(mockInputStream.readAllBytes());
+
+        ResponseEntity<?> response = appealController.getAllAppealsAsCsv();
+
+        assertThat(response.getHeaders().containsKey("Content-Disposition")).isTrue();
+        assertThat(Objects.requireNonNull(response.getHeaders().get("Content-Disposition")).get(0)).endsWithIgnoringCase(".csv");
+        assertThat(Objects.requireNonNull(response.getHeaders().get("Content-Disposition")).get(0)).startsWithIgnoringCase("attachment; filename=");
+    }
+
+    /**
+     * Тест для метода downloadAppealsCsvReport.
+     * Проверяет, что в случае ошибки открытия потока ввода данных, возвращается статус 500
+     */
+    @Test
+    void downloadAppealsCsvReport_returnsInternalServerError() {
+        when(appealFeignClient.downloadAppealsCsvReport()).thenReturn(null);
+
+        ResponseEntity<?> response = appealController.getAllAppealsAsCsv();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    /**
+     * Тест для метода downloadAppealsCsvReport.
+     * Возвращает статус 404, если получен файл нулевой длины
+     */
+    @Test
+    void downloadAppealsCsvReport_returnsNotFound() {
+        ByteArrayInputStream mockInputStream = new ByteArrayInputStream(new byte[0]);
+        when(appealFeignClient.downloadAppealsCsvReport()).thenReturn(mockInputStream.readAllBytes());
+
+        ResponseEntity<?> response = appealController.getAllAppealsAsCsv();
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

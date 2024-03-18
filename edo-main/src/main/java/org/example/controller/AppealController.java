@@ -13,9 +13,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
 import org.example.feign.AppealFeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -31,11 +35,11 @@ public class AppealController {
 
     /**
      * Возвращает обращение из базы данных.
-     * Если обращение по заданному id не найдено, возвращает ответ со статусом "Not Found".
+     * Если обращение по-заданному id не найдено, возвращает ответ со статусом "Not Found".
      * Метод выполняет поиск обращения с помощью AppealFeignClient.
      *
      * @param id идентификатор вызываемого обращения.
-     * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
+     * @return ответ с Dto объектом обращения в виде ResponseEntity<AppealDto>
      */
     @GetMapping("/{id}")
     @Operation(summary = "Возвращает обращение по идентификатору")
@@ -46,7 +50,7 @@ public class AppealController {
         AppealDto appealDto = appealFeignClient.getAppeal(id);
         countOfRequestsToAppeal.incrementAndGet();
         if (appealDto == null) {
-            log.warn("Ошибка получечния обращения: обращение с id: " + id + " не найдено");
+            log.warn("Ошибка получения обращения: обращение с id: " + id + " не найдено");
             return ResponseEntity.notFound().build();
         }
         log.info("Обращение c номером: " + appealDto.getNumber() + " успешно получено");
@@ -59,7 +63,7 @@ public class AppealController {
      * Метод выполняет сохранение обращения с помощью AppealFeignClient.
      *
      * @param appealDto сохраненный объект DTO обращения.
-     * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
+     * @return ответ с Dto объектом обращения в виде ResponseEntity<AppealDto>
      *
      */
     @PostMapping
@@ -79,11 +83,11 @@ public class AppealController {
 
     /**
      * Метод для добавления даты архивации обращения с указанным id.
-     * Если обращение по заданному id не найдено, возвращает ответ со статусом "Not Found".
+     * Если обращение по-заданному id не найдено, возвращает ответ со статусом "Not Found".
      * Метод выполняет сохранение обращения с помощью AppealFeignClient.
      *
      * @param id идентификатор архивируемого обращения.
-     * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
+     * @return ответ с Dto объектом обращения в виде ResponseEntity<AppealDto>
      */
     @PatchMapping("/{id}")
     @Operation(summary = "Архивирует обращение")
@@ -158,6 +162,35 @@ public class AppealController {
             }
             log.warn("Ошибка резервирования номера для обращения: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+    /**
+     * Метод для получения файла обращений в формате XLSX.
+     */
+    @GetMapping("/export/csv")
+    @Operation(summary = "Получение списка обращений в формате CSV")
+    public ResponseEntity<?> getAllAppealsAsCsv() {
+        log.info("Получение списка обращений в формате CSV");
+        try {
+            byte[] file = appealFeignClient.downloadAppealsCsvReport();
+            if (file.length == 0) {
+                log.warn("Ошибка получения списка обращений: список пустой");
+                return ResponseEntity.notFound().build();
+            }
+            DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+            String currentDateTime = dateFormatter.format(new Date());
+            String filename = "appeals_" + currentDateTime + ".csv";
+            log.info("Список обращений получен");
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=" + filename)
+                    .contentLength(file.length)
+                    .contentType(MediaType.parseMediaType("application/csv"))
+                    .body(file);
+        } catch (Exception e) {
+            log.warn("Ошибка получения списка обращений: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
     }
 
