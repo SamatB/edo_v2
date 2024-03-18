@@ -2,31 +2,31 @@ package org.example.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dto.EmailDto;
 import org.example.service.EmailService;
 import org.example.service.EmployeeService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import static org.example.configuration.RabbitConfiguration.GET_EMAIL_DTO;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class EmployeeListener {
-    private final EmployeeService employeeService;
     private final EmailService emailService;
 
     /**
-     * Получает Коллекцию id EmployeeDTO с очереди rabbitmq и отправляет emails
+     * Получает EmployeeDTO с очереди rabbitmq и отправляет emails
      * на основе переданных идентификаторов.
-     * @param employeeDtoId Коллекция id EmployeeDTO
+     * @param emailDto содержит в себе список email сотрудников, тему и текст для рассылки сообщения
      */
-    @RabbitListener(queues = "employeeDtoId")
-    public void sendEmailToEmployeeDtoId(Collection<Long> employeeDtoId) {
+    @RabbitListener(queues = GET_EMAIL_DTO)
+    public void sendEmailToEmailDTO(EmailDto emailDto) {
+
         try {
-            log.info("Коллекция employeeDtoIDs успешно получен из очереди");
-            employeeService.getEmailsByIds(employeeDtoId)
-                    .parallelStream()
-                    .forEach(e -> emailService.sendEmail(e, "Hello", "Hello world"));
+            log.info("EmailDto успешно получен из очереди");
+            emailDto.getEmail().stream().parallel().forEach(e -> emailService.sendEmail(e, emailDto.getSubject(), emailDto.getText()));
         } catch (Exception e) {
             log.error("Ошибка при обработке сообщения из RabbitMQ: " + e.getMessage());
         }
