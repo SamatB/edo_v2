@@ -44,6 +44,7 @@ public class RabbitConfiguration {
     private Integer replyTimeout;
     public static final String SAVE_DEPARTMENT_ROUTING_KEY = "save_department";
     public static final String EMPLOYEE_DTO_ID = "employeeDtoId";
+    public static final String GET_EMAIL_DTO = "getEmailDTO";
 
     /**
      * Бин, отвечающий за соединение с сервером RabbitMQ
@@ -109,6 +110,14 @@ public class RabbitConfiguration {
      */
     @Bean
     public Queue employeeDtoId() {return new Queue(EMPLOYEE_DTO_ID);}
+
+    /**
+     * Бин очереди для EmailDTO
+     */
+    @Bean
+    public Queue getEmailDto() {
+        return new Queue(GET_EMAIL_DTO);
+    }
 
 
     /**
