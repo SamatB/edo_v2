@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -105,12 +106,14 @@ class AppealControllerTest {
         when(appealService.reserveNumberForAppeal(appealDto)).thenThrow(new EntityExistsException());
         ResponseEntity<AppealDto> response = appealController.reserveNumberForAppeal(appealDto);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
     /**
      * Тест для метода downloadAppealsCsvReport.
      * Возвращает статус 200, если файл был получен.
      */
     @Test
-    void downloadAppealsCsvReport_returnsOk() throws IOException {
+    public void downloadAppealsCsvReport_returnsOk() throws IOException {
         File testCsv = new File(OUTPUT_DIR + "appeals_2024-03-18_19_25_07.csv");
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testCsv));
 
