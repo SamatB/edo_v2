@@ -31,6 +31,7 @@ import java.util.Date;
 public class AppealController {
 
     private final AppealService appealService;
+    private final ReportService reportService;
 
 
     /**
