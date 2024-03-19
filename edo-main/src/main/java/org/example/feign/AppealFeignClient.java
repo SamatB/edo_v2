@@ -37,4 +37,13 @@ public interface AppealFeignClient {
      */
     @PostMapping("/appeal/{id}/register")
     AppealDto registerAppeal(@PathVariable Long id);
+
+    /**
+     * Метод для резервирования номера обращения
+     *
+     * @param  appeal   номер обращения
+     * @return                обновленное AppealDto
+     */
+    @PostMapping("/appeal/reserve-number")
+    AppealDto reserveNumberForAppeal(@RequestBody AppealDto appeal);
 }

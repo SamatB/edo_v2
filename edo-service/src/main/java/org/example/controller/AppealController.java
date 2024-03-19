@@ -90,4 +90,31 @@ public class AppealController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    /**
+     * Резервирует номер для обращения.
+     * При попытке резервации номера для обращения с уже зарезервированным номером
+     * или существующим номером,
+     * или отсутствующим полем nomenclature
+     * возвращается ответ со статусом "badRequest"
+     *
+     * @param appeal номер обращения.
+     * @return объект DTO обращения в случае успешной резервации.
+     */
+    @PostMapping("/reserve-number")
+    @Operation(summary = "Резервирование номера для обращения")
+    public ResponseEntity<AppealDto> reserveNumberForAppeal(@RequestBody AppealDto appeal) {
+        log.info("Резервирование номера  для обращения...");
+
+        try {
+            AppealDto appealDto = appealService.reserveNumberForAppeal(appeal);
+            log.info("Номер {} успешно зарезервирован", appealDto.getReservedNumber() != null
+                    ? appealDto.getReservedNumber()
+                    : null);
+            return ResponseEntity.ok(appealDto);
+        } catch (EntityExistsException | IllegalArgumentException e) {
+            log.warn(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

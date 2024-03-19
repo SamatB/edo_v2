@@ -38,6 +38,9 @@ public class AppealDto {
     @Schema(description = "Номер обращения")
     private String number;
 
+    @Schema(description = "Зарезервированный номер обращения")
+    private String reservedNumber;
+
     @Schema(description = "Описание обращения")
     private String annotation;
 
@@ -52,4 +55,8 @@ public class AppealDto {
 
     @Schema(description = "Адресаты")
     private List<EmployeeDto> addressee;
+
+    @NotNull
+    @Schema(description = "Номенклатура")
+    private NomenclatureDto nomenclature;
 }

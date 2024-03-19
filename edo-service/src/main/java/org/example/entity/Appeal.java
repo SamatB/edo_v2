@@ -46,9 +46,15 @@ public class Appeal extends BaseEntity {
     /**
      * Номер обращения
      */
-    @NotNull
     @Column(name = "number")
     private String number;
+
+
+    /**
+     * Зарезервированный номер обращения
+     */
+    @Column(name = "reserved_number", unique = true, length = 50)
+    private String reservedNumber;
 
     /**
      * Описание обращения
@@ -95,6 +101,7 @@ public class Appeal extends BaseEntity {
     /**
      * связь с сущностью Номенклатура
      */
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nomenclature_id", referencedColumnName = "id")
     private Nomenclature nomenclature;

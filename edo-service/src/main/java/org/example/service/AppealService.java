@@ -10,4 +10,6 @@ public interface AppealService {
     AppealDto archiveAppeal(Long id);
 
     AppealDto registerAppeal(Long id);
+
+    AppealDto reserveNumberForAppeal(AppealDto appealDto);
 }
