@@ -1,50 +1,51 @@
 package org.example.controllers;
 
-import org.example.controller.EmployeeController;
-import org.example.service.RabbitmqSender;
-import org.junit.jupiter.api.DisplayName;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import java.util.Collection;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.example.configuration.RabbitConfiguration;
+import org.example.controller.EmployeeController;
+import org.example.dto.EmailDto;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("EmployeeController")
 class EmployeeControllerTest {
 
     @Mock
-    private RabbitmqSender sender;
+    private RabbitTemplate rabbitTemplate;
 
     @InjectMocks
     private EmployeeController employeeController;
 
     @Test
-    @DisplayName("Should return INTERNAL_SERVER_ERROR status when an exception occurs")
-    void sendEmployeeDtoIdWhenExceptionOccurs() {
-        Collection<Long> idEmployeeDTO = List.of(1L, 2L, 44L);
-        doThrow(new RuntimeException("Error sending employeeDtoId")).when(sender).send("employeeDtoId", idEmployeeDTO);
-        ResponseEntity<String> response = employeeController.sendEmployeeDtoId(idEmployeeDTO);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        verify(sender, times(1)).send("employeeDtoId", idEmployeeDTO);
+    @DisplayName("Should successfully send EmailDto and return OK status")
+    void sendEmailDtoSuccessfully() {
+        EmailDto emailDto = new EmailDto(); // Assume EmailDto is correctly instantiated and populated
+
+        ResponseEntity<String> response = employeeController.sendEmailDTO(emailDto);
+
+        verify(rabbitTemplate).convertAndSend(RabbitConfiguration.GET_EMAIL_DTO, emailDto);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("ok", response.getBody());
     }
 
     @Test
-    @DisplayName("Should send the collection of EmployeeDTO IDs to the queue and return status OK")
-    void sendEmployeeDtoIdWhenSuccessful() {
-        Collection<Long> idEmployeeDTO = List.of(1L, 2L, 55L);
-        ResponseEntity<String> expectedResponse = ResponseEntity.ok("ok");
-        ResponseEntity<String> actualResponse = employeeController.sendEmployeeDtoId(idEmployeeDTO);
-        assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
-        assertEquals(expectedResponse.getBody(), actualResponse.getBody());
-    }
+    @DisplayName("Should return INTERNAL_SERVER_ERROR status when an exception occurs")
+    void sendEmailDtoWithException() {
+        EmailDto emailDto = new EmailDto(); // Assume EmailDto is correctly instantiated and populated
+        doThrow(new RuntimeException("Test exception")).when(rabbitTemplate).convertAndSend(RabbitConfiguration.GET_EMAIL_DTO, emailDto);
 
+        ResponseEntity<String> response = employeeController.sendEmailDTO(emailDto);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("emailDto не добавилась в очередь", response.getBody());
+    }
 }

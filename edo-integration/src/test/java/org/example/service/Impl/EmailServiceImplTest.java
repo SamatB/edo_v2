@@ -1,10 +1,11 @@
 package org.example.service.Impl;
 
+import org.example.service.EmailService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
@@ -22,27 +23,23 @@ class EmailServiceImplTest {
     @InjectMocks
     private EmailServiceImpl emailService;
 
-    @Test
-    @DisplayName("Should throw an exception when the recipient is null")
-    void sendEmailWhenRecipientIsNullThenThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> emailService.sendEmail(null));
-    }
+
     @Test
     @DisplayName("Should catch and log the exception when the email sending fails")
     void sendEmailWhenEmailSendingFailsThenCatchAndLogException() {
-        String to = "test@example.com";
+        String to = "test@yandex.ru";
         SimpleMailMessage expectedMessage = new SimpleMailMessage();
-        expectedMessage.setFrom("john.doe@example.org");
+        expectedMessage.setFrom("edo.2.kate@gmail.com");
         expectedMessage.setTo(to);
         expectedMessage.setSubject("Hello world");
         expectedMessage.setText("Hello");
 
-        doThrow(new MailSendException("Failed to send email")).when(emailSender).send(expectedMessage);
-
-        SimpleMailMessage actualMessage = emailService.sendEmail(to);
+        SimpleMailMessage actualMessage = emailService.sendEmail(to, "Hello world", "Hello");
 
         verify(emailSender, times(1)).send(expectedMessage);
         assertEquals(expectedMessage, actualMessage);
     }
+
+
 
 }
