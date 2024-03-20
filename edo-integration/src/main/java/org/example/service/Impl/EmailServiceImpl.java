@@ -2,6 +2,7 @@ package org.example.service.Impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dto.EmailDto;
 import org.example.service.EmailService;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
@@ -43,25 +44,22 @@ public class EmailServiceImpl implements EmailService {
 
     /**
      * метод для отправки почты с помощью Spring Mail API
-     * @param to получатель email
-     * @param subject тема письма
-     * @param text текст письма
+     * @param emailDto объект DTO с данными для отправки
      * @return SimpleMailMessage модель письма для отправки.
      */
-    @Override
-    public SimpleMailMessage sendAgreementListEmail(String to, String subject, String text) {
-        if (to == null) {
-            throw new IllegalArgumentException("Отправитель не может быть null");
+    public SimpleMailMessage sendEmail(EmailDto emailDto) {
+        if (emailDto.getTo() == null) {
+            throw new IllegalArgumentException("Получатель не может быть null");
         }
         SimpleMailMessage message = new SimpleMailMessage() {{
-            setFrom("john.doe@example.org");
-            setTo(to);
-            setSubject(subject);
-            setText(text);
+            setFrom(emailDto.getFrom() != null ? emailDto.getFrom() : "john.doe@example.org");
+            setTo(emailDto.getTo());
+            setSubject(emailDto.getSubject() != null ? emailDto.getSubject() : "Новое сообщение");
+            setText(emailDto.getBody() != null ? emailDto.getBody() : "Здесь должен был быть текст письма, но отправитель забыл его добавить");
         }};
         try {
             emailSender.send(message);
-            log.info("Письмо было отправлено на адрес: " + to);
+            log.info("Письмо было отправлено на адрес: " + emailDto.getTo());
         } catch (MailSendException e) {
             log.warn("Отправка не произошла: " + e.getMessage());
         }

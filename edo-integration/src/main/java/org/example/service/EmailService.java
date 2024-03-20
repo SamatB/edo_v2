@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.example.dto.EmailDto;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
@@ -11,5 +12,5 @@ public interface EmailService {
      */
     SimpleMailMessage sendEmail(String to);
 
-    SimpleMailMessage sendAgreementListEmail(String to, String subject, String text);
+    SimpleMailMessage sendEmail(EmailDto emailDto);
 }
