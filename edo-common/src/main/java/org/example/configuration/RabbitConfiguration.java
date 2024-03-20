@@ -6,10 +6,12 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Класс конфигурации RabbitMQ
@@ -178,7 +180,9 @@ public class RabbitConfiguration {
     public static final String SEND_AGREEMENT_LIST_ROUTING_KEY = "sendAgreementList";
     @Bean
     public Queue sendAgreementListQueue() {
-        return new Queue(SEND_AGREEMENT_LIST_ROUTING_KEY);
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-max-priority", 255);
+        return new Queue(SEND_AGREEMENT_LIST_ROUTING_KEY, true, false, false, args);
     }
     @Bean
     public Binding sendAgreementListBinding() {
