@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.example.dto.EmailDto;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
@@ -13,5 +14,7 @@ public interface EmailService {
      * @param subject принимает тему для сообщения
      * @param text принимает текс для сообщения
      */
+
+    SimpleMailMessage sendEmail(EmailDto emailDto);
     SimpleMailMessage sendEmail(String to, String subject, String text);
 }

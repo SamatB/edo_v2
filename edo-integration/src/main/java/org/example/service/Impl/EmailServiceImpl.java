@@ -2,7 +2,9 @@ package org.example.service.Impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dto.EmailDto;
 import org.example.service.EmailService;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,31 @@ public class EmailServiceImpl implements EmailService {
         return simpleMailMessage;
     }
 
+    /**
+     * метод для отправки почты с помощью Spring Mail API
+     *
+     * @param emailDto объект DTO с данными для отправки
+     * @return SimpleMailMessage модель письма для отправки.
+     */
+    public SimpleMailMessage sendEmail(EmailDto emailDto) {
+        if (emailDto.getTo() == null) {
+            throw new IllegalArgumentException("Получатель не может быть null");
+        }
+        SimpleMailMessage message = new SimpleMailMessage() {{
+            setFrom(emailDto.getFrom() != null ? emailDto.getFrom() : "john.doe@example.org");
+            setTo(emailDto.getTo());
+            setSubject(emailDto.getSubject() != null ? emailDto.getSubject() : "Новое сообщение");
+            setText(emailDto.getBody() != null ? emailDto.getBody() : "Здесь должен был быть текст письма, но отправитель забыл его добавить");
+        }};
+        try {
+            emailSender.send(message);
+            log.info("Письмо было отправлено на адрес: " + emailDto.getTo());
+        } catch (MailSendException e) {
+            log.warn("Отправка не произошла: " + e.getMessage());
+        }
+        return message;
+    }
+    
     /***
      * Валидирует параметры электронного письма перед его отправкой.
      * Проверяет, что переданный адрес электронной почты соответствует формату валидных email-адресов,
@@ -72,5 +99,4 @@ public class EmailServiceImpl implements EmailService {
             throw new IllegalArgumentException();
         }
     }
-
 }
