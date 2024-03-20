@@ -33,10 +33,10 @@ public class AgreementListController {
             @Parameter(description = "Идентификатор листа согласования", required = true)
             @PathVariable Long id) {
         try {
-            log.info("Отправка листа согласования всем заинтересованным лицам");
+            log.info("Отправка листа согласования с id {} всем заинтересованным лицам", id);
             return ResponseEntity.ok().body(agreementListService.sendAgreementList(id));
         } catch (Exception e) {
-            log.error("Ошибка отправки листа согласования всем заинтересованным лицам в БД");
+            log.error("Ошибка отправки листа согласования с id {} всем заинтересованным лицам в БД", id);
             return ResponseEntity.badRequest().body(e);
         }
     }
