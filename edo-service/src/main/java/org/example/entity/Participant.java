@@ -1,8 +1,8 @@
 package org.example.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,7 +43,7 @@ public class Participant extends BaseEntity {
     private ParticipantStatusType status;
 
     /**
-     * Дата создания участнкиа
+     * Дата создания участника
      */
     @NotNull
     @Column(name = "create_date")
@@ -74,7 +74,7 @@ public class Participant extends BaseEntity {
      * Номер по порядку согласования и порядку отображения на UI
      */
     @NotNull
-    @Size(min = 1)
+    @Min(1)
     @Column(name = "number")
     private Long number;
 
