@@ -12,4 +12,6 @@ public interface EmployeeService {
     List<EmployeeDto> getEmployeesByIds(List<Long> ids);
     EmployeeDto saveEmployee(EmployeeDto employeeDto);
     EmployeeDto updateEmployeeAddress(String address, Long id);
+
+    List<EmployeeDto> getEmployeeSearchByText(String name);
 }

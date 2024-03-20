@@ -78,4 +78,24 @@ public class EmployeeController {
         log.info("Получен запрос на изменение адреса у Employee");
         return employeeService.updateEmployeeAddress(address, id);
     }
+
+    /**
+     * Метод принимает строку символов в качестве параметра и возвращает список объектов EmployeeDto.
+     * Поиск данных начинается после ввода минимум трех символов
+     * Предусмотрен ввод ошибочных данных из-за забытой смены раскладки "Bdfyjd" == "Иванов"
+     * Предусмотренно, что "ё"=="е"
+     *
+     * @param name Строка с символами, представляющими имя для поиска сотрудников.
+     * @return список EmployeeDto отсортированных по фамилии - по убыванию
+     * @throws IllegalArgumentException В случае, если введено менее трех символов в качестве параметра
+     */
+    @GetMapping("")
+    public ResponseEntity<List<EmployeeDto>> getEmployeeSearchByText(@RequestParam(name = "name", required = false) String name) {
+        if (name.length() < 3) {
+            throw new IllegalArgumentException("Строка name пуста или меньше трех символов");
+        }
+
+        return ResponseEntity.ok(employeeService.getEmployeeSearchByText(name));
+    }
+
 }
