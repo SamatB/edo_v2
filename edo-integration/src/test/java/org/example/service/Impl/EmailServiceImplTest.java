@@ -25,7 +25,7 @@ class EmailServiceImplTest {
     @Test
     @DisplayName("Should throw an exception when the recipient is null")
     void sendEmailWhenRecipientIsNullThenThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> emailService.sendEmail(null));
+        assertThrows(IllegalArgumentException.class, () -> emailService.sendEmail((String) null));
     }
     @Test
     @DisplayName("Should catch and log the exception when the email sending fails")
