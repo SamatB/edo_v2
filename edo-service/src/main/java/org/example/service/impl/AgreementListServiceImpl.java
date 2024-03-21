@@ -3,7 +3,6 @@ package org.example.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.dto.*;
 import org.example.entity.AgreementList;
 import org.example.entity.MatchingBlock;
 import org.example.entity.Participant;
@@ -30,56 +29,6 @@ public class AgreementListServiceImpl implements AgreementListService {
     private final AgreementListMapper agreementListMapper;
     private final EmailHelper emailHelper;
     private final AgreementListPublisher agreementListPublisher;
-
-    /**
-     * Сохраняет лист согласования в базе данных.
-     *
-     * @param agreementListDto объект DTO листа согласования
-     * @return сохраненный объект DTO листа согласования
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public AgreementListDto saveAgreementList(AgreementListDto agreementListDto) {
-        return Optional.ofNullable(agreementListDto)
-                .map(agreementListMapper::dtoToEntity)
-                .map(agreementList -> {
-                    agreementList.setCreationDate(ZonedDateTime.now());
-                    return agreementList;
-                })
-                .map(agreementListRepository::save)
-                .map(agreementListMapper::entityToDto)
-                .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения листа согласования: лист согласования не должен быть null"));
-    }
-
-    /**
-     * Возвращает лист согласования по его идентификатору.
-     *
-     * @param id идентификатор листа согласования
-     * @return объект DTO листа согласования
-     */
-    public AgreementListDto getAgreementList(Long id) {
-        return agreementListRepository.findById(id)
-                .map(agreementListMapper::entityToDto)
-                .orElseThrow(() -> new EntityNotFoundException("Лист согласования с id: " + id + " не найден"));
-    }
-
-    /**
-     * Обновляет лист согласования в базе данных.
-     *
-     * @param id               идентификатор листа согласования
-     * @param agreementListDto объект DTO листа согласования
-     * @return обновленный объект DTO листа согласования
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public AgreementListDto updateAgreementList(Long id, AgreementListDto agreementListDto) {
-        return agreementListRepository.findById(id)
-                .map(agreementList -> {
-                    agreementListMapper.updateEntity(agreementListDto, agreementList);
-                    return agreementList;
-                })
-                .map(agreementListRepository::save)
-                .map(agreementListMapper::entityToDto)
-                .orElseThrow(() -> new EntityNotFoundException("Лист согласования с id: " + id + " не найден"));
-    }
 
     /**
      * Отправляет лист согласования всем заинтересованным лицам.
@@ -125,6 +74,7 @@ public class AgreementListServiceImpl implements AgreementListService {
                             });
 
                     agreementList.setSentApprovalDate(ZonedDateTime.now());
+                    log.info("Лист согласования с идентификатором {} отправлен всем заинтересованным лицам в: {}", id, agreementList.getSentApprovalDate());
                     return agreementList;
                 })
                 .map(agreementListRepository::save)
