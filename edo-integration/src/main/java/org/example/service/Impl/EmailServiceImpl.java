@@ -59,7 +59,7 @@ public class EmailServiceImpl implements EmailService {
             setFrom(emailDto.getFrom() != null ? emailDto.getFrom() : "john.doe@example.org");
             setTo(emailDto.getTo());
             setSubject(emailDto.getSubject() != null ? emailDto.getSubject() : "Новое сообщение");
-            setText(emailDto.getBody() != null ? emailDto.getBody() : "Здесь должен был быть текст письма, но отправитель забыл его добавить");
+            setText(emailDto.getText() != null ? emailDto.getText() : "Здесь должен был быть текст письма, но отправитель забыл его добавить");
         }};
         try {
             emailSender.send(message);
@@ -75,9 +75,9 @@ public class EmailServiceImpl implements EmailService {
      * Проверяет, что переданный адрес электронной почты соответствует формату валидных email-адресов,
      * а также что тема и текст письма не равны null. В случае, если какой-либо из параметров не проходит валидацию,
      * метод логирует соответствующее информационное сообщение и генерирует исключение IllegalArgumentException.
-     * @param to
-     * @param subject
-     * @param text
+     * @param to кому
+     * @param subject тема
+     * @param text тело письма
      * @throws IllegalArgumentException если переданные данные не валидны
      */
     private void validParams(String to, String subject, String text) {

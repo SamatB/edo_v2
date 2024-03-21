@@ -22,7 +22,7 @@ public class EmailHelper {
         String emailText = "Добрый день, " + participant.getEmployee().getFioNominative() + "! На ваше имя пришёл Лист Согласования по обращению номер " + appealNumber + ".";
 
         emailDto.setSubject("Уведомление");
-        emailDto.setBody(emailText);
+        emailDto.setText(emailText);
         emailDto.setTo(participant.getEmployee().getEmail());
 
         return emailDto;
@@ -33,7 +33,7 @@ public class EmailHelper {
         String emailText = "Добрый день, " + participant.getEmployeeDto().getFioNominative() + "! На ваше имя пришёл Лист Согласования по обращению номер " + appealNumber + ".";
 
         emailDto.setSubject("Уведомление");
-        emailDto.setBody(emailText);
+        emailDto.setText(emailText);
         emailDto.setTo(participant.getEmployeeDto().getEmail());
 
         return emailDto;

@@ -25,7 +25,10 @@ class EmailServiceImplTest {
     @Test
     @DisplayName("Should throw an exception when the recipient is null")
     void sendEmailWhenRecipientIsNullThenThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> emailService.sendEmail((String) null));
+        EmailDto emailDto = new EmailDto();
+        emailDto.setSubject("Hello world");
+        emailDto.setText("Hello");
+        assertThrows(IllegalArgumentException.class, () -> emailService.sendEmail(emailDto));
     }
     @Test
     @DisplayName("Should catch and log the exception when the email sending fails")
@@ -57,12 +60,12 @@ class EmailServiceImplTest {
         emailDto.setTo("test@example.com");
         emailDto.setFrom("john.doe@example.org");
         emailDto.setSubject("Hello world");
-        emailDto.setBody("Hello");
+        emailDto.setText("Hello");
         SimpleMailMessage expectedMessage = new SimpleMailMessage();
         expectedMessage.setFrom(emailDto.getFrom());
         expectedMessage.setTo(emailDto.getTo());
         expectedMessage.setSubject(emailDto.getSubject());
-        expectedMessage.setText(emailDto.getBody());
+        expectedMessage.setText(emailDto.getText());
 
         doThrow(new MailSendException("Failed to send email")).when(emailSender).send(expectedMessage);
 

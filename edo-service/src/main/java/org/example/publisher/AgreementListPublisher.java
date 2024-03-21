@@ -3,7 +3,6 @@ package org.example.publisher;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.EmailDto;
 import org.example.service.RabbitmqSender;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**

@@ -39,5 +39,5 @@ public class EmailDto implements Serializable {
     private String subject;
 
     @Schema(description = "Тело письма")
-    private String body;
+    private String text;
 }
