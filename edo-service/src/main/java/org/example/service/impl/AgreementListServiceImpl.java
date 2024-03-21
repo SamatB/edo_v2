@@ -1,5 +1,6 @@
 package org.example.service.impl;
 
+import static org.example.utils.EmailHelper.getAgreementListEmailDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +11,6 @@ import org.example.mapper.AgreementListMapper;
 import org.example.publisher.AgreementListPublisher;
 import org.example.repository.AgreementListRepository;
 import org.example.service.AgreementListService;
-import org.example.utils.EmailHelper;
 import org.example.utils.MatchingBlockType;
 import org.example.utils.ParticipantStatusType;
 
@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 public class AgreementListServiceImpl implements AgreementListService {
     private final AgreementListRepository agreementListRepository;
     private final AgreementListMapper agreementListMapper;
-    private final EmailHelper emailHelper;
     private final AgreementListPublisher agreementListPublisher;
 
     /**
@@ -56,7 +55,7 @@ public class AgreementListServiceImpl implements AgreementListService {
                                 if (mb.getMatchingBlockType().equals(MatchingBlockType.PARALLEL)) {
                                     mb.getParticipants().forEach(participant -> {
                                         participant.setStatus(ParticipantStatusType.ACTIVE);
-                                        agreementListPublisher.sendAgreementListEmailNotification(emailHelper.getAgreementListEmailDto(participant, appealNumber), participant.getNumber());
+                                        agreementListPublisher.sendAgreementListEmailNotification(getAgreementListEmailDto(participant, appealNumber), participant.getNumber());
                                     });
                                 } else {
                                     mb.getParticipants()
@@ -68,7 +67,7 @@ public class AgreementListServiceImpl implements AgreementListService {
                                             .findFirst()
                                             .ifPresent(participant -> {
                                                 participant.setStatus(ParticipantStatusType.ACTIVE);
-                                                agreementListPublisher.sendAgreementListEmailNotification(emailHelper.getAgreementListEmailDto(participant, appealNumber), participant.getNumber());
+                                                agreementListPublisher.sendAgreementListEmailNotification(getAgreementListEmailDto(participant, appealNumber), participant.getNumber());
                                             });
                                 }
                             });
