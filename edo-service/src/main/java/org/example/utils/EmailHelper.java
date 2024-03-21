@@ -1,15 +1,14 @@
 package org.example.utils;
 
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.constraints.NotNull;
 import org.example.dto.EmailDto;
+import org.example.dto.ParticipantDto;
 import org.example.entity.Participant;
-import org.springframework.stereotype.Component;
 
 /**
  * Вспомогательный класс для работы с электронной почтой.
  */
-@Component
-@Slf4j
+
 public class EmailHelper {
 
     /**
@@ -18,14 +17,24 @@ public class EmailHelper {
      * @param appealNumber номер обращения
      * @return DTO для электронной почты с уведомлением для участника
      */
-    public EmailDto getAgreementListEmailDto(Participant participant, String appealNumber) {
+    public static EmailDto getAgreementListEmailDto(Participant participant, String appealNumber) {
         EmailDto emailDto = new EmailDto();
         String emailText = "Добрый день, " + participant.getEmployee().getFioNominative() + "! На ваше имя пришёл Лист Согласования по обращению номер " + appealNumber + ".";
 
-        emailDto.setEmployeeId(participant.getId());
         emailDto.setSubject("Уведомление");
         emailDto.setBody(emailText);
         emailDto.setTo(participant.getEmployee().getEmail());
+
+        return emailDto;
+    }
+
+    public static EmailDto getAgreementListEmailDto(@NotNull ParticipantDto participant, @NotNull String appealNumber) {
+        EmailDto emailDto = new EmailDto();
+        String emailText = "Добрый день, " + participant.getEmployeeDto().getFioNominative() + "! На ваше имя пришёл Лист Согласования по обращению номер " + appealNumber + ".";
+
+        emailDto.setSubject("Уведомление");
+        emailDto.setBody(emailText);
+        emailDto.setTo(participant.getEmployeeDto().getEmail());
 
         return emailDto;
     }
