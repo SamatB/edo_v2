@@ -1,5 +1,6 @@
 package org.example.service.Impl;
 
+import org.example.dto.EmailDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +26,7 @@ class EmailServiceImplTest {
     @Test
     @DisplayName("Should throw an exception when the recipient is null")
     void sendEmailWhenRecipientIsNullThenThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> emailService.sendEmail(null));
+        assertThrows(IllegalArgumentException.class, () -> emailService.sendEmail((String) null));
     }
     @Test
     @DisplayName("Should catch and log the exception when the email sending fails")
@@ -45,4 +46,32 @@ class EmailServiceImplTest {
         assertEquals(expectedMessage, actualMessage);
     }
 
+    @Test
+    @DisplayName("Should throw an exception when the EmailDto is null")
+    void sendEmailWhenEmailDtoIsNullThenThrowException() {
+        EmailDto emailDto = new EmailDto();
+        assertThrows(IllegalArgumentException.class, () -> emailService.sendEmail(emailDto));
+    }
+
+    @Test
+    @DisplayName("Should catch and log the exception when the email sending fails")
+    void sendEmailDtoWhenEmailSendingFailsThenCatchAndLogException() {
+        EmailDto emailDto = new EmailDto();
+        emailDto.setTo("test@example.com");
+        emailDto.setFrom("john.doe@example.org");
+        emailDto.setSubject("Hello world");
+        emailDto.setBody("Hello");
+        SimpleMailMessage expectedMessage = new SimpleMailMessage();
+        expectedMessage.setFrom(emailDto.getFrom());
+        expectedMessage.setTo(emailDto.getTo());
+        expectedMessage.setSubject(emailDto.getSubject());
+        expectedMessage.setText(emailDto.getBody());
+
+        doThrow(new MailSendException("Failed to send email")).when(emailSender).send(expectedMessage);
+
+        SimpleMailMessage actualMessage = emailService.sendEmail(emailDto);
+
+        verify(emailSender, times(1)).send(expectedMessage);
+        assertEquals(expectedMessage, actualMessage);
+    }
 }
