@@ -40,4 +40,7 @@ public class ParticipantDto implements Serializable {
 
     @Schema(description = "Сотрудник")
     private EmployeeDto employeeDto;
+
+    @Schema(description = "Блок согласования")
+    private MatchingBlockDto matchingBlock;
 }

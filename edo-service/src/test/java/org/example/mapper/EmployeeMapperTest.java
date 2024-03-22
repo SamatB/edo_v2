@@ -16,6 +16,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Класс тестирования маппера для сущности Employee
+ */
 @Slf4j
 @SpringBootTest
 class EmployeeMapperTest {
@@ -92,6 +95,9 @@ class EmployeeMapperTest {
         assertNotNull(result.getAddressDetails());
         assertNotNull(result.getDepartment());
         assertNotNull(result.getDepartment().getAddressDetails());
+
+        log.info("Employee successfully created: " + employee);
+
         assertEquals(employee, result);
         assertEquals(employee.getAddressDetails().getFullAddress(), result.getAddressDetails().getFullAddress());
         assertEquals(employee.getDepartment().getAddressDetails().getFullAddress(), result.getDepartment().getAddressDetails().getFullAddress());
@@ -104,13 +110,15 @@ class EmployeeMapperTest {
         Employee employee = getEmployee();
 
         EmployeeDto result = employeeMapper.entityToDto(employee);
-        log.info("Address: {}", result.getAddressDetails());
-        log.info("Department: {}", result.getDepartment());
+
         assertNotNull(result.getAddressDetails());
         assertNotNull(result.getDepartment());
         assertNotNull(result.getDepartment().getAddressDetails());
+
+        log.info("EmployeeDto successfully created: " + employeeDto);
+
         assertEquals(employeeDto, result);
         assertEquals(employee.getAddressDetails().getFullAddress(), result.getAddressDetails().getFullAddress());
-//        assertEquals(employee.getDepartment().getAddressDetails().getFullAddress(), result.getDepartment().getAddressDetails().getFullAddress());
+        assertEquals(employee.getDepartment().getAddressDetails().getFullAddress(), result.getDepartment().getAddressDetails().getFullAddress());
     }
 }
