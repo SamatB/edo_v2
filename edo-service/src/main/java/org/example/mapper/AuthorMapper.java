@@ -8,6 +8,6 @@ import org.mapstruct.Mapper;
 /**
  * Маппер для преобразования между сущностью Author и объектом AuthorDto.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = AppealMapper.class)
 public interface AuthorMapper extends AbstractMapper<Author, AuthorDto> {
 }

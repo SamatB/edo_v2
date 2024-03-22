@@ -16,6 +16,7 @@ import java.time.ZonedDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Schema(description = "DTO для сущности Employee")
 public class EmployeeDto implements Serializable {
 

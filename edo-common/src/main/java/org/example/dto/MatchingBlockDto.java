@@ -20,8 +20,11 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "DTO для сущности MatchingBlock")
+
 public class MatchingBlockDto {
 
+    @Schema(description = "идентификатор блока участников согласования")
+    private Long id;
 
     @Schema(description = "Номер по порядку согласования и отображения")
     private Long number;

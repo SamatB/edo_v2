@@ -1,5 +1,5 @@
 /**
- * Маппер для преобразования между сущностью Appeal и объектом AppealDto.
+ * Маппер для преобразования между сущностью AgreementList и объектом AgreementListDto.
  */
 
 package org.example.mapper;
@@ -13,6 +13,6 @@ import org.mapstruct.Mapper;
 /**
  * Маппер преобразует AgreementList в AgreementListDto и обратно
  */
-@Mapper(componentModel = "spring", uses = {AppealMapper.class, ParticipantMapper.class, MatchingBlockMapper.class})
+@Mapper(componentModel = "spring", uses = {ParticipantMapper.class, MatchingBlockMapper.class, AppealMapper.class})
 public interface AgreementListMapper extends AbstractMapper<AgreementList, AgreementListDto> {
 }

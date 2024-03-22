@@ -16,6 +16,9 @@ import java.time.ZonedDateTime;
 @Schema(description = "Номенклатура")
 public class NomenclatureDto implements Serializable {
 
+        @Schema(description = "идентификатор номенклатуры")
+        private Long id;
+
         @Schema(name = "index")
         private String index;
 

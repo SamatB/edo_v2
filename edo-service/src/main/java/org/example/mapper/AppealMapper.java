@@ -9,6 +9,6 @@ import org.example.entity.Appeal;
 import org.example.mapper.util.AbstractMapper;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {EmployeeMapper.class, NomenclatureMapper.class, RegionMapper.class} )
 public interface AppealMapper extends AbstractMapper<Appeal, AppealDto> {
 }

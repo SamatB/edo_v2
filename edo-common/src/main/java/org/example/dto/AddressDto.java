@@ -12,6 +12,9 @@ import java.io.Serializable;
 @Data
 @Schema(description = "Адрес")
 public class AddressDto implements Serializable {
+
+    @Schema(description = "идентификатор адреса")
+    private Long id;
     @Schema(description = "Полный адрес")
     private String fullAddress;
     @Schema(description = "Название улицы")
