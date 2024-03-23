@@ -86,17 +86,17 @@ class AgreementListMapperTest {
         ParticipantDto initiator = new ParticipantDto();
         initiator.setType("INITIATOR");
         initiator.setNumber(1L);
-        initiator.setEmployeeDto(new EmployeeDto());
+        initiator.setEmployee(new EmployeeDto());
 
         ParticipantDto coordinating = new ParticipantDto();
         coordinating.setType("PARTICIPANT");
         coordinating.setNumber(1L);
-        coordinating.setEmployeeDto(new EmployeeDto());
+        coordinating.setEmployee(new EmployeeDto());
 
         ParticipantDto signatory = new ParticipantDto();
         signatory.setType("SIGNER");
         signatory.setNumber(1L);
-        signatory.setEmployeeDto(new EmployeeDto());
+        signatory.setEmployee(new EmployeeDto());
 
         Set<ParticipantDto> coordinatingParticipants = new HashSet<>();
         coordinatingParticipants.add(coordinating);
@@ -108,7 +108,7 @@ class AgreementListMapperTest {
         Set<MatchingBlockDto> signatoryBlocks = new HashSet<>();
         AgreementListDto agreementList = new AgreementListDto();
         agreementList.setComment("AgreementListComment");
-        agreementList.setAppealDto(appeal);
+        agreementList.setAppeal(appeal);
         agreementList.setInitiator(initiator);
         agreementList.setCoordinating(coordinatingBlocks);
         agreementList.setSignatory(signatoryBlocks);
@@ -143,15 +143,15 @@ class AgreementListMapperTest {
         assertNotNull(agreementListDto.getInitiator());
         assertNotNull(agreementListDto.getCoordinating());
         assertNotNull(agreementListDto.getSignatory());
-        assertNotNull(agreementListDto.getAppealDto());
+        assertNotNull(agreementListDto.getAppeal());
 
         log.info("AgreementListDto successfully created: " + agreementListDto);
 
         assertEquals(agreementListDto.getComment(), agreementList.getComment());
-        assertEquals(agreementListDto.getInitiator().getEmployeeDto().getFioNominative(), agreementList.getInitiator().getEmployee().getFioNominative());
+        assertEquals(agreementListDto.getInitiator().getEmployee().getFioNominative(), agreementList.getInitiator().getEmployee().getFioNominative());
         assertEquals(agreementListDto.getCoordinating().size(), agreementList.getCoordinating().size());
         assertEquals(agreementListDto.getSignatory().size(), agreementList.getSignatory().size());
-        assertEquals(agreementListDto.getAppealDto().getNumber(), agreementList.getAppeal().getNumber());
+        assertEquals(agreementListDto.getAppeal().getNumber(), agreementList.getAppeal().getNumber());
     }
 
     @Test
@@ -170,9 +170,9 @@ class AgreementListMapperTest {
         log.info("AgreementList successfully created: " + agreementList);
 
         assertEquals(agreementListDto.getComment(), agreementList.getComment());
-        assertEquals(agreementListDto.getInitiator().getEmployeeDto().getFioNominative(), agreementList.getInitiator().getEmployee().getFioNominative());
+        assertEquals(agreementListDto.getInitiator().getEmployee().getFioNominative(), agreementList.getInitiator().getEmployee().getFioNominative());
         assertEquals(agreementListDto.getCoordinating().size(), agreementList.getCoordinating().size());
         assertEquals(agreementListDto.getSignatory().size(), agreementList.getSignatory().size());
-        assertEquals(agreementListDto.getAppealDto().getNumber(), agreementList.getAppeal().getNumber());
+        assertEquals(agreementListDto.getAppeal().getNumber(), agreementList.getAppeal().getNumber());
     }
 }

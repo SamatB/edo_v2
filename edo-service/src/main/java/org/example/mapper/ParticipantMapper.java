@@ -12,15 +12,16 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {EmployeeMapper.class})
 public interface ParticipantMapper extends AbstractMapper<Participant, ParticipantDto> {
     /**
-     * Эти 2 метода нужны как костыль пока MapStruct не починит проблему с использованием других мапперов
-     * На момент их добавления не работает @Autowire для EmployeeMapper
-     * Без них поля с типом Employee и EmployeeDto не маппятся и становятся null
+     * Не трогать - упадет при маппинге листа согласования!
+     * Эти 2 метода исправляют проблемы с бесконечной рекурсией при обращении к полям matchingBlock во время маппинга.
      */
     @Override
-    @Mapping(source = "employee.addressDetails", target = "employeeDto.addressDetails")
+    @Mapping(target = "matchingBlock.participants", ignore = true)
+    @Mapping(target = "matchingBlock.agreementList", ignore = true)
     ParticipantDto entityToDto(Participant participant);
 
     @Override
-    @Mapping(source = "employeeDto.addressDetails", target = "employee.addressDetails")
+    @Mapping(target = "matchingBlock.participants", ignore = true)
+    @Mapping(target = "matchingBlock.agreementList", ignore = true)
     Participant dtoToEntity(ParticipantDto participantDto);
 }

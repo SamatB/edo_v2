@@ -46,7 +46,7 @@ public class AgreementListDto {
 
 
     @Schema(description = "Обращение с которым связан лист согласования")
-    private AppealDto appealDto;
+    private AppealDto appeal;
 
 
     @Schema(description = "Инициатор запуска листа согласования")

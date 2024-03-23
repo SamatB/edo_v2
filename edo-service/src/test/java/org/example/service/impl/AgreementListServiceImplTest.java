@@ -2,6 +2,7 @@ package org.example.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dto.AgreementListDto;
 import org.example.entity.AgreementList;
 import org.example.mapper.AgreementListMapper;
 import org.example.repository.AgreementListRepository;
@@ -31,12 +32,19 @@ class AgreementListServiceImplTest {
     @Test
     @DisplayName("Should return agreement list and get agreement list by id from database")
     void sendAgreementList_returnsAgreementList() {
-        AgreementList result = agreementListService.sendAgreementList(1L);
         AgreementList agreementList = agreementListRepository.findById(1L).get();
-//        AgreementListDto agreementListDto = agreementListMapper.entityToDto(agreementList);
+        AgreementListDto agreementListDto = agreementListMapper.entityToDto(agreementList);
+
+        AgreementListDto result = agreementListService.sendAgreementList(1L);
 
         assertNotNull(result);
-        assertEquals(agreementList, result);
+        assertEquals(agreementListDto.getAppeal().getId(), result.getAppeal().getId());
+        assertEquals(agreementListDto.getComment(), result.getComment());
+        assertEquals(agreementListDto.getInitiator(), result.getInitiator());
+        assertEquals(agreementListDto.getCreationDate(), result.getCreationDate());
+        assertEquals(agreementListDto.getCoordinating(), result.getCoordinating());
+        assertNotEquals(agreementListDto.getSentApprovalDate(), result.getSentApprovalDate());
+        assertEquals(agreementListDto.getSignatory().size(), result.getSignatory().size());
     }
 
     @Test
