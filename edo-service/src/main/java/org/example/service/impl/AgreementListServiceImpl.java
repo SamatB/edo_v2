@@ -1,13 +1,15 @@
 package org.example.service.impl;
 
 import static org.example.utils.EmailHelper.getAgreementListEmailDto;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.AgreementList;
+import org.example.dto.AgreementListDto;
 import org.example.entity.MatchingBlock;
 import org.example.entity.Participant;
 import org.example.mapper.AgreementListMapper;
+import org.example.mapper.ParticipantMapper;
 import org.example.publisher.AgreementListPublisher;
 import org.example.repository.AgreementListRepository;
 import org.example.service.AgreementListService;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class AgreementListServiceImpl implements AgreementListService {
     private final AgreementListRepository agreementListRepository;
     private final AgreementListMapper agreementListMapper;
+    private final ParticipantMapper participantMapper;
     private final AgreementListPublisher agreementListPublisher;
 
     /**
@@ -36,15 +39,13 @@ public class AgreementListServiceImpl implements AgreementListService {
      * @return объект DTO листа согласования
      */
     @Transactional(rollbackFor = Exception.class)
-    public AgreementList sendAgreementList(Long id) {
-        // TODO: починить маппер для листа согласования и изменить возвращаемый тип на AgreementListDto
+    public AgreementListDto sendAgreementList(Long id) {
         log.info("Отправка листа согласования с идентификатором: {}", id);
 
-        AgreementList result = agreementListRepository.findById(id)
+        return agreementListRepository.findById(id)
                 .map(agreementList -> {
                     String appealNumber = agreementList.getAppeal().getNumber();
-
-                    Set<MatchingBlock> matchingBlocks = agreementList.getSignatory();
+                    Set<MatchingBlock> matchingBlocks = new HashSet<>(agreementList.getSignatory());
                     matchingBlocks.addAll(agreementList.getCoordinating());
 
                     matchingBlocks
@@ -55,7 +56,7 @@ public class AgreementListServiceImpl implements AgreementListService {
                                 if (mb.getMatchingBlockType().equals(MatchingBlockType.PARALLEL)) {
                                     mb.getParticipants().forEach(participant -> {
                                         participant.setStatus(ParticipantStatusType.ACTIVE);
-                                        agreementListPublisher.sendAgreementListEmailNotification(getAgreementListEmailDto(participant, appealNumber), participant.getNumber());
+                                        agreementListPublisher.sendAgreementListEmailNotification(getAgreementListEmailDto(participantMapper.entityToDto(participant), appealNumber), participant.getNumber());
                                     });
                                 } else {
                                     mb.getParticipants()
@@ -67,7 +68,7 @@ public class AgreementListServiceImpl implements AgreementListService {
                                             .findFirst()
                                             .ifPresent(participant -> {
                                                 participant.setStatus(ParticipantStatusType.ACTIVE);
-                                                agreementListPublisher.sendAgreementListEmailNotification(getAgreementListEmailDto(participant, appealNumber), participant.getNumber());
+                                                agreementListPublisher.sendAgreementListEmailNotification(getAgreementListEmailDto(participantMapper.entityToDto(participant), appealNumber), participant.getNumber());
                                             });
                                 }
                             });
@@ -77,10 +78,7 @@ public class AgreementListServiceImpl implements AgreementListService {
                     return agreementList;
                 })
                 .map(agreementListRepository::save)
-//                .map(agreementListMapper::entityToDto)
+                .map(agreementListMapper::entityToDto)
                 .orElseThrow(() -> new EntityNotFoundException("Лист согласования с id: " + id + " не найден"));
-
-//        agreementListMapper.entityToDto(result);
-        return result;
     }
 }
