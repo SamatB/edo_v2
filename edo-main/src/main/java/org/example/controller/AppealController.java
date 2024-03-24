@@ -9,18 +9,18 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PreDestroy;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
 import org.example.feign.AppealFeignClient;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.example.utils.AppealCsvHelper.successResponseForAppealsCsvReport;
 
 
 @RestController
@@ -167,27 +167,20 @@ public class AppealController {
 
 
     /**
-     * Метод для получения файла обращений в формате XLSX.
+     * Метод для получения файла обращений в формате CSV.
      */
     @GetMapping("/export/csv")
     @Operation(summary = "Получение списка обращений в формате CSV")
-    public ResponseEntity<?> getAllAppealsAsCsv() {
+    public ResponseEntity<?> getAppealsAsCsv(@Parameter(name = "offset", example = "1") @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset, @Parameter(name = "size", example = "7") @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size) {
         log.info("Получение списка обращений в формате CSV");
         try {
-            byte[] file = appealFeignClient.downloadAppealsCsvReport();
+            byte[] file = appealFeignClient.downloadAppealsCsvReport(offset, size);
             if (file.length == 0) {
                 log.warn("Ошибка получения списка обращений: список пустой");
                 return ResponseEntity.notFound().build();
             }
-            DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-            String currentDateTime = dateFormatter.format(new Date());
-            String filename = "appeals_" + currentDateTime + ".csv";
             log.info("Список обращений получен");
-            return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=" + filename)
-                    .contentLength(file.length)
-                    .contentType(MediaType.parseMediaType("application/csv"))
-                    .body(file);
+            return successResponseForAppealsCsvReport(file);
         } catch (Exception e) {
             log.warn("Ошибка получения списка обращений: " + e.getMessage());
             return ResponseEntity.internalServerError().build();

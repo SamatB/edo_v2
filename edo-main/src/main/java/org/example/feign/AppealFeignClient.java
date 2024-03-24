@@ -52,5 +52,5 @@ public interface AppealFeignClient {
      * Метод для выгрузки обращений в формате CSV
      */
     @GetMapping(value = "/appeal/export/csv", consumes = "application/octet-stream", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    byte[] downloadAppealsCsvReport();
+    byte[] downloadAppealsCsvReport(int offset, int size);
 }

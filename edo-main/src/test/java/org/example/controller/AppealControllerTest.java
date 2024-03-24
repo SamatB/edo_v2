@@ -234,9 +234,9 @@ public class AppealControllerTest {
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testCsv));
         byte[] bytes = mockInputStream.readAllBytes();
 
-        when(appealFeignClient.downloadAppealsCsvReport()).thenReturn(bytes);
+        when(appealFeignClient.downloadAppealsCsvReport(0, 5)).thenReturn(bytes);
 
-        ResponseEntity<?> response = appealController.getAllAppealsAsCsv();
+        ResponseEntity<?> response = appealController.getAppealsAsCsv(0, 5);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -251,9 +251,9 @@ public class AppealControllerTest {
         int size = mockInputStream.available();
         byte[] bytes = mockInputStream.readAllBytes();
 
-        when(appealFeignClient.downloadAppealsCsvReport()).thenReturn(bytes);
+        when(appealFeignClient.downloadAppealsCsvReport(0, 5)).thenReturn(bytes);
 
-        ResponseEntity<?> response = appealController.getAllAppealsAsCsv();
+        ResponseEntity<?> response = appealController.getAppealsAsCsv(0, 5);
         assertEquals(size, response.getHeaders().getContentLength());
         assertThat(response.getBody()).isNotNull();
     }
@@ -266,9 +266,9 @@ public class AppealControllerTest {
     void downloadAppealsCsvReport_fileHasSuffix() throws IOException {
         File testCsv = new File(OUTPUT_DIR + "appeals_2024-03-18_19_25_07.csv");
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testCsv));
-        when(appealFeignClient.downloadAppealsCsvReport()).thenReturn(mockInputStream.readAllBytes());
+        when(appealFeignClient.downloadAppealsCsvReport(0, 5)).thenReturn(mockInputStream.readAllBytes());
 
-        ResponseEntity<?> response = appealController.getAllAppealsAsCsv();
+        ResponseEntity<?> response = appealController.getAppealsAsCsv(0, 5);
 
         assertThat(response.getHeaders().containsKey("Content-Disposition")).isTrue();
         assertThat(Objects.requireNonNull(response.getHeaders().get("Content-Disposition")).get(0)).endsWithIgnoringCase(".csv");
@@ -281,9 +281,9 @@ public class AppealControllerTest {
      */
     @Test
     void downloadAppealsCsvReport_returnsInternalServerError() {
-        when(appealFeignClient.downloadAppealsCsvReport()).thenReturn(null);
+        when(appealFeignClient.downloadAppealsCsvReport(0, 5)).thenReturn(null);
 
-        ResponseEntity<?> response = appealController.getAllAppealsAsCsv();
+        ResponseEntity<?> response = appealController.getAppealsAsCsv(0, 5);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -295,9 +295,9 @@ public class AppealControllerTest {
     @Test
     void downloadAppealsCsvReport_returnsNotFound() {
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(new byte[0]);
-        when(appealFeignClient.downloadAppealsCsvReport()).thenReturn(mockInputStream.readAllBytes());
+        when(appealFeignClient.downloadAppealsCsvReport(0, 5)).thenReturn(mockInputStream.readAllBytes());
 
-        ResponseEntity<?> response = appealController.getAllAppealsAsCsv();
+        ResponseEntity<?> response = appealController.getAppealsAsCsv(0, 5);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }

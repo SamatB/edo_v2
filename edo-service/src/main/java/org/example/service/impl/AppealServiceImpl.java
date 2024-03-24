@@ -15,11 +15,14 @@ import org.example.repository.AppealRepository;
 import org.example.service.AppealService;
 import org.example.enums.StatusType;
 import org.example.service.NomenclatureService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -145,5 +148,13 @@ public class AppealServiceImpl implements AppealService {
                 .map(appealRepository::save)
                 .map(appealMapper::entityToDto)
                 .orElseThrow(() -> new IllegalArgumentException("Ошибка резервирования номера обращения: обращение не должно быть null"));
+    }
+
+    public List<AppealDto> getPaginatedAppeals(int offset, int size) {
+        return appealRepository.findAll(PageRequest.of(offset, size))
+                .getContent()
+                .stream()
+                .map(appealMapper::entityToDto)
+                .collect(Collectors.toList());
     }
 }
