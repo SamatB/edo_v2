@@ -6,11 +6,7 @@ package org.example.feign;
 import org.example.dto.AppealDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "edo-service")
 public interface AppealFeignClient {
@@ -52,5 +48,5 @@ public interface AppealFeignClient {
      * Метод для выгрузки обращений в формате CSV
      */
     @GetMapping(value = "/appeal/export/csv", consumes = "application/octet-stream", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    byte[] downloadAppealsCsvReport(int offset, int size);
+    byte[] downloadAppealsCsvReport(@RequestParam int offset, @RequestParam int size);
 }
