@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.ZonedDateTime;
 
@@ -31,6 +33,7 @@ public class Nomenclature extends BaseEntity {
      */
     @JoinColumn(name = "department_id")
     @OneToOne(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
     private Department department;
 
     /**

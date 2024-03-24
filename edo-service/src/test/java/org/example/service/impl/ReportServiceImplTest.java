@@ -12,9 +12,7 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Тесты для класса ReportServiceImpl.*
- * Работают только при установке FetchType.EAGER на поле appeal.creator
- * Иначе падает окружение с hibernate no session
+ * Тесты для класса ReportServiceImpl
  */
 @SpringBootTest
 class ReportServiceImplTest {
