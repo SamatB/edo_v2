@@ -1,24 +1,22 @@
 package org.example.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
 import org.example.service.AppealService;
 import org.example.service.ReportService;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import static org.example.utils.AppealCsvHelper.successResponseForAppealsCsvReport;
 
 /**
  * Контроллер для работы с сущностью Appeal.
@@ -130,23 +128,16 @@ public class AppealController {
 
     @GetMapping("/export/csv")
     @Operation(summary = "Экспорт обращений в CSV")
-    public ResponseEntity<Resource> downloadAppealsCsvReport() {
+    public ResponseEntity<ByteArrayResource> downloadAppealsCsvReport(@Parameter(name = "offset", example = "1") @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset, @Parameter(name = "size", example = "7") @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size) {
         log.info("Экспорт обращений в CSV");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-        String currentDateTime = dateFormatter.format(new Date());
-        String filename = "appeals_" + currentDateTime + ".csv";
         try {
-            ByteArrayResource file = new ByteArrayResource(reportService.downloadAppealsCsvReport().readAllBytes());
+            ByteArrayResource file = new ByteArrayResource(reportService.downloadAppealsCsvReport(offset, size).readAllBytes());
             if (file.contentLength() == 0) {
                 log.warn("Ошибка получения списка обращений: файл не существует");
                 return ResponseEntity.notFound().build();
             }
             log.info("Список обращений отправлен");
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .contentLength(file.contentLength())
-                    .body(file);
+            return successResponseForAppealsCsvReport(file);
         } catch (Exception e) {
             log.warn("Ошибка получения списка обращений: " + e.getMessage());
             return ResponseEntity.internalServerError().build();

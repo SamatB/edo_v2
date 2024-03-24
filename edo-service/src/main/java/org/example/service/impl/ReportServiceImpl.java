@@ -2,22 +2,23 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.Appeal;
-import org.example.repository.AppealRepository;
+import org.example.dto.AppealDto;
+import org.example.service.AppealService;
 import org.example.service.ReportService;
-import org.example.utils.AppealCsvHelper;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
+import static org.example.utils.AppealCsvHelper.appealsToCsv;
+import static org.example.utils.FileHelper.CSV_FILE_EXTENSION;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ReportServiceImpl implements ReportService {
-    private final AppealRepository appealRepository;
-    private final AppealCsvHelper appealCsvHelper;
+    private final AppealService appealService;
 
     /**
      * Запись в CSV файл
@@ -25,21 +26,18 @@ public class ReportServiceImpl implements ReportService {
      *
      * @param fileName название файла для записи в формате абсолютного пути
      */
-    public void writeAppealsToCsv(String fileName) {
+    public void writeAppealsToCsv(int offset, int size, String fileName) {
         log.info("Запись в CSV файл");
-        String suffix = ".csv";
-        if (!fileName.endsWith(suffix)) {
-            log.info("Добавление суффикса {} к имени файла", suffix);
-            fileName = fileName + suffix;
+        if (!fileName.endsWith(CSV_FILE_EXTENSION)) {
+            log.info("Добавление суффикса {} к имени файла", CSV_FILE_EXTENSION);
+            fileName = fileName + CSV_FILE_EXTENSION;
         }
         log.info("Получение списка обращений из базы данных");
-        List<Appeal> appeals = appealRepository.findAll();
+        List<AppealDto> appeals = appealService.getPaginatedAppeals(offset, size);
 
         try {
             log.info("Создание CSV файла...");
-//            appealCsvHelper.setFormatter(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
-//            appealCsvHelper.setQuestionsSeparator("; ");
-            appealCsvHelper.appealsToCsv(appeals, fileName);
+            appealsToCsv(appeals, fileName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -50,12 +48,12 @@ public class ReportServiceImpl implements ReportService {
      *
      * @return ByteArrayInputStream
      */
-    public ByteArrayInputStream downloadAppealsCsvReport() {
+    public ByteArrayInputStream downloadAppealsCsvReport(int offset, int size) {
         log.info("Получение списка обращений из базы данных");
-        List<Appeal> appeals = appealRepository.findAll();
+        List<AppealDto> appeals = appealService.getPaginatedAppeals(offset, size);
         try {
             log.info("Загрузка CSV файла...");
-            return appealCsvHelper.appealsToCsv(appeals);
+            return appealsToCsv(appeals);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

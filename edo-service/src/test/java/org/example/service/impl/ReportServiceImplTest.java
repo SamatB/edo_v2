@@ -12,8 +12,7 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Тесты для класса ReportServiceImpl.
- *
+ * Тесты для класса ReportServiceImpl.*
  * Работают только при установке FetchType.EAGER на поле appeal.creator
  * Иначе падает окружение с hibernate no session
  */
@@ -38,7 +37,7 @@ class ReportServiceImplTest {
     @Test
     void writeAppealsToCsv_fileExists() {
         String fileName = OUTPUT_DIR + "test.csv";
-        reportService.writeAppealsToCsv(fileName);
+        reportService.writeAppealsToCsv(0, 10, fileName);
 
         assertTrue(Files.exists(Paths.get(fileName)));
     }
@@ -50,7 +49,7 @@ class ReportServiceImplTest {
     void writeAppealsToCsv_fileHasSuffix() {
         String fileName = OUTPUT_DIR + "test.csv";
         String wrongSuffix = ".txt";
-        reportService.writeAppealsToCsv(fileName + wrongSuffix);
+        reportService.writeAppealsToCsv(0, 10,fileName + wrongSuffix);
 
         assertTrue(Files.exists(Paths.get(fileName + wrongSuffix + ".csv")));
     }
