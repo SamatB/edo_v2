@@ -37,7 +37,7 @@ public class ParticipantDto implements Serializable {
     private Long number;
 
     @Schema(description = "Сотрудник")
-    private EmployeeDto employeeDto;
+    private EmployeeDto employee;
 
     @Schema(description = "Блок участников согласования")
     private MatchingBlockDto matchingBlock;

@@ -5,9 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.ZonedDateTime;
 import java.util.Set;
@@ -52,7 +50,7 @@ public class AgreementListDto {
 
 
     @Schema(description = "Обращение с которым связан лист согласования")
-    private AppealDto appealDto;
+    private AppealDto appeal;
 
 
     @Schema(description = "Инициатор запуска листа согласования")

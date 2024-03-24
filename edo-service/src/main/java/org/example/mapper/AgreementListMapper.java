@@ -13,6 +13,6 @@ import org.mapstruct.Mapper;
 /**
  * Маппер преобразует AgreementList в AgreementListDto и обратно
  */
-@Mapper(componentModel = "spring", uses = {ParticipantMapper.class, MatchingBlockMapper.class, AppealMapper.class})
+@Mapper(componentModel = "spring", uses = {AppealMapper.class, ParticipantMapper.class, MatchingBlockMapper.class})
 public interface AgreementListMapper extends AbstractMapper<AgreementList, AgreementListDto> {
 }
