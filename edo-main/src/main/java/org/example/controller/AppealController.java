@@ -171,7 +171,11 @@ public class AppealController {
      */
     @GetMapping("/export/csv")
     @Operation(summary = "Получение списка обращений в формате CSV")
-    public ResponseEntity<?> getAppealsAsCsv(@Parameter(name = "offset", example = "1") @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset, @Parameter(name = "size", example = "7") @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size) {
+    public ResponseEntity<?> getAppealsAsCsv(
+            @Parameter(name = "offset", example = "1", required = false)
+            @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
+            @Parameter(name = "size", example = "7", required = false)
+            @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size) {
         log.info("Получение списка обращений в формате CSV");
         try {
             byte[] file = appealFeignClient.downloadAppealsCsvReport(offset, size);
