@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Тесты для класса AgreementListServiceImpl.
- * Работает только с enable_lazy_load_no_trans: true в настройках hibernate
  */
 
 @Slf4j
