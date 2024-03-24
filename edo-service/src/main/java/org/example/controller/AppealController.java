@@ -128,7 +128,11 @@ public class AppealController {
 
     @GetMapping("/export/csv")
     @Operation(summary = "Экспорт обращений в CSV")
-    public ResponseEntity<ByteArrayResource> downloadAppealsCsvReport(@Parameter(name = "offset", example = "1") @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset, @Parameter(name = "size", example = "7") @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size) {
+    public ResponseEntity<ByteArrayResource> downloadAppealsCsvReport(
+            @Parameter(name = "offset", example = "1", required = false)
+            @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
+            @Parameter(name = "size", example = "7", required = false)
+            @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size) {
         log.info("Экспорт обращений в CSV");
         try {
             ByteArrayResource file = new ByteArrayResource(reportService.downloadAppealsCsvReport(offset, size).readAllBytes());
