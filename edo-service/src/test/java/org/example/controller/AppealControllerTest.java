@@ -117,9 +117,9 @@ class AppealControllerTest {
         File testCsv = new File(OUTPUT_DIR + "appeals_2024-03-18_19_25_07.csv");
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testCsv));
 
-        when(reportService.downloadAppealsCsvReport()).thenReturn(mockInputStream);
+        when(reportService.downloadAppealsCsvReport(0, 10)).thenReturn(mockInputStream);
 
-        ResponseEntity<?> response = appealController.downloadAppealsCsvReport();
+        ResponseEntity<?> response = appealController.downloadAppealsCsvReport(0, 10);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -132,9 +132,9 @@ class AppealControllerTest {
         File testCsv = new File(OUTPUT_DIR + "appeals_2024-03-18_19_25_07.csv");
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testCsv));
         int size = mockInputStream.available();
-        when(reportService.downloadAppealsCsvReport()).thenReturn(mockInputStream);
+        when(reportService.downloadAppealsCsvReport(0, 10)).thenReturn(mockInputStream);
 
-        ResponseEntity<?> response = appealController.downloadAppealsCsvReport();
+        ResponseEntity<?> response = appealController.downloadAppealsCsvReport(0, 10);
         assertEquals(size, response.getHeaders().getContentLength());
         assertThat(response.getBody()).isNotNull();
     }
@@ -148,9 +148,9 @@ class AppealControllerTest {
         File testCsv = new File(OUTPUT_DIR + "appeals_2024-03-18_19_25_07.csv");
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testCsv));
 
-        when(reportService.downloadAppealsCsvReport()).thenReturn(mockInputStream);
+        when(reportService.downloadAppealsCsvReport(0, 10)).thenReturn(mockInputStream);
 
-        ResponseEntity<?> response = appealController.downloadAppealsCsvReport();
+        ResponseEntity<?> response = appealController.downloadAppealsCsvReport(0, 10);
 
         assertThat(response.getHeaders().containsKey("Content-Disposition")).isTrue();
         assertThat(Objects.requireNonNull(response.getHeaders().get("Content-Disposition")).get(0)).endsWithIgnoringCase(".csv");
@@ -163,9 +163,9 @@ class AppealControllerTest {
      */
     @Test
     void downloadAppealsCsvReport_returnsInternalServerError() {
-        when(reportService.downloadAppealsCsvReport()).thenReturn(null);
+        when(reportService.downloadAppealsCsvReport(0, 10)).thenReturn(null);
 
-        ResponseEntity<?> response = appealController.downloadAppealsCsvReport();
+        ResponseEntity<?> response = appealController.downloadAppealsCsvReport(0,10);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -177,9 +177,9 @@ class AppealControllerTest {
     @Test
     void downloadAppealsCsvReport_returnsNotFound() {
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(new byte[0]);
-        when(reportService.downloadAppealsCsvReport()).thenReturn(mockInputStream);
+        when(reportService.downloadAppealsCsvReport(0, 10)).thenReturn(mockInputStream);
 
-        ResponseEntity<?> response = appealController.downloadAppealsCsvReport();
+        ResponseEntity<?> response = appealController.downloadAppealsCsvReport(0, 10);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
