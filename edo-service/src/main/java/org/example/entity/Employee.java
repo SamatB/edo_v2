@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
@@ -69,6 +71,7 @@ public class Employee extends BaseEntity {
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
+    @Fetch(FetchMode.JOIN)
     private Address addressDetails;
 
     /**
@@ -153,5 +156,6 @@ public class Employee extends BaseEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
+    @Fetch(FetchMode.JOIN)
     private Department department;
 }

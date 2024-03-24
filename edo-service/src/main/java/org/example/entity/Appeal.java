@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.example.enums.StatusType;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -79,6 +81,7 @@ public class Appeal extends BaseEntity {
             , joinColumns = @JoinColumn(name = "id_appeal")
             , inverseJoinColumns = @JoinColumn(name = "id_employee")
     )
+    @Fetch(FetchMode.JOIN)
     private List<Employee> singers;
     /**
      * свзязь один к одному к таблице Employee
@@ -86,6 +89,7 @@ public class Appeal extends BaseEntity {
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
+    @Fetch(FetchMode.JOIN)
     private Employee creator;
     /**
      * свзязь один ко многим к таблице Employee
@@ -97,6 +101,7 @@ public class Appeal extends BaseEntity {
             , joinColumns = @JoinColumn(name = "id_appeal")
             , inverseJoinColumns = @JoinColumn(name = "id_employee")
     )
+    @Fetch(FetchMode.JOIN)
     private List<Employee> addressee;
     /**
      * связь с сущностью Номенклатура
@@ -104,6 +109,7 @@ public class Appeal extends BaseEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nomenclature_id", referencedColumnName = "id")
+    @Fetch(FetchMode.JOIN)
     private Nomenclature nomenclature;
 
     /**
