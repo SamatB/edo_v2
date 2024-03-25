@@ -3,6 +3,8 @@ package org.example.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
 import org.example.dto.ResolutionDto;
+import org.example.entity.Appeal;
+import org.example.entity.Question;
 import org.example.entity.Resolution;
 import org.example.mapper.ResolutionMapper;
 import org.example.repository.ResolutionRepository;
@@ -36,6 +38,8 @@ public class ResolutionServiceTest {
 
     @InjectMocks
     private ResolutionServiceImpl resolutionService;
+
+
 
     @BeforeEach
     public void setUp() {
@@ -106,14 +110,15 @@ public class ResolutionServiceTest {
         when(resolutionService.findResolution(false)).thenReturn(notArchivedResolutions);
         when(resolutionService.findResolution(null)).thenReturn(allResolutions);
 
-        List<ResolutionDto> resultListArchivedResolutions =  resolutionService.findResolution(true);
-        List<ResolutionDto> resultListNotArchivedResolutions =  resolutionService.findResolution(false);
-        List<ResolutionDto> resultListAllResolutions =  resolutionService.findResolution(null);
+        List<ResolutionDto> resultListArchivedResolutions = resolutionService.findResolution(true);
+        List<ResolutionDto> resultListNotArchivedResolutions = resolutionService.findResolution(false);
+        List<ResolutionDto> resultListAllResolutions = resolutionService.findResolution(null);
 
 
         assertEquals(archivedResolutions, resultListArchivedResolutions);
         assertEquals(notArchivedResolutions, resultListNotArchivedResolutions);
         assertEquals(allResolutions, resultListAllResolutions);
+
         verify(resolutionRepository).findResolutions(true);
         verify(resolutionRepository).findResolutions(false);
         verify(resolutionRepository).findResolutions(null);
@@ -174,4 +179,6 @@ public class ResolutionServiceTest {
 
         assertThrows(EntityNotFoundException.class, () -> resolutionService.updateResolution(id, resolutionDto));
     }
+
+
 }

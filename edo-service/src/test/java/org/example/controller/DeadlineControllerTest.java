@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.dto.DeadlineDto;
+import org.example.entity.Appeal;
 import org.example.service.DeadlineService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,9 +12,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Collection;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -55,5 +59,23 @@ public class DeadlineControllerTest {
 
         ResponseEntity<DeadlineDto> response = deadlineController.setOrUpdateDeadline(1L, new DeadlineDto());
         assertEquals(ResponseEntity.status(503).build(), response);
+    }
+
+    /**
+     *Тест получения списка  объектов DeadlineDto по идентификатору обращения
+     */
+
+    @Test
+    public  void testGetDeadlinesByAppeal() {
+        Appeal appeal = mock(Appeal.class);
+        Collection<DeadlineDto> deadlineDtoList = mock(Collection.class);
+        Boolean archived = null;
+
+        when(deadlineService.getDeadlinesByAppeal(appeal.getId(),archived)).thenReturn(deadlineDtoList);
+
+        ResponseEntity<Collection<DeadlineDto>> response = deadlineController.getDeadlinesByAppeal(appeal.getId(), archived);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(deadlineDtoList, response.getBody());
     }
 }

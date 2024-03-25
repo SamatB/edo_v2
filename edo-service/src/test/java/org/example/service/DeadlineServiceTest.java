@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.dto.DeadlineDto;
+import org.example.entity.Appeal;
 import org.example.entity.Deadline;
 import org.example.mapper.DeadlineMapper;
 import org.example.repository.DeadlineRepository;
@@ -12,8 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Collection;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -30,6 +33,7 @@ public class DeadlineServiceTest {
 
     @InjectMocks
     private DeadlineServiceImpl deadlineService;
+
 
     @BeforeEach
     public void setUp() {
@@ -55,4 +59,24 @@ public class DeadlineServiceTest {
 
         assertEquals(deadlineDto, result);
     }
+
+    /**
+     *
+     */
+    @Test
+    public void testGetAllByResolution_Question_Appeal_Id() {
+
+        Collection<DeadlineDto> deadlineDtoList = mock(List.class);
+        Appeal appeal = mock(Appeal.class);
+
+        when(deadlineMapper.entityListToDtoList(
+                deadlineRepository.getDeadlinesByAppeal(appeal.getId(), null)))
+                .thenReturn(deadlineDtoList);
+
+
+        Collection<DeadlineDto> deadlineDtos = deadlineService.getDeadlinesByAppeal(2L, null);
+
+        assertEquals(deadlineDtoList, deadlineDtos);
+    }
+
 }

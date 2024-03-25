@@ -69,15 +69,15 @@ public class EmailServiceImpl implements EmailService {
         }
         return message;
     }
-    
+
     /***
      * Валидирует параметры электронного письма перед его отправкой.
      * Проверяет, что переданный адрес электронной почты соответствует формату валидных email-адресов,
      * а также что тема и текст письма не равны null. В случае, если какой-либо из параметров не проходит валидацию,
      * метод логирует соответствующее информационное сообщение и генерирует исключение IllegalArgumentException.
-     * @param to кому
-     * @param subject тема
-     * @param text тело письма
+     * @param to почта, которая проверяется на валидацию и на null
+     * @param subject тема сообщения, которая проверяется на null
+     * @param text текст сообщения, который проверяется на null
      * @throws IllegalArgumentException если переданные данные не валидны
      */
     private void validParams(String to, String subject, String text) {

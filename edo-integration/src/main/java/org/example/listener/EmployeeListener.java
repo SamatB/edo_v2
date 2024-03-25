@@ -16,7 +16,7 @@ public class EmployeeListener {
     private final EmailService emailService;
 
     /**
-     * Получает EmployeeDTO с очереди rabbitmq и отправляет emails
+     * Получает EmailDTO с очереди rabbitmq и отправляет emails
      * на основе переданных идентификаторов.
      * @param emailDto содержит в себе список email сотрудников, тему и текст для рассылки сообщения
      */
