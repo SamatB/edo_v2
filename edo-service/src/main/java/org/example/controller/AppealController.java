@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static org.example.utils.FileHelper.getAppealsXlsxReportFileName;
+
 /**
  * Контроллер для работы с сущностью Appeal.
  */
@@ -151,9 +153,7 @@ public class AppealController {
     @Operation(summary = "Экспорт обращений в Excel")
     public ResponseEntity<Resource> downloadAppealsXlsxReport() {
         log.info("Экспорт обращений в Excel");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-        String currentDateTime = dateFormatter.format(new Date());
-        String filename = "appeals_" + currentDateTime + ".xlsx";
+        String filename = getAppealsXlsxReportFileName();
         try {
             ByteArrayResource file = new ByteArrayResource(reportService.getAppealsXlsxReport().readAllBytes());
             if (file.contentLength() == 0) {

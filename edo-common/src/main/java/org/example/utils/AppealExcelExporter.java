@@ -1,6 +1,5 @@
 package org.example.utils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -8,40 +7,30 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.example.entity.Appeal;
-import org.example.entity.Question;
-import org.example.service.QuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.example.dto.AppealDto;
+import org.example.dto.QuestionDto;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.example.utils.FileHelper.*;
 
 /**
  * Вспомогательный класс для экспорта обращений в Excel
  */
 
 @Slf4j
-@RequiredArgsConstructor
-@Component
 public class AppealExcelExporter {
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
-    private List<Appeal> appeals;
-    private QuestionService questionService;
+    private List<AppealDto> appeals;
 
-    @Autowired
-    public AppealExcelExporter(QuestionService questionService) {
-        this.questionService = questionService;
-    }
-
-    public void createNewWorkBook(List<Appeal> listAppeals) {
+    public void createNewWorkBook(List<AppealDto> listAppeals) {
         workbook = new XSSFWorkbook();
         this.appeals = listAppeals;
     }
@@ -56,7 +45,8 @@ public class AppealExcelExporter {
         font.setFontHeight(16);
         style.setFont(font);
 
-        String[] cellNames = {"Номер обращения", "Дата создания", "ФИО создателя", "Список вопросов обращения", "Статус обращения"};
+        String[] cellNames = APPEAL_REPORT_COLUMNS.toArray(new String[0]);
+
         for (int i = 0; i < cellNames.length; i++) {
             createCell(row, i, cellNames[i], style);
         }
@@ -72,7 +62,7 @@ public class AppealExcelExporter {
         } else if (value instanceof Long) {
             cell.setCellValue((Long) value);
         } else if (value instanceof ZonedDateTime) {
-            cell.setCellValue(((ZonedDateTime) value).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+            cell.setCellValue(((ZonedDateTime) value).format(DAY_FIRST_DATE_NO_TIME_FORMATTER));
         } else {
             cell.setCellValue((String) value);
         }
@@ -87,15 +77,9 @@ public class AppealExcelExporter {
         font.setFontHeight(14);
         style.setFont(font);
 
-        for (Appeal appeal : appeals) {
+        for (AppealDto appeal : appeals) {
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
-
-            log.info("Получение списка вопросов обращения из базы данных");
-            String questions = questionService.getAllQuestionsByAppealId(appeal.getId())
-                    .stream()
-                    .map(Question::getSummary)
-                    .collect(Collectors.joining(", "));
 
             log.info("Запись обращения {} в XLSX файл", appeal.getNumber() != null
                     ? appeal.getNumber()
@@ -106,7 +90,9 @@ public class AppealExcelExporter {
                     : appeal.getId()), style);
             createCell(row, columnCount++, appeal.getCreationDate(), style);
             createCell(row, columnCount++, appeal.getCreator().getFioNominative(), style);
-            createCell(row, columnCount++, questions, style);
+            createCell(row, columnCount++, appeal.getQuestions().stream()
+                    .map(QuestionDto::getSummary)
+                    .collect(Collectors.joining(COMMA_DELIMITER)), style);
             createCell(row, columnCount, appeal.getStatusType().getRusStatusType(), style);
         }
     }
