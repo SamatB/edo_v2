@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -25,4 +24,6 @@ public interface ResolutionRepository extends JpaRepository<Resolution, Long> {
             "OR (:archived = true AND e.archivedDate IS NOT NULL) " +
             "OR (:archived = false AND e.archivedDate IS NULL))")
     List<ResolutionDto> findResolutions(Boolean archived);
+
+
 }

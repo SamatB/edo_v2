@@ -38,6 +38,7 @@ public class ResolutionServiceImpl implements ResolutionService {
     private final ResolutionMapper resolutionMapper;
     private final RabbitTemplate rabbitTemplate;
 
+
     /**
      * Сохраняет резолюцию в базе данных, обновляя даты создания и последнего действия на текущее время.
      * Статусы связанных вопросов и апелляций также обновляются перед сохранением.

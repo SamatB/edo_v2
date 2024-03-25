@@ -8,7 +8,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 /**
  * Сущность Deadline представляет дэдлайн.

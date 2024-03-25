@@ -10,6 +10,8 @@ import org.example.feign.DeadlineFeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+
 /**
  * Контроллер для работы установки и изменения дедлайна.
  */
@@ -41,6 +43,35 @@ public class DeadlineController {
         } catch (Exception e) {
             log.error("Установка даты дедлайна завершена с ошибкой " + e);
             return ResponseEntity.status(503).build();
+        }
+    }
+
+    /**
+     * Метод возвращает список объектов DeadlineDto  по идентификатору обращения с учетом нахождения резолюций в архиве.
+     * @param appealId - идентификатор обращения
+     * @param archived - флаг, указывающий на архивацию "null - все резолюции, true - архивные, false - не в архиве"
+     * @return ответ со списком объектов DeadlineDto
+     */
+    @GetMapping("/getDeadlinesByAppeal/{id}")
+    @Operation(summary = "Получает дедлайн резолюции по идентификатору обращения",
+            description = "Обращение должно существовать")
+    public ResponseEntity<Collection<DeadlineDto>> getDeadlinesByAppeal(@PathVariable("id") Long appealId,
+                                                                        @Parameter(description = "null - все резолюции, true - архивные, false - не в архиве")
+                                                                        @RequestParam(required = false) Boolean archived) {
+        try {
+            Collection<DeadlineDto> deadlineDtoList = deadlineFeignClient.getDeadlinesByAppeal(appealId, archived);
+            if (archived == null) {
+                log.info("Получены дедлайны резолюций");
+                return ResponseEntity.ok(deadlineDtoList);
+            } else {
+                log.info("Получены дедлайны резолюций, с учетом нахождения резолюций в архиве");
+                return deadlineDtoList != null && !deadlineDtoList.isEmpty()
+                        ?  ResponseEntity.ok(deadlineDtoList)
+                        :  ResponseEntity.status(204).build();
+            }
+        } catch (Exception e) {
+            log.warn("Получение дедлайнов завершено с ошибкой" + e);
+            return ResponseEntity.notFound().build();
         }
     }
 }

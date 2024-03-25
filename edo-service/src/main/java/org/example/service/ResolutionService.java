@@ -16,4 +16,5 @@ public interface ResolutionService {
     List<ResolutionDto> findResolution(Boolean archivedType);
 
     void validateResolution(ResolutionDto resolutionDto);
+
 }
