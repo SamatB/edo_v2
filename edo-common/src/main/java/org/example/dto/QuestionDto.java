@@ -33,5 +33,5 @@ public class QuestionDto {
     private String summary;
 
     @Schema(description = "Идентификатор обращения")
-    private Long appeal_id;
+    private Long appealId;
 }

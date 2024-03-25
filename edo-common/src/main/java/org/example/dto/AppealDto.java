@@ -59,4 +59,7 @@ public class AppealDto {
     @NotNull
     @Schema(description = "Номенклатура")
     private NomenclatureDto nomenclature;
+
+    @Schema(description = "Вопросы")
+    private List<QuestionDto> questions;
 }
