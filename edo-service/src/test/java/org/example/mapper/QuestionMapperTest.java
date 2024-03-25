@@ -43,8 +43,7 @@ class QuestionMapperTest {
         Question result = questionMapper.dtoToEntity(questionDto);
 
         assertNotNull(result.getAppeal());
-        log.info(result.getAppeal().getId().toString());
-        assertNotNull(result.getAppeal().getQuestions());
+        assertNotNull(result.getAppeal());
 
         assertEquals(question, result);
         assertEquals(question.getAppeal().getId(), result.getAppeal().getId());

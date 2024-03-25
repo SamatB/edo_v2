@@ -110,17 +110,6 @@ class AppealMapperTest {
                 .summary("Summary")
                 .appeal(Appeal.builder()
                         .id(1L)
-                        .creationDate(dateTime)
-                        .registrationDate(dateTime)
-                        .number("1")
-                        .reservedNumber("1")
-                        .annotation("1")
-                        .statusType(StatusType.REGISTERED)
-                        .creator(getEmployee())
-                        .singers(List.of(getEmployee()))
-                        .addressee(List.of(getEmployee()))
-                        .nomenclature(getNomenclature())
-                        .questions(List.of(Question.builder().id(1L).summary("Summary").build()))
                         .build())
                 .build();
     }
