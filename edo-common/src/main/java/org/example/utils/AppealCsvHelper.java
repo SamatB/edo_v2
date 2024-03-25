@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.example.dto.AppealDto;
+import org.example.dto.QuestionDto;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,25 +15,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.example.utils.FileHelper.dateNoTimeFormatter;
-import static org.example.utils.FileHelper.getAppealsCsvReportFileName;
+import static org.example.utils.FileHelper.*;
 
 @Slf4j
 public class AppealCsvHelper {
-    private static final List<String> columns = Arrays.asList("Номер обращения", "Дата создания", "ФИО создателя", "Список вопросов обращения", "Статус обращения");
-
-    /**
-     * Поле задает разделитель в списке вопросов
-     */
-    private static final String QUESTIONS_DELIMITER = ", ";
-//    private final QuestionService questionService;
-//    @Autowired
-//    public AppealCsvHelper(QuestionService questionService) {
-//        this.questionService = questionService;
-//    }
-
     /**
      * Метод для загрузки списка обращений в формате CSV по сети
+     *
      * @param appeals список обращений
      * @return ByteArrayInputStream
      * @throws IOException при ошибке создания CSV файла
@@ -51,7 +40,8 @@ public class AppealCsvHelper {
 
     /**
      * Метод для сохранения списка обращений в файл CSV
-     * @param appeals список обращений
+     *
+     * @param appeals  список обращений
      * @param fileName имя файла в формате абсолютного пути
      * @throws IOException при ошибке записи в CSV файл
      */
@@ -67,24 +57,25 @@ public class AppealCsvHelper {
 
     /**
      * Метод для формирования файла CSV из списка обращений
+     *
      * @param csvPrinter объект для записи
-     * @param appeals список обращений
+     * @param appeals    список обращений
      * @throws IOException при ошибке формирования CSV
      */
     private static void appealsToCsv(CSVPrinter csvPrinter, List<AppealDto> appeals) throws IOException {
         log.info("Запись заголовка в CSV файл");
-        csvPrinter.printRecord(columns);
+        csvPrinter.printRecord(APPEAL_REPORT_COLUMNS);
 
         appeals.forEach(appeal -> {
             List<String> data = Arrays.asList(
                     String.valueOf(appeal.getNumber() != null
                             ? appeal.getNumber()
                             : appeal.getId()),
-                    dateNoTimeFormatter.format(appeal.getCreationDate()),
+                    DAY_FIRST_DATE_NO_TIME_FORMATTER.format(appeal.getCreationDate()),
                     appeal.getCreator().getFioNominative(),
-//appeal.getQuestions().stream().map(QuestionDto::getSummary).collect(Collectors.joining(QUESTIONS_DELIMITER)),
-//                    getQuestions(appeal.getId()),
-                    "Question 1, Question 2, Question 3",
+                    appeal.getQuestions().stream()
+                            .map(QuestionDto::getSummary)
+                            .collect(Collectors.joining(COMMA_DELIMITER)),
                     (appeal.getStatusType() != null ? appeal.getStatusType().getRusStatusType() : "Статус недоступен")
             );
             log.info("Запись обращения {} в CSV файл", appeal.getNumber() != null
@@ -99,19 +90,6 @@ public class AppealCsvHelper {
         });
         csvPrinter.flush();
     }
-
-    /**
-     * Метод для получения списка вопросов обращения
-     * @param id идентификатор обращения
-     * @return строку со списком вопросов
-     */
-//    private String getQuestions(Long id) {
-//        log.info("Получение списка вопросов обращения из базы данных");
-//        return questionService.getAllQuestionsByAppealId(id)
-//                .stream()
-//                .map(Question::getSummary)
-//                .collect(Collectors.joining(QUESTIONS_DELIMITER));
-//    }
 
     /**
      * Метод для формирования успешного ответа.
