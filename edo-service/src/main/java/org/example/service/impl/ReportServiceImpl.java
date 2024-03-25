@@ -2,8 +2,8 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.entity.Appeal;
-import org.example.repository.AppealRepository;
+import org.example.dto.AppealDto;
+import org.example.service.AppealService;
 import org.example.service.ReportService;
 import org.example.utils.AppealExcelExporter;
 import org.springframework.stereotype.Service;
@@ -12,12 +12,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
+import static org.example.utils.FileHelper.XLSX_FILE_EXTENSION;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ReportServiceImpl implements ReportService {
-    private final AppealRepository appealRepository;
-    private final AppealExcelExporter appealExcelExporter;
+    private final AppealService appealService;
 
     /**
      * Запись в XLSX файл
@@ -27,14 +28,14 @@ public class ReportServiceImpl implements ReportService {
      */
     public void writeAppealsToXlsx(String fileName) {
         log.info("Начало записи в XLSX файл... {}", fileName);
-        String suffix = ".xlsx";
-        if (!fileName.endsWith(suffix)) {
-            log.info("Добавление суффикса {} к имени файла", suffix);
-            fileName = fileName + suffix;
+        if (!fileName.endsWith(XLSX_FILE_EXTENSION)) {
+            log.info("Добавление суффикса {} к имени файла", XLSX_FILE_EXTENSION);
+            fileName = fileName + XLSX_FILE_EXTENSION;
         }
         log.info("Получение списка обращений из базы данных");
-        List<Appeal> appeals = appealRepository.findAll();
+        List<AppealDto> appeals = appealService.getAllAppeals();
 
+        AppealExcelExporter appealExcelExporter = new AppealExcelExporter();
         appealExcelExporter.createNewWorkBook(appeals);
 
         try {
@@ -52,7 +53,8 @@ public class ReportServiceImpl implements ReportService {
      */
     public ByteArrayInputStream getAppealsXlsxReport() {
         log.info("Получение списка обращений из базы данных");
-        List<Appeal> appeals = appealRepository.findAll();
+        List<AppealDto> appeals = appealService.getAllAppeals();
+        AppealExcelExporter appealExcelExporter = new AppealExcelExporter();
         appealExcelExporter.createNewWorkBook(appeals);
         try {
             log.info("Загрузка XLSX файла...");

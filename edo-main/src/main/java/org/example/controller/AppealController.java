@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.example.utils.FileHelper.getAppealsXlsxReportFileName;
+
 
 @RestController
 @RequestMapping("/appeal")
@@ -196,9 +198,7 @@ public class AppealController {
                 log.warn("Ошибка получения списка обращений: список пустой");
                 return ResponseEntity.notFound().build();
             }
-            DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-            String currentDateTime = dateFormatter.format(new Date());
-            String filename = "appeals_" + currentDateTime + ".xlsx";
+            String filename = getAppealsXlsxReportFileName();
             log.info("Список обращений получен");
             return ResponseEntity.ok()
                     .header("Content-Disposition", "attachment; filename=" + filename)
