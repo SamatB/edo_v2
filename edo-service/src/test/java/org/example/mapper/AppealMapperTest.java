@@ -35,14 +35,14 @@ class AppealMapperTest {
         assertNotNull(result.getSingers());
         assertNotNull(result.getAddressee());
         assertNotNull(result.getNomenclature());
-//        assertNotNull(result.getRegion());
+        assertNotNull(result.getQuestions());
 
         log.info("Appeal successfully created: " + appeal);
-        log.info(result.getStatusType().getRusStatusType());
 
         assertEquals(appeal, result);
         assertEquals(appealDto.getCreator().getAddressDetails().getFullAddress(), result.getCreator().getAddressDetails().getFullAddress());
         assertEquals(appealDto.getNomenclature().getDepartment().getAddressDetails().getFullAddress(), result.getNomenclature().getDepartment().getAddressDetails().getFullAddress());
+        assertEquals(appealDto.getQuestions().size(), result.getQuestions().size());
     }
 
     @Test
@@ -57,16 +57,17 @@ class AppealMapperTest {
         assertNotNull(result.getSingers());
         assertNotNull(result.getAddressee());
         assertNotNull(result.getNomenclature());
+        assertNotNull(result.getQuestions());
 //        assertNotNull(result.getRegion());
 
         log.info("AppealDto successfully created: " + appealDto);
-        log.info(result.getStatusType().getRusStatusType());
 
         assertEquals(appealDto.getId(), result.getId());
         assertEquals(appeal.getCreator().getAddressDetails().getFullAddress(), result.getCreator().getAddressDetails().getFullAddress());
         assertEquals(appeal.getNomenclature().getDepartment().getAddressDetails().getFullAddress(), result.getNomenclature().getDepartment().getAddressDetails().getFullAddress());
         assertEquals(appeal.getSingers().size(), result.getSingers().size());
         assertEquals(appeal.getAddressee().size(), result.getAddressee().size());
+        assertEquals(appeal.getQuestions().size(), result.getQuestions().size());
     }
 
     private AppealDto getAppealDto() {
@@ -82,6 +83,7 @@ class AppealMapperTest {
         appealDto.setSingers(List.of(getEmployeeDto()));
         appealDto.setAddressee(List.of(getEmployeeDto()));
         appealDto.setNomenclature(getNomenclatureDto());
+        appealDto.setQuestions(List.of(getQuestionDto()));
         return appealDto;
     }
 
@@ -98,6 +100,36 @@ class AppealMapperTest {
                 .singers(List.of(getEmployee()))
                 .addressee(List.of(getEmployee()))
                 .nomenclature(getNomenclature())
+                .questions(List.of(getQuestion()))
+                .build();
+    }
+
+    private Question getQuestion() {
+        return Question.builder()
+                .id(1L)
+                .summary("Summary")
+                .appeal(Appeal.builder()
+                        .id(1L)
+                        .creationDate(dateTime)
+                        .registrationDate(dateTime)
+                        .number("1")
+                        .reservedNumber("1")
+                        .annotation("1")
+                        .statusType(StatusType.REGISTERED)
+                        .creator(getEmployee())
+                        .singers(List.of(getEmployee()))
+                        .addressee(List.of(getEmployee()))
+                        .nomenclature(getNomenclature())
+                        .questions(List.of(Question.builder().id(1L).summary("Summary").build()))
+                        .build())
+                .build();
+    }
+
+    private QuestionDto getQuestionDto() {
+        return QuestionDto.builder()
+                .id(1L)
+                .summary("Summary")
+                .appealId(1L)
                 .build();
     }
 

@@ -118,4 +118,17 @@ public class Appeal extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", referencedColumnName = "id")
     private Region region;
+
+    /**
+     * Связь один ко многим к таблице Question
+     * вопросы
+     */
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "appeal_questions"
+            , joinColumns = @JoinColumn(name = "appeal_id")
+            , inverseJoinColumns = @JoinColumn(name = "question_id")
+    )
+    @Fetch(FetchMode.JOIN)
+    private List<Question> questions;
 }
