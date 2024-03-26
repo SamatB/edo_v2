@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dto.EmailDto;
 import org.example.dto.ResolutionDto;
 import org.example.entity.Resolution;
 import org.example.enums.StatusType;
@@ -11,12 +12,15 @@ import org.example.mapper.ResolutionMapper;
 import org.example.repository.ResolutionRepository;
 import org.example.service.ResolutionService;
 import org.example.enums.ResolutionType;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static org.example.configuration.RabbitConfiguration.GET_EMAIL_DTO;
 
 /**
  * Сервис для работы с сущностью Resolution.
@@ -32,11 +36,14 @@ public class ResolutionServiceImpl implements ResolutionService {
 
     private final ResolutionRepository resolutionRepository;
     private final ResolutionMapper resolutionMapper;
+    private final RabbitTemplate rabbitTemplate;
+
 
     /**
      * Сохраняет резолюцию в базе данных, обновляя даты создания и последнего действия на текущее время.
      * Статусы связанных вопросов и апелляций также обновляются перед сохранением.
-     * В случае успешного сохранения возвращает DTO обновленной резолюции.
+     * В случае успешного сохранения отправляет на почту создателя уведомление о создании резолюции.
+     * После чего возвращает DTO обновленной резолюции.
      * Если переданное DTO резолюции равно null, метод выбрасывает исключение IllegalArgumentException.
      *
      * @param resolutionDto DTO резолюции, которую необходимо сохранить. Не должно быть null.
@@ -44,6 +51,7 @@ public class ResolutionServiceImpl implements ResolutionService {
      * @throws IllegalArgumentException если переданное DTO резолюции равно null.
      */
     @Override
+    @Transactional
     public ResolutionDto saveResolution(ResolutionDto resolutionDto) {
         return Optional.ofNullable(resolutionDto)
                 .map(resolutionMapper::dtoToEntity)
@@ -53,9 +61,48 @@ public class ResolutionServiceImpl implements ResolutionService {
                     updateStatusQuestionAndAppeal(resolution);
                     return resolution;
                 })
-                .map(resolutionRepository::save)
+                .map(resolution -> {
+                    log.info("Идет сохранение Resolution");
+                    resolutionRepository.save(resolution);
+                    log.info("Сохранение успешно прошло. Подготовка данных для отправки сообщения");
+
+                    rabbitTemplate.convertAndSend(GET_EMAIL_DTO,
+                            creatorEmailDtoForRabbit(
+                                    resolution.getCreator().getEmail(),
+                                    String.valueOf(resolution.getId()),
+                                    resolution.getCreator().getFioNominative()
+                            )
+                    );
+
+                    log.info("Рассылка произведена успешно");
+
+                    return resolution;
+
+                })
                 .map(resolutionMapper::entityToDto)
                 .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения резолюции: резолюция не должна быть null"));
+    }
+
+    /**
+     * Создает объект EmailDto для отправки через RabbitMQ.
+     * Метод формирует объект EmailDto для отправки сообщения
+     * получателю о создании новой резолюции, в которой он является исполнителем.
+     *
+     * @param to      Адрес электронной почты получателя.
+     * @param subject Идентификатор резолюции, используемый для формирования темы письма.
+     * @param text    Имя получателя, используемое в тексте уведомления.
+     * @return EmailDto объект, содержащий информацию для отправки электронного письма.
+     */
+    private EmailDto creatorEmailDtoForRabbit(String to, String subject, String text) {
+        EmailDto emailDto = new EmailDto();
+        emailDto.setEmail(List.of(to));
+        emailDto.setSubject(String.format("Вы создали новую резолюцию под номером %s", subject));
+        emailDto.setText(String.format("Добрый день! Уважаемый, %s! Была создана резолюция " +
+                "к обращению http://localhost:8761/resolutions/%s в которой вы являетесь исполнителем!", text, subject));
+
+        log.info("Данные готовы и передаются");
+
+        return emailDto;
     }
 
 
@@ -118,7 +165,7 @@ public class ResolutionServiceImpl implements ResolutionService {
      * В случае успешного обновления возвращает DTO обновленной резолюции.
      * Если резолюция с указанным ID не найдена, метод выбрасывает исключение EntityNotFoundException.
      *
-     * @param id ID резолюции, которую необходимо обновить. Должно соответствовать существующей записи в базе данных.
+     * @param id            ID резолюции, которую необходимо обновить. Должно соответствовать существующей записи в базе данных.
      * @param resolutionDto DTO с новыми данными для обновления резолюции. Не должно быть null.
      * @return ResolutionDto DTO обновленной резолюции после сохранения.
      * @throws EntityNotFoundException если резолюция с указанным ID не найдена в базе данных.
