@@ -51,7 +51,7 @@ VALUES (4, 'Иван', 'Иванов', 'Денисович', 'г. Борович
  добавление тестовых данных в appeal
  */
 INSERT INTO appeal (id, creation_date, archived_date, number, annotation, creator_id, nomenclature_id)
-VALUES (3, '2024-02-21 21:16:54.000000', null, '2', 'appeal for ТЕСТ agreement list', 1, 1);
+VALUES (2, '2024-02-21 21:16:54.000000', null, '2', 'appeal for ТЕСТ agreement list', 1, 1);
 
 /*
  добавление тестовых данных в agreement_list
@@ -65,8 +65,8 @@ VALUES (1, '2024-02-21 21:16:54.000000', 'TEST agreement list', 2, 1);
  добавление тестовых данных в matching_block
  */
 INSERT INTO matching_block (id, number, type, agreement_list_id, approval_block_type)
-VALUES (1, 1, 'PARALLEL', 1, 'SIGNER_BLOCK'),
-       (2, 2, 'PARALLEL', 1, 'SIGNER_BLOCK'),
+VALUES (1, 4, 'PARALLEL', 1, 'SIGNER_BLOCK'),
+       (2, 5, 'PARALLEL', 1, 'SIGNER_BLOCK'),
        (3, 2, 'ALTERNATE', 1, 'SIGNER_BLOCK'),
        (4, 1, 'ALTERNATE', 1, 'SIGNER_BLOCK'),
        (5, 3, 'PARALLEL', 1, 'PARTICIPANT_BLOCK');

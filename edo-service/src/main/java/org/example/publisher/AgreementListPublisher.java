@@ -28,12 +28,13 @@ public class AgreementListPublisher {
      * @return приоритет в очереди
      */
     private Integer getPriority(Long priority) {
-        if (priority > 255) {
+        int maxQueueSize = 255;
+        if (priority > maxQueueSize) {
             return 1;
         } else if (priority < 1) {
             return 0;
         } else {
-            return 256 - priority.intValue();
+            return maxQueueSize + 1 - priority.intValue();
         }
     }
 }

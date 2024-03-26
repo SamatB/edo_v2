@@ -44,30 +44,8 @@ public class AgreementListServiceImpl implements AgreementListService {
         return agreementListRepository.findById(agreementListId)
                 .map(agreementList -> {
                     String appealNumber = agreementList.getAppeal().getNumber();
-                    Set<MatchingBlock> matchingBlocks = new HashSet<>(agreementList.getSignatory());
-                    matchingBlocks.addAll(agreementList.getCoordinating());
-
-                    matchingBlocks
-                            .stream()
-                            .sorted(Comparator
-                                    .comparing(MatchingBlock::getNumber, Comparator.nullsLast(Comparator.naturalOrder())))
-                            .forEachOrdered(mb -> {
-                                if (mb.getMatchingBlockType().equals(MatchingBlockType.PARALLEL)) {
-                                    mb.getParticipants().forEach(participant -> {
-                                        participant.setStatus(ParticipantStatusType.ACTIVE);
-                                        agreementListPublisher.sendAgreementListEmailNotification(getAgreementListEmailDto(participantMapper.entityToDto(participant), appealNumber), participant.getNumber());
-                                    });
-                                } else {
-                                    mb.getParticipants()
-                                            .stream()
-                                            .min(Comparator
-                                                    .comparing(Participant::getNumber, Comparator.nullsLast(Comparator.naturalOrder())))
-                                            .ifPresent(participant -> {
-                                                participant.setStatus(ParticipantStatusType.ACTIVE);
-                                                agreementListPublisher.sendAgreementListEmailNotification(getAgreementListEmailDto(participantMapper.entityToDto(participant), appealNumber), participant.getNumber());
-                                            });
-                                }
-                            });
+                    sendAgreementListEmailNotification(agreementList.getSignatory(), appealNumber);
+                    sendAgreementListEmailNotification(agreementList.getCoordinating(), appealNumber);
 
                     agreementList.setSentApprovalDate(ZonedDateTime.now());
                     log.info("Лист согласования с идентификатором {} отправлен всем заинтересованным лицам в: {}", agreementListId, agreementList.getSentApprovalDate());
@@ -76,5 +54,40 @@ public class AgreementListServiceImpl implements AgreementListService {
                 .map(agreementListRepository::save)
                 .map(agreementListMapper::entityToDto)
                 .orElseThrow(() -> new EntityNotFoundException("Лист согласования с id: " + agreementListId + " не найден"));
+    }
+
+    /**
+     * Метод находит блок с наименьшим номером в сете блоков согласования и в зависимости от типа блока отправляет лист согласования либо всем заинтересованным лицам, либо только первому в сете.
+     *
+     * @param matchingBlockSet сет блоков согласования
+     * @param appealNumber     номер обращения
+     */
+    private void sendAgreementListEmailNotification(Set<MatchingBlock> matchingBlockSet, String appealNumber) {
+        matchingBlockSet
+                .stream()
+                .min(Comparator
+                        .comparing(MatchingBlock::getNumber, Comparator.nullsLast(Comparator.naturalOrder())))
+                .ifPresent(mb -> {
+                    if (mb.getMatchingBlockType().equals(MatchingBlockType.PARALLEL)) {
+                        mb.getParticipants().forEach(participant -> sendAgreementListEmailNotification(participant, appealNumber));
+                    } else {
+                        mb.getParticipants()
+                                .stream()
+                                .min(Comparator
+                                        .comparing(Participant::getNumber, Comparator.nullsLast(Comparator.naturalOrder())))
+                                .ifPresent(participant -> sendAgreementListEmailNotification(participant, appealNumber));
+                    }
+                });
+    }
+
+    /**
+     * Метод устанавливает статус активного участника и отправляет уведомление по электронной почте
+     *
+     * @param participant  сущность участника
+     * @param appealNumber номер обращения
+     */
+    private void sendAgreementListEmailNotification(Participant participant, String appealNumber) {
+        participant.setStatus(ParticipantStatusType.ACTIVE);
+        agreementListPublisher.sendAgreementListEmailNotification(getAgreementListEmailDto(participantMapper.entityToDto(participant), appealNumber), participant.getNumber());
     }
 }
