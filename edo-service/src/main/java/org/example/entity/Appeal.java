@@ -123,12 +123,7 @@ public class Appeal extends BaseEntity {
      * Связь один ко многим к таблице Question
      * вопросы
      */
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "appeal_questions"
-            , joinColumns = @JoinColumn(name = "appeal_id")
-            , inverseJoinColumns = @JoinColumn(name = "question_id")
-    )
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "appeal")
     @Fetch(FetchMode.JOIN)
     private List<Question> questions;
 }
