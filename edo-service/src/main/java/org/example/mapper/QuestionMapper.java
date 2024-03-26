@@ -9,14 +9,14 @@ import org.mapstruct.Mapping;
 /**
  * Маппер преобразует Question в QuestionDto и обратно
  */
-@Mapper(componentModel = "spring", uses = {AppealMapperResolver.class})
+@Mapper(componentModel = "spring", uses = {AppealMapper.class})
 public interface QuestionMapper extends AbstractMapper<Question, QuestionDto> {
     @Override
     @Mapping(target = "appealId", source = "appeal.id")
     QuestionDto entityToDto(Question question);
 
     @Override
-    @Mapping(source = "appealId", target = "appeal")
+    @Mapping(source = "appealId", target = "appeal.id")
     Question dtoToEntity(QuestionDto questionDto);
 
 }

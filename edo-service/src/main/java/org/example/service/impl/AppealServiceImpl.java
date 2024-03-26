@@ -15,6 +15,7 @@ import org.example.repository.AppealRepository;
 import org.example.service.AppealService;
 import org.example.enums.StatusType;
 import org.example.service.NomenclatureService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +36,13 @@ public class AppealServiceImpl implements AppealService {
     /**
      * Метод для получения всех обращений в базе данных
      */
-    public List<AppealDto> getAllAppeals() {
-        return appealRepository.findAll()
+    public List<AppealDto> getPaginatedAppeals(int offset, int size) {
+        return appealRepository.findAll(PageRequest.of(offset, size))
+                .getContent()
                 .stream()
                 .map(appealMapper::entityToDto)
                 .collect(Collectors.toList());
+
     }
 
     /**

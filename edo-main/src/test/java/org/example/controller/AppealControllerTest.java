@@ -236,8 +236,8 @@ public class AppealControllerTest {
         AppealDto appealDto1 = new AppealDto();
         AppealDto appealDto2 = new AppealDto();
         List<AppealDto> appealDtos = new ArrayList<>(Arrays.asList(appealDto1, appealDto2));
-        when(appealFeignClient.getAllAppeals()).thenReturn(appealDtos);
-        ResponseEntity<?> response = appealController.getAllAppeals();
+        when(appealFeignClient.getPaginatedAppeals(0, 5)).thenReturn(appealDtos);
+        ResponseEntity<?> response = appealController.getPaginatedAppeals(0, 5);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(appealDtos, response.getBody());
     }
@@ -249,8 +249,8 @@ public class AppealControllerTest {
     @Test
     void getAllAppeals_returnsNoContent() {
         List<AppealDto> appealDtos = new ArrayList<>();
-        when(appealFeignClient.getAllAppeals()).thenReturn(appealDtos);
-        ResponseEntity<?> response = appealController.getAllAppeals();
+        when(appealFeignClient.getPaginatedAppeals(0, 5)).thenReturn(appealDtos);
+        ResponseEntity<?> response = appealController.getPaginatedAppeals(0, 5);
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         assertNull(response.getBody());
@@ -266,9 +266,9 @@ public class AppealControllerTest {
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testXlsx));
         byte[] bytes = mockInputStream.readAllBytes();
 
-        when(appealFeignClient.downloadAppealsXlsxReport()).thenReturn(bytes);
+        when(appealFeignClient.downloadAppealsXlsxReport(0, 5)).thenReturn(bytes);
 
-        ResponseEntity<?> response = appealController.getAllAppealsAsXlsx();
+        ResponseEntity<?> response = appealController.getAllAppealsAsXlsx(0, 5);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -283,9 +283,9 @@ public class AppealControllerTest {
         int size = mockInputStream.available();
         byte[] bytes = mockInputStream.readAllBytes();
 
-        when(appealFeignClient.downloadAppealsXlsxReport()).thenReturn(bytes);
+        when(appealFeignClient.downloadAppealsXlsxReport(0, 5)).thenReturn(bytes);
 
-        ResponseEntity<?> response = appealController.getAllAppealsAsXlsx();
+        ResponseEntity<?> response = appealController.getAllAppealsAsXlsx(0, 5);
         assertEquals(size, response.getHeaders().getContentLength());
         assertThat(response.getBody()).isNotNull();
     }
@@ -298,9 +298,9 @@ public class AppealControllerTest {
     void downloadAppealsXlsxReport_fileHasSuffix() throws IOException {
         File testXlsx = new File(OUTPUT_DIR + "appeals_2024-03-17_16_03_38.xlsx");
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testXlsx));
-        when(appealFeignClient.downloadAppealsXlsxReport()).thenReturn(mockInputStream.readAllBytes());
+        when(appealFeignClient.downloadAppealsXlsxReport(0, 5)).thenReturn(mockInputStream.readAllBytes());
 
-        ResponseEntity<?> response = appealController.getAllAppealsAsXlsx();
+        ResponseEntity<?> response = appealController.getAllAppealsAsXlsx(0, 5);
 
         assertThat(response.getHeaders().containsKey("Content-Disposition")).isTrue();
         assertThat(Objects.requireNonNull(response.getHeaders().get("Content-Disposition")).get(0)).endsWithIgnoringCase(".xlsx");
@@ -313,9 +313,9 @@ public class AppealControllerTest {
      */
     @Test
     void downloadAppealsXlsxReport_returnsInternalServerError() {
-        when(appealFeignClient.downloadAppealsXlsxReport()).thenReturn(null);
+        when(appealFeignClient.downloadAppealsXlsxReport(0, 5)).thenReturn(null);
 
-        ResponseEntity<?> response = appealController.getAllAppealsAsXlsx();
+        ResponseEntity<?> response = appealController.getAllAppealsAsXlsx(0, 5);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -327,9 +327,9 @@ public class AppealControllerTest {
     @Test
     void downloadAppealsXlsxReport_returnsNotFound() {
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(new byte[0]);
-        when(appealFeignClient.downloadAppealsXlsxReport()).thenReturn(mockInputStream.readAllBytes());
+        when(appealFeignClient.downloadAppealsXlsxReport(0, 5)).thenReturn(mockInputStream.readAllBytes());
 
-        ResponseEntity<?> response = appealController.getAllAppealsAsXlsx();
+        ResponseEntity<?> response = appealController.getAllAppealsAsXlsx(0, 5);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
