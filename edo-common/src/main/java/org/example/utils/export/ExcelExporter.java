@@ -2,6 +2,7 @@ package org.example.utils.export;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -33,7 +34,7 @@ public abstract class ExcelExporter {
 
         Row row = sheet.createRow(0);
 
-        CellStyle style = createCellStyleWithFontHeight(workbook,16, true);
+        CellStyle style = createCellStyleWithFontHeight(workbook,16, true, HorizontalAlignment.CENTER);
 
         headers.forEach(cellName -> createCell(sheet, row, headers.indexOf(cellName), cellName, style));
     }
@@ -68,12 +69,13 @@ public abstract class ExcelExporter {
      * @param isBold жирный шрифт
      * @return стиль ячейки
      */
-    protected CellStyle createCellStyleWithFontHeight(XSSFWorkbook workbook, int fontHeight, boolean isBold) {
+    protected CellStyle createCellStyleWithFontHeight(XSSFWorkbook workbook, int fontHeight, boolean isBold, HorizontalAlignment alignment) {
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setBold(isBold);
         font.setFontHeight(fontHeight);
         style.setFont(font);
+        style.setAlignment(alignment);
         return style;
     }
 

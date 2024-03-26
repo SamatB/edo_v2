@@ -24,7 +24,6 @@ import java.util.List;
 @SuperBuilder
 public class Appeal extends BaseEntity {
 
-
     /**
      * Дата создания обращения
      */
@@ -51,7 +50,6 @@ public class Appeal extends BaseEntity {
     @Column(name = "number")
     private String number;
 
-
     /**
      * Зарезервированный номер обращения
      */
@@ -72,7 +70,7 @@ public class Appeal extends BaseEntity {
     private StatusType statusType;
 
     /**
-     * свзязь один ко многим к таблице Employee
+     * Связь один ко многим к таблице Employee
      * исполнитель
      */
     @OneToMany(fetch = FetchType.LAZY)
@@ -83,7 +81,7 @@ public class Appeal extends BaseEntity {
     )
     private List<Employee> singers;
     /**
-     * свзязь один к одному к таблице Employee
+     * Связь один к одному к таблице Employee
      * создатель
      */
     @OneToOne(fetch = FetchType.LAZY)
@@ -91,7 +89,7 @@ public class Appeal extends BaseEntity {
     @Fetch(FetchMode.JOIN)
     private Employee creator;
     /**
-     * свзязь один ко многим к таблице Employee
+     * Связь один ко многим к таблице Employee
      * адресат
      */
     @OneToMany(fetch = FetchType.LAZY)
@@ -102,7 +100,7 @@ public class Appeal extends BaseEntity {
     )
     private List<Employee> addressee;
     /**
-     * связь с сущностью Номенклатура
+     * Связь с сущностью Номенклатура
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -110,7 +108,7 @@ public class Appeal extends BaseEntity {
     private Nomenclature nomenclature;
 
     /**
-     * связь с сущностью Регион (у одного обращения Appeal может быть один регион Region)
+     * Связь с сущностью Регион (у одного обращения Appeal может быть один регион Region)
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", referencedColumnName = "id")
@@ -120,13 +118,7 @@ public class Appeal extends BaseEntity {
      * Связь один ко многим к таблице Question
      * вопросы
      */
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "appeal_questions"
-            , joinColumns = @JoinColumn(name = "appeal_id")
-            , inverseJoinColumns = @JoinColumn(name = "question_id")
-    )
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "appeal")
     @Fetch(FetchMode.JOIN)
     private List<Question> questions;
-
 }

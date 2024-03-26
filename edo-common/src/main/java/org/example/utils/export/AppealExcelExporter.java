@@ -2,6 +2,7 @@ package org.example.utils.export;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -57,7 +58,7 @@ public class AppealExcelExporter extends ExcelExporter {
     private void writeAppealDataLines(List<AppealDto> appeals, XSSFWorkbook workbook, XSSFSheet sheet) {
         AtomicInteger rowCount = new AtomicInteger(1);
 
-        CellStyle style = createCellStyleWithFontHeight(workbook,14, false);
+        CellStyle style = createCellStyleWithFontHeight(workbook,14, false, HorizontalAlignment.LEFT);
 
         appeals.forEach(appeal -> {
             Row row = sheet.createRow(rowCount.getAndIncrement());
