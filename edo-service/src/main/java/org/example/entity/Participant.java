@@ -10,8 +10,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.example.utils.ParticipantStatusType;
 import org.example.utils.ParticipantType;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import java.time.ZonedDateTime;
 
@@ -85,7 +83,6 @@ public class Participant extends BaseEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
-    @Fetch(FetchMode.JOIN)
     private Employee employee;
 
     /**

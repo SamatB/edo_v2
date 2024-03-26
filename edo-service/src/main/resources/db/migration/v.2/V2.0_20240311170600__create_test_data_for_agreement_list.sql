@@ -51,7 +51,7 @@ VALUES (4, 'Иван', 'Иванов', 'Денисович', 'г. Борович
  добавление тестовых данных в appeal
  */
 INSERT INTO appeal (id, creation_date, archived_date, number, annotation, creator_id, nomenclature_id)
-VALUES (2, '2024-02-21 21:16:54.000000', null, '2', 'appeal for ТЕСТ agreement list', 1, 1);
+VALUES (3, '2024-02-21 21:16:54.000000', null, '2', 'appeal for ТЕСТ agreement list', 1, 1);
 
 /*
  добавление тестовых данных в agreement_list

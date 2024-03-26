@@ -13,10 +13,10 @@ public interface AgreementListFeignClient {
     /**
      * Отправляет лист согласования всем заинтересованным лицам.
      *
-     * @param id идентификатор листа согласования
+     * @param agreementListId идентификатор листа согласования
      * @return объект agreementListDto со статусом 200 в случае успешного выполнения,
      * и статусом 400 в случае не удачи.
      */
-    @PutMapping("/agreement-lists/send/{id}")
-    AgreementListDto sendAgreementList(@PathVariable Long id);
+    @PutMapping("/agreement-lists/send/{agreementListId}")
+    AgreementListDto sendAgreementList(@PathVariable Long agreementListId);
 }

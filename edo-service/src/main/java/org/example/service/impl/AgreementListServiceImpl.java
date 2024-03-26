@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,14 +34,14 @@ public class AgreementListServiceImpl implements AgreementListService {
     /**
      * Отправляет лист согласования всем заинтересованным лицам.
      *
-     * @param id идентификатор листа согласования
+     * @param agreementListId идентификатор листа согласования
      * @return объект DTO листа согласования
      */
     @Transactional(rollbackFor = Exception.class)
-    public AgreementListDto sendAgreementList(Long id) {
-        log.info("Отправка листа согласования с идентификатором: {}", id);
+    public AgreementListDto sendAgreementList(Long agreementListId) {
+        log.info("Отправка листа согласования с идентификатором: {}", agreementListId);
 
-        return agreementListRepository.findById(id)
+        return agreementListRepository.findById(agreementListId)
                 .map(agreementList -> {
                     String appealNumber = agreementList.getAppeal().getNumber();
                     Set<MatchingBlock> matchingBlocks = new HashSet<>(agreementList.getSignatory());
@@ -61,11 +60,8 @@ public class AgreementListServiceImpl implements AgreementListService {
                                 } else {
                                     mb.getParticipants()
                                             .stream()
-                                            .sorted(Comparator
+                                            .min(Comparator
                                                     .comparing(Participant::getNumber, Comparator.nullsLast(Comparator.naturalOrder())))
-                                            .collect(Collectors.toCollection(LinkedHashSet::new))
-                                            .stream()
-                                            .findFirst()
                                             .ifPresent(participant -> {
                                                 participant.setStatus(ParticipantStatusType.ACTIVE);
                                                 agreementListPublisher.sendAgreementListEmailNotification(getAgreementListEmailDto(participantMapper.entityToDto(participant), appealNumber), participant.getNumber());
@@ -74,11 +70,11 @@ public class AgreementListServiceImpl implements AgreementListService {
                             });
 
                     agreementList.setSentApprovalDate(ZonedDateTime.now());
-                    log.info("Лист согласования с идентификатором {} отправлен всем заинтересованным лицам в: {}", id, agreementList.getSentApprovalDate());
+                    log.info("Лист согласования с идентификатором {} отправлен всем заинтересованным лицам в: {}", agreementListId, agreementList.getSentApprovalDate());
                     return agreementList;
                 })
                 .map(agreementListRepository::save)
                 .map(agreementListMapper::entityToDto)
-                .orElseThrow(() -> new EntityNotFoundException("Лист согласования с id: " + id + " не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Лист согласования с id: " + agreementListId + " не найден"));
     }
 }

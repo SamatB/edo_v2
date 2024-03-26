@@ -28,19 +28,19 @@ public class AgreementListController {
     /**
      * Отправляет лист согласования всем заинтересованным лицам.
      *
-     * @param id идентификатор листа согласования
+     * @param agreementListId идентификатор листа согласования
      * @return объект agreementListDto со статусом 200 в случае успешного выполнения,
      * и статусом 400 в случае не удачи.
      */
-    @PutMapping("/send/{id}")
+    @PutMapping("/send/{agreementListId}")
     @Operation(summary = "Отправляет лист согласования всем заинтересованным лицам")
     public ResponseEntity<AgreementListDto> sendAgreementList(
             @Parameter(description = "Идентификатор листа согласования", required = true)
-            @PathVariable Long id) {
-        log.info("Отправка листа согласования с идентификатором {} всем заинтересованным лицам", id);
-        AgreementListDto agreementListDto = agreementListFeignClient.sendAgreementList(id);
+            @PathVariable Long agreementListId) {
+        log.info("Отправка листа согласования с идентификатором {} всем заинтересованным лицам", agreementListId);
+        AgreementListDto agreementListDto = agreementListFeignClient.sendAgreementList(agreementListId);
         if (agreementListDto == null) {
-            log.warn("Лист согласования с идентификатором {} не найден", id);
+            log.warn("Лист согласования с идентификатором {} не найден", agreementListId);
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity

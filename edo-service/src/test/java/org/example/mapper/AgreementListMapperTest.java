@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Класс тестирования маппера для сущности AgreementList
+ * работает только с enable_lazy_load_no_trans: true в настройках hibernate
  */
 @Slf4j
 @SpringBootTest

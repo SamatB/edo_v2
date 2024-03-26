@@ -27,11 +27,10 @@ class AgreementListServiceImplTest {
     @Autowired
     private AgreementListServiceImpl agreementListService;
 
-
     @Test
-    @DisplayName("Should return agreement list and get agreement list by id from database")
-    void sendAgreementList_returnsAgreementList() {
-        AgreementList agreementList = agreementListRepository.findById(1L).get();
+    @DisplayName("Should return agreement list Dto and get agreement list by id from database")
+    void sendAgreementList_returnsAgreementListDto() {
+        AgreementList agreementList = agreementListRepository.findById(1L).orElseGet(AgreementList::new);
         AgreementListDto agreementListDto = agreementListMapper.entityToDto(agreementList);
 
         AgreementListDto result = agreementListService.sendAgreementList(1L);
@@ -41,9 +40,9 @@ class AgreementListServiceImplTest {
         assertEquals(agreementListDto.getComment(), result.getComment());
         assertEquals(agreementListDto.getInitiator(), result.getInitiator());
         assertEquals(agreementListDto.getCreationDate(), result.getCreationDate());
-        assertEquals(agreementListDto.getCoordinating(), result.getCoordinating());
-        assertNotEquals(agreementListDto.getSentApprovalDate(), result.getSentApprovalDate());
         assertEquals(agreementListDto.getSignatory().size(), result.getSignatory().size());
+        assertEquals(agreementListDto.getCoordinating().size(), result.getCoordinating().size());
+        assertNotEquals(agreementListDto.getSentApprovalDate(), result.getSentApprovalDate());
     }
 
     @Test

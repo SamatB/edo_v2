@@ -23,20 +23,20 @@ public class AgreementListController {
     /**
      * Отправляет лист согласования всем заинтересованным лицам.
      *
-     * @param id идентификатор листа согласования
+     * @param agreementListId идентификатор листа согласования
      * @return объект agreementListDto со статусом 200 в случае успешного выполнения,
      * и статусом 400 в случае не удачи.
      */
-    @PutMapping("/send/{id}")
+    @PutMapping("/send/{agreementListId}")
     @Operation(summary = "Отправляет лист согласования всем заинтересованным лицам")
     public ResponseEntity<?> sendAgreementList(
             @Parameter(description = "Идентификатор листа согласования", required = true)
-            @PathVariable Long id) {
+            @PathVariable Long agreementListId) {
         try {
-            log.info("Отправка листа согласования с id {} всем заинтересованным лицам", id);
-            return ResponseEntity.ok().body(agreementListService.sendAgreementList(id));
+            log.info("Отправка листа согласования с id {} всем заинтересованным лицам", agreementListId);
+            return ResponseEntity.ok().body(agreementListService.sendAgreementList(agreementListId));
         } catch (Exception e) {
-            log.error("Ошибка отправки листа согласования с id {} всем заинтересованным лицам в БД", id);
+            log.error("Ошибка отправки листа согласования с id {} всем заинтересованным лицам в БД", agreementListId);
             return ResponseEntity.badRequest().body(e);
         }
     }
