@@ -5,11 +5,13 @@ import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.EmailDto;
+import org.example.dto.EmployeeDto;
 import org.example.dto.ResolutionDto;
 import org.example.entity.Resolution;
 import org.example.enums.StatusType;
 import org.example.mapper.ResolutionMapper;
 import org.example.repository.ResolutionRepository;
+import org.example.service.EmployeeService;
 import org.example.service.ResolutionService;
 import org.example.enums.ResolutionType;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -37,6 +39,7 @@ public class ResolutionServiceImpl implements ResolutionService {
     private final ResolutionRepository resolutionRepository;
     private final ResolutionMapper resolutionMapper;
     private final RabbitTemplate rabbitTemplate;
+    private final EmployeeService employeeService;
 
 
     /**
@@ -53,6 +56,9 @@ public class ResolutionServiceImpl implements ResolutionService {
     @Override
     @Transactional
     public ResolutionDto saveResolution(ResolutionDto resolutionDto) {
+
+        EmployeeDto creator = employeeService.getEmployeeById(resolutionDto.getCreatorId());
+
         return Optional.ofNullable(resolutionDto)
                 .map(resolutionMapper::dtoToEntity)
                 .map(resolution -> {
@@ -68,16 +74,15 @@ public class ResolutionServiceImpl implements ResolutionService {
 
                     rabbitTemplate.convertAndSend(GET_EMAIL_DTO,
                             creatorEmailDtoForRabbit(
-                                    resolution.getCreator().getEmail(),
+                                    creator.getEmail(),
                                     String.valueOf(resolution.getId()),
-                                    resolution.getCreator().getFioNominative()
+                                    creator.getFioNominative()
                             )
                     );
 
                     log.info("Рассылка произведена успешно");
 
                     return resolution;
-
                 })
                 .map(resolutionMapper::entityToDto)
                 .orElseThrow(() -> new IllegalArgumentException("Ошибка сохранения резолюции: резолюция не должна быть null"));
