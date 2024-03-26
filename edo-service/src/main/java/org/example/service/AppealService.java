@@ -15,5 +15,5 @@ public interface AppealService {
 
     AppealDto reserveNumberForAppeal(AppealDto appealDto);
 
-    List<AppealDto> getAllAppeals();
+    List<AppealDto> getPaginatedAppeals(int offset, int size);
 }

@@ -9,21 +9,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PreDestroy;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
 import org.example.feign.AppealFeignClient;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.example.utils.FileHelper.getAppealsXlsxReportFileName;
+import static org.example.utils.FileHelper.*;
 
 
 @RestController
@@ -174,9 +172,14 @@ public class AppealController {
      */
     @GetMapping("/all")
     @Operation(summary = "Получение списка обращений")
-    public ResponseEntity<List<AppealDto>> getAllAppeals() {
+    public ResponseEntity<List<AppealDto>> getPaginatedAppeals(
+            @Parameter(name = "offset", example = "1")
+            @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
+            @Parameter(name = "size", example = "7")
+            @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size
+    ) {
         log.info("Получение списка обращений");
-        List<AppealDto> appealDtos = appealFeignClient.getAllAppeals();
+        List<AppealDto> appealDtos = appealFeignClient.getPaginatedAppeals(offset, size);
         if (appealDtos.isEmpty()) {
             log.warn("Ошибка получения списка обращений");
             return ResponseEntity.noContent().build();
@@ -190,21 +193,21 @@ public class AppealController {
      */
     @GetMapping("/export/excel")
     @Operation(summary = "Получение списка обращений в формате XLSX")
-    public ResponseEntity<?> getAllAppealsAsXlsx() {
+    public ResponseEntity<?> getAllAppealsAsXlsx(
+            @Parameter(name = "offset", example = "1")
+            @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
+            @Parameter(name = "size", example = "7")
+            @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size
+    ) {
         log.info("Получение списка обращений в формате XLSX");
         try {
-            byte[] file = appealFeignClient.downloadAppealsXlsxReport();
+            byte[] file = appealFeignClient.downloadAppealsXlsxReport(offset, size);
             if (file.length == 0) {
                 log.warn("Ошибка получения списка обращений: список пустой");
                 return ResponseEntity.notFound().build();
             }
-            String filename = getAppealsXlsxReportFileName();
             log.info("Список обращений получен");
-            return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=" + filename)
-                    .contentLength(file.length)
-                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-                    .body(file);
+            return successResponseForXlsxReport(file);
         } catch (Exception e) {
             log.warn("Ошибка получения списка обращений: " + e.getMessage());
             return ResponseEntity.internalServerError().build();

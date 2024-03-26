@@ -2,10 +2,7 @@ package org.example.controller;
 
 import jakarta.persistence.EntityExistsException;
 import org.example.dto.AppealDto;
-import org.example.service.impl.AppealServiceImpl;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.example.dto.AppealDto;
 import org.example.service.AppealService;
 import org.example.service.ReportService;
 import org.junit.jupiter.api.BeforeEach;
@@ -117,12 +114,12 @@ class AppealControllerTest {
      * Возвращает список обращений со статусом 200.
      */
     @Test
-    void getAllAppeals_returnsOk() {
+    void getPaginatedAppeals_returnsOk() {
         AppealDto appealDto1 = new AppealDto();
         AppealDto appealDto2 = new AppealDto();
         List<AppealDto> appealDtos = new ArrayList<>(Arrays.asList(appealDto1, appealDto2));
-        when(appealService.getAllAppeals()).thenReturn(appealDtos);
-        ResponseEntity<?> response = appealController.getAllAppeals();
+        when(appealService.getPaginatedAppeals(0, 5)).thenReturn(appealDtos);
+        ResponseEntity<?> response = appealController.getPaginatedAppeals(0, 5);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(appealDtos, response.getBody());
     }
@@ -132,10 +129,10 @@ class AppealControllerTest {
      * Возвращает NoContent если список обращений пуст (со статусом 204).
      */
     @Test
-    void getAllAppeals_returnsNoContent() {
+    void getPaginatedAppeals_returnsNoContent() {
         List<AppealDto> appealDtos = new ArrayList<>();
-        when(appealService.getAllAppeals()).thenReturn(appealDtos);
-        ResponseEntity<?> response = appealController.getAllAppeals();
+        when(appealService.getPaginatedAppeals(0, 5)).thenReturn(appealDtos);
+        ResponseEntity<?> response = appealController.getPaginatedAppeals(0, 5);
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         assertNull(response.getBody());
@@ -150,9 +147,9 @@ class AppealControllerTest {
         File testXlsx = new File(OUTPUT_DIR + "appeals_2024-03-17_16_03_38.xlsx");
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testXlsx));
 
-        when(reportService.getAppealsXlsxReport()).thenReturn(mockInputStream);
+        when(reportService.getAppealsXlsxReport(0, 5)).thenReturn(mockInputStream);
 
-        ResponseEntity<?> response = appealController.downloadAppealsXlsxReport();
+        ResponseEntity<?> response = appealController.downloadAppealsXlsxReport(0, 5);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -165,9 +162,9 @@ class AppealControllerTest {
         File testXlsx = new File(OUTPUT_DIR + "appeals_2024-03-17_16_03_38.xlsx");
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testXlsx));
         int size = mockInputStream.available();
-        when(reportService.getAppealsXlsxReport()).thenReturn(mockInputStream);
+        when(reportService.getAppealsXlsxReport(0, 5)).thenReturn(mockInputStream);
 
-        ResponseEntity<?> response = appealController.downloadAppealsXlsxReport();
+        ResponseEntity<?> response = appealController.downloadAppealsXlsxReport(0, 5);
         assertEquals(size, response.getHeaders().getContentLength());
         assertThat(response.getBody()).isNotNull();
     }
@@ -181,9 +178,9 @@ class AppealControllerTest {
         File testXlsx = new File(OUTPUT_DIR + "appeals_2024-03-17_16_03_38.xlsx");
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(testXlsx));
 
-        when(reportService.getAppealsXlsxReport()).thenReturn(mockInputStream);
+        when(reportService.getAppealsXlsxReport(0, 5)).thenReturn(mockInputStream);
 
-        ResponseEntity<?> response = appealController.downloadAppealsXlsxReport();
+        ResponseEntity<?> response = appealController.downloadAppealsXlsxReport(0, 5);
 
         assertThat(response.getHeaders().containsKey("Content-Disposition")).isTrue();
         assertThat(Objects.requireNonNull(response.getHeaders().get("Content-Disposition")).get(0)).endsWithIgnoringCase(".xlsx");
@@ -196,9 +193,9 @@ class AppealControllerTest {
      */
     @Test
     void downloadAppealsXlsxReport_returnsInternalServerError() {
-        when(reportService.getAppealsXlsxReport()).thenReturn(null);
+        when(reportService.getAppealsXlsxReport(0, 5)).thenReturn(null);
 
-        ResponseEntity<?> response = appealController.downloadAppealsXlsxReport();
+        ResponseEntity<?> response = appealController.downloadAppealsXlsxReport(0, 5);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -210,9 +207,9 @@ class AppealControllerTest {
     @Test
     void downloadAppealsXlsxReport_returnsNotFound() {
         ByteArrayInputStream mockInputStream = new ByteArrayInputStream(new byte[0]);
-        when(reportService.getAppealsXlsxReport()).thenReturn(mockInputStream);
+        when(reportService.getAppealsXlsxReport(0, 5)).thenReturn(mockInputStream);
 
-        ResponseEntity<?> response = appealController.downloadAppealsXlsxReport();
+        ResponseEntity<?> response = appealController.downloadAppealsXlsxReport(0, 5);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }

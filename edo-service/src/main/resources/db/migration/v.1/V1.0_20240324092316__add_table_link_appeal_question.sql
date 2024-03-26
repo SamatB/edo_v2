@@ -6,6 +6,12 @@ CREATE TABLE IF NOT EXISTS appeal_questions
     FOREIGN KEY (question_id) REFERENCES question (id)
 );
 
+/*
+ добавление тестовых данных в appeal
+ */
+INSERT INTO appeal (id, creation_date, archived_date, number, annotation, creator_id, nomenclature_id)
+VALUES (2, '2024-02-21 21:16:54.000000', null, '2', 'appeal for ТЕСТ questions', 1, 1);
+
 INSERT INTO question (id, creation_date, summary, appeal_id, status)
 VALUES (1, '2024-03-24 01:26:24.000000', 'test a1 q1', 1, 'REGISTERED'),
        (2, '2024-03-24 01:27:26.000000', 'test a2 q1', 2, 'REGISTERED'),
@@ -15,7 +21,7 @@ VALUES (1, '2024-03-24 01:26:24.000000', 'test a1 q1', 1, 'REGISTERED'),
 
 INSERT INTO appeal_questions (appeal_id, question_id)
 VALUES (1, 1),
-       (1, 3),
-       (1, 5),
        (2, 2),
-       (2, 4);
+       (1, 3),
+       (2, 4),
+       (1, 5);
