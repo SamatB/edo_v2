@@ -4,6 +4,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.example.controller.TestData;
 import org.example.dto.EmailDto;
 import org.example.dto.ResolutionDto;
 import org.example.entity.Resolution;
@@ -16,7 +20,10 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +45,38 @@ public class ResolutionServiceImpl implements ResolutionService {
     private final ResolutionMapper resolutionMapper;
     private final RabbitTemplate rabbitTemplate;
 
+    public byte[] getXLSXResolutionsByAppealIdentity(Long appealIdentity) throws IOException {
+        List<TestData> testData = new ArrayList<>();
+        testData.add(new TestData("Иван", 25, "Москва"));
+        testData.add(new TestData("Мария", 30, "Санкт-Петербург"));
+        testData.add(new TestData("Петр", 40, "Казань"));
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("Тестовые данные");
+
+            // Создание заголовка
+            XSSFRow headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Имя");
+            headerRow.createCell(1).setCellValue("Возраст");
+            headerRow.createCell(2).setCellValue("Город");
+
+            // Запись данных
+            int rowIndex = 1;
+            for (TestData data : testData) {
+                XSSFRow row = sheet.createRow(rowIndex++);
+                row.createCell(0).setCellValue(data.getName());
+                row.createCell(1).setCellValue(data.getAge());
+                row.createCell(2).setCellValue(data.getCity());
+            }
+
+            // Сохранение файла в массив байтов
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            workbook.write(out);
+            out.close();
+
+            return out.toByteArray();
+        }
+    }
 
     /**
      * Сохраняет резолюцию в базе данных, обновляя даты создания и последнего действия на текущее время.

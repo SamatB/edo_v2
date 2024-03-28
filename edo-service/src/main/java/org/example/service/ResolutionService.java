@@ -2,9 +2,12 @@ package org.example.service;
 
 import org.example.dto.ResolutionDto;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface ResolutionService {
+
+    public byte[] getXLSXResolutionsByAppealIdentity(Long appealIdentity) throws IOException;
     ResolutionDto saveResolution(ResolutionDto resolutionDto);
 
     ResolutionDto archiveResolution(Long id);
