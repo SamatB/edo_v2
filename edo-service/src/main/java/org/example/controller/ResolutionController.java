@@ -11,7 +11,6 @@ import org.example.service.ResolutionService;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,16 +26,23 @@ public class ResolutionController {
 
     private final ResolutionService resolutionService;
 
-    @RequestMapping(value = "/test-data", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getTestData() throws IOException {
-        byte[] bytes = resolutionService.getXLSXResolutionsByAppealIdentity(1L);
+    /**
+     * Метод выгружает файл с резолюциями связанными с обращением в формате XSLSX
+     * @param appealIdentity ID обращения
+     * @return файл с резолюциями и статусом ответа ОК,
+     * иначе ответ со статусом 500
+     */
+    @GetMapping("/xslsx/{appealIdentity}")
+    public ResponseEntity<byte[]> resolutionsByAppealToXSLSX(@PathVariable("appealIdentity") Long appealIdentity) {
+        byte[] bytes = resolutionService.resolutionsByAppealConvertToXSLSX(appealIdentity);
         try {
+            log.info("Загрузка файла резолюций");
             return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=\"test_data.xlsx\"")
+                    .header("Content-Disposition", "attachment; filename=\"resolutions_by_appeal.xlsx\"")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(bytes);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("Ошибка загрузки файла с резолюциями");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

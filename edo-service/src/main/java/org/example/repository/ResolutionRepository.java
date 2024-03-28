@@ -15,6 +15,15 @@ import java.util.List;
  */
 @Repository
 public interface ResolutionRepository extends JpaRepository<Resolution, Long> {
+    /**
+     * Метод ищет резолюции связанные с обращением через связанную сущность Question
+     * @param appealIdentity ID обращения
+     * @return Список резолюций
+     */
+    @Query("SELECT resolution FROM Resolution resolution " +
+            "JOIN Question question on resolution.question.id = question.id " +
+            "JOIN Appeal appeal ON question.appeal.id = :appealIdentity")
+    List<Resolution> findByAppealIdentity(Long appealIdentity);
 
     @Modifying
     @Query(value = "UPDATE Resolution r SET r.archivedDate = :dateTime WHERE r.id = :resolutionId")

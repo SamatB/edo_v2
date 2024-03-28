@@ -10,7 +10,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.example.controller.TestData;
 import org.example.dto.EmailDto;
 import org.example.dto.ResolutionDto;
+import org.example.entity.Employee;
 import org.example.entity.Resolution;
+import org.example.entity.ResolutionReport;
 import org.example.enums.StatusType;
 import org.example.mapper.ResolutionMapper;
 import org.example.repository.ResolutionRepository;
@@ -23,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,28 +46,42 @@ public class ResolutionServiceImpl implements ResolutionService {
     private final ResolutionMapper resolutionMapper;
     private final RabbitTemplate rabbitTemplate;
 
-    public byte[] getXLSXResolutionsByAppealIdentity(Long appealIdentity) throws IOException {
-        List<TestData> testData = new ArrayList<>();
-        testData.add(new TestData("Иван", 25, "Москва"));
-        testData.add(new TestData("Мария", 30, "Санкт-Петербург"));
-        testData.add(new TestData("Петр", 40, "Казань"));
+    /**
+     * Метод преобразует список резолюций связанных с ID обращения в массив байтов (XSLSX)
+     *
+     * @param appealIdentity ID обращения
+     * @return массив байтов
+     */
+    public byte[] resolutionsByAppealConvertToXSLSX(Long appealIdentity) {
+        List<Resolution> resolutionsByAppeal =
+                resolutionRepository.findByAppealIdentity(appealIdentity);
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            XSSFSheet sheet = workbook.createSheet("Тестовые данные");
+            XSSFSheet sheet = workbook.createSheet("Resolutions By Appeal");
 
             // Создание заголовка
             XSSFRow headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Имя");
-            headerRow.createCell(1).setCellValue("Возраст");
-            headerRow.createCell(2).setCellValue("Город");
+            headerRow.createCell(0).setCellValue("Номер Обращения");
+            headerRow.createCell(1).setCellValue("Дата создания резолюции");
+            headerRow.createCell(2).setCellValue("Дедлайн резолюции");
+            headerRow.createCell(3).setCellValue("ФИО исполнителя");
+            headerRow.createCell(4).setCellValue("Статус исполнения");
 
             // Запись данных
             int rowIndex = 1;
-            for (TestData data : testData) {
+            int columnIndex = 0;
+            for (Resolution resolution : resolutionsByAppeal) {
                 XSSFRow row = sheet.createRow(rowIndex++);
-                row.createCell(0).setCellValue(data.getName());
-                row.createCell(1).setCellValue(data.getAge());
-                row.createCell(2).setCellValue(data.getCity());
+                row.createCell(columnIndex++).setCellValue(resolution.getQuestion().getAppeal().getNumber());
+                row.createCell(columnIndex++).setCellValue(resolution.getCreationDate().toString());
+                row.createCell(columnIndex++).setCellValue(resolution.getLastActionDate().toString());
+                List<String> fioNominatives = resolution.getExecutors().stream()
+                        .map(Employee::getFioNominative).toList();
+                row.createCell(columnIndex++).setCellValue(fioNominatives.toString());
+                List<Boolean> statusesOfResolutionReports = resolution.getResolutionReports().stream()
+                        .map(ResolutionReport::getResult).toList();
+                row.createCell(columnIndex).setCellValue(statusesOfResolutionReports.toString());
+                columnIndex = 0;
             }
 
             // Сохранение файла в массив байтов
@@ -75,7 +90,10 @@ public class ResolutionServiceImpl implements ResolutionService {
             out.close();
 
             return out.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return new byte[0];
     }
 
     /**
