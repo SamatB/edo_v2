@@ -5,11 +5,10 @@ package org.example.feign;
 
 import org.example.dto.AppealDto;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @FeignClient(name = "edo-service")
 public interface AppealFeignClient {
@@ -46,4 +45,16 @@ public interface AppealFeignClient {
      */
     @PostMapping("/appeal/reserve-number")
     AppealDto reserveNumberForAppeal(@RequestBody AppealDto appeal);
+
+    /**
+     * Метод для получения списка обращений
+     */
+    @GetMapping("/appeal")
+    List<AppealDto> getPaginatedAppeals(@RequestParam int offset, @RequestParam int size);
+
+    /**
+     * Метод для получения списка обращений в виде XLSX
+     */
+    @GetMapping(value="/appeal/export/excel", consumes = "application/octet-stream", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    byte[] downloadAppealsXlsxReport(@RequestParam int offset, @RequestParam int size);
 }

@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.example.enums.StatusType;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -21,7 +23,6 @@ import java.util.List;
 @Setter
 @SuperBuilder
 public class Appeal extends BaseEntity {
-
 
     /**
      * Дата создания обращения
@@ -49,7 +50,6 @@ public class Appeal extends BaseEntity {
     @Column(name = "number")
     private String number;
 
-
     /**
      * Зарезервированный номер обращения
      */
@@ -70,7 +70,7 @@ public class Appeal extends BaseEntity {
     private StatusType statusType;
 
     /**
-     * свзязь один ко многим к таблице Employee
+     * Связь один ко многим к таблице Employee
      * исполнитель
      */
     @OneToMany(fetch = FetchType.LAZY)
@@ -81,14 +81,15 @@ public class Appeal extends BaseEntity {
     )
     private List<Employee> singers;
     /**
-     * свзязь один к одному к таблице Employee
+     * Связь один к одному к таблице Employee
      * создатель
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
+    @Fetch(FetchMode.JOIN)
     private Employee creator;
     /**
-     * свзязь один ко многим к таблице Employee
+     * Связь один ко многим к таблице Employee
      * адресат
      */
     @OneToMany(fetch = FetchType.LAZY)
@@ -99,7 +100,7 @@ public class Appeal extends BaseEntity {
     )
     private List<Employee> addressee;
     /**
-     * связь с сущностью Номенклатура
+     * Связь с сущностью Номенклатура
      */
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -107,9 +108,17 @@ public class Appeal extends BaseEntity {
     private Nomenclature nomenclature;
 
     /**
-     * связь с сущностью Регион (у одного обращения Appeal может быть один регион Region)
+     * Связь с сущностью Регион (у одного обращения Appeal может быть один регион Region)
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", referencedColumnName = "id")
     private Region region;
+
+    /**
+     * Связь один ко многим к таблице Question
+     * вопросы
+     */
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "appeal")
+    @Fetch(FetchMode.JOIN)
+    private List<Question> questions;
 }
