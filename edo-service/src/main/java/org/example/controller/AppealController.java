@@ -13,10 +13,17 @@ import org.example.dto.AppealDto;
 import org.example.service.AppealService;
 import org.example.service.ReportService;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.example.service.ReportService;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static org.example.utils.AppealCsvHelper.successResponseForAppealsCsvReport;
+
+import java.util.List;
+
+import static org.example.utils.FileHelper.*;
 
 /**
  * Контроллер для работы с сущностью Appeal.
@@ -30,7 +37,6 @@ public class AppealController {
 
     private final AppealService appealService;
     private final ReportService reportService;
-
 
     /**
      * Сохраняет новое обращение в базу данных.
@@ -123,6 +129,52 @@ public class AppealController {
         } catch (EntityExistsException | IllegalArgumentException e) {
             log.warn(e.getMessage());
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * Возвращает список обращений.
+     *
+     * @return список обращений
+     */
+    @GetMapping
+    @Operation(summary = "Получение списка обращений")
+    public ResponseEntity<List<AppealDto>> getPaginatedAppeals(
+            @Parameter(name = "offset", example = "1")
+            @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
+            @Parameter(name = "size", example = "7")
+            @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size
+    ) {
+        log.info("Получение списка обращений");
+        List<AppealDto> appealDtos = appealService.getPaginatedAppeals(offset, size);
+        if (appealDtos.isEmpty()) {
+            log.warn("Список обращений пуст");
+            return ResponseEntity.noContent().build();
+        }
+        log.info("Получено " + (!appealDtos.isEmpty() ? appealDtos.size() : 0) + " обращений");
+        return ResponseEntity.ok(appealDtos);
+    }
+
+    @GetMapping("/export/excel")
+    @Operation(summary = "Экспорт обращений в Excel")
+    public ResponseEntity<Resource> downloadAppealsXlsxReport(
+            @Parameter(name = "offset", example = "1")
+            @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
+            @Parameter(name = "size", example = "7")
+            @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size
+    ) {
+        log.info("Экспорт обращений в Excel");
+        try {
+            ByteArrayResource file = new ByteArrayResource(reportService.getAppealsXlsxReport(offset, size).readAllBytes());
+            if (file.contentLength() == 0) {
+                log.warn("Ошибка получения списка обращений: файл не существует");
+                return ResponseEntity.notFound().build();
+            }
+            log.info("Список обращений отправлен");
+            return successResponseForXlsxReport(file);
+        } catch (Exception e) {
+            log.warn("Ошибка получения списка обращений: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
     }
 

@@ -24,7 +24,6 @@ import java.util.List;
 @SuperBuilder
 public class Appeal extends BaseEntity {
 
-
     /**
      * Дата создания обращения
      */
@@ -50,7 +49,6 @@ public class Appeal extends BaseEntity {
      */
     @Column(name = "number")
     private String number;
-
 
     /**
      * Зарезервированный номер обращения

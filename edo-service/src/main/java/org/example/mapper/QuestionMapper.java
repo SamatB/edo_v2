@@ -18,4 +18,5 @@ public interface QuestionMapper extends AbstractMapper<Question, QuestionDto> {
     @Override
     @Mapping(source = "appealId", target = "appeal.id")
     Question dtoToEntity(QuestionDto questionDto);
+
 }

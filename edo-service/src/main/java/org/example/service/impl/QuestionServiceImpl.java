@@ -13,12 +13,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class QuestionServiceImpl implements QuestionService {
-
     private final QuestionRepository questionRepository;
 
     /**
      * Получение списка вопросов по идентификатору обращения
-     *
      * @param appealId идентификатор обращения
      * @return список вопросов
      */
