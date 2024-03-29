@@ -19,7 +19,6 @@ import org.example.utils.ParticipantStatusType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -47,8 +46,7 @@ public class AgreementListServiceImpl implements AgreementListService {
                     sendAgreementListEmailNotification(agreementList.getSignatory(), appealNumber);
                     sendAgreementListEmailNotification(agreementList.getCoordinating(), appealNumber);
 
-                    agreementList.setSentApprovalDate(ZonedDateTime.now());
-                    log.info("Лист согласования с идентификатором {} отправлен всем заинтересованным лицам в: {}", agreementListId, agreementList.getSentApprovalDate());
+                    log.info("Лист согласования с идентификатором {} отправлен всем заинтересованным лицам", agreementListId);
                     return agreementList;
                 })
                 .map(agreementListRepository::save)

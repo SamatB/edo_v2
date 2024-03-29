@@ -43,7 +43,6 @@ class AgreementListServiceImplTest {
         assertEquals(agreementListDto.getCreationDate(), result.getCreationDate());
         assertEquals(agreementListDto.getSignatory().size(), result.getSignatory().size());
         assertEquals(agreementListDto.getCoordinating().size(), result.getCoordinating().size());
-        assertNotEquals(agreementListDto.getSentApprovalDate(), result.getSentApprovalDate());
     }
 
     @Test

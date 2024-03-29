@@ -1,19 +1,5 @@
 spring:
   mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: edo.2.kate@gmail.com
-#    password: uatadagugdrawmbl
-#
-#    properties:
-#      mail:
-#        debug: false
-#        transport:
-#          protocol: smtp
-#        smtp:
-#          auth: false
-#          starttls:
-#              enable: true
     host: "app.debugmail.io"
     port: 25
     username: "46d9d802-c701-4a6b-81b0-f644aad9abec"
