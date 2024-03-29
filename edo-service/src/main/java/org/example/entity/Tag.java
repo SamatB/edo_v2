@@ -51,6 +51,6 @@ public class Tag extends BaseEntity{
      * Одно обращение - множество меток.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_appeal")
+    @JoinColumn(name = "appeal_id")
     private Appeal appeal;
 }

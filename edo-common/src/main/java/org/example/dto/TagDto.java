@@ -25,12 +25,12 @@ public class TagDto {
 
     @NotNull
     @Schema(description = "Идентификатор создателя метки")
-    private Long creatorId  ;
+    private EmployeeDto creator;
 
     @NotNull
     @Schema(description = "Дата создания метки")
     private ZonedDateTime creationDate;
 
     @Schema(description = "Обращение")
-    private AppealDto appealDto;
+    private AppealDto appeal;
 }
