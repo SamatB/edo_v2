@@ -14,16 +14,13 @@ import org.example.service.AppealService;
 import org.example.service.ReportService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.example.service.ReportService;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.example.utils.AppealCsvHelper.successResponseForAppealsCsvReport;
-
 import java.util.List;
 
-import static org.example.utils.FileHelper.*;
+import static org.example.utils.FileHelper.successResponseForAppealsCsvReport;
+import static org.example.utils.FileHelper.successResponseForXlsxReport;
 
 /**
  * Контроллер для работы с сущностью Appeal.
@@ -155,6 +152,13 @@ public class AppealController {
         return ResponseEntity.ok(appealDtos);
     }
 
+    /**
+     * Метод для экспорта обращений в Excel
+     *
+     * @param offset принимает начальный индекс начиная с 0
+     * @param size   принимает размер страницы максимум 25
+     * @return объект с ресурсом в виде файла в формате XLSX
+     */
     @GetMapping("/export/excel")
     @Operation(summary = "Экспорт обращений в Excel")
     public ResponseEntity<Resource> downloadAppealsXlsxReport(
@@ -178,12 +182,19 @@ public class AppealController {
         }
     }
 
+    /**
+     * Метод для экспорта обращений в CSV
+     *
+     * @param offset принимает начальный индекс начиная с 0
+     * @param size   принимает размер страницы максимум 25
+     * @return объект с ресурсом в виде файла в формате CSV
+     */
     @GetMapping("/export/csv")
     @Operation(summary = "Экспорт обращений в CSV")
     public ResponseEntity<ByteArrayResource> downloadAppealsCsvReport(
-            @Parameter(name = "offset", example = "1", required = false)
+            @Parameter(name = "offset", example = "1")
             @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
-            @Parameter(name = "size", example = "7", required = false)
+            @Parameter(name = "size", example = "7")
             @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size) {
         log.info("Экспорт обращений в CSV");
         try {

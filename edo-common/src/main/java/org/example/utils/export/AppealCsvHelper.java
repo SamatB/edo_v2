@@ -1,14 +1,10 @@
-package org.example.utils;
+package org.example.utils.export;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.example.dto.AppealDto;
 import org.example.dto.QuestionDto;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 
 import java.io.*;
 import java.util.Arrays;
@@ -89,24 +85,5 @@ public class AppealCsvHelper {
             }
         });
         csvPrinter.flush();
-    }
-
-    /**
-     * Метод для формирования успешного ответа.
-     */
-    public static ResponseEntity<byte[]> successResponseForAppealsCsvReport(byte[] file) {
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + getAppealsCsvReportFileName())
-                .contentType(MediaType.parseMediaType("application/csv"))
-                .contentLength(file.length)
-                .body(file);
-    }
-
-    public static ResponseEntity<ByteArrayResource> successResponseForAppealsCsvReport(ByteArrayResource file) {
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + getAppealsCsvReportFileName())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .contentLength(file.contentLength())
-                .body(file);
     }
 }

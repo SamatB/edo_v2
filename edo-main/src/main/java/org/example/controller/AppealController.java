@@ -21,9 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.example.utils.FileHelper.*;
-
-import static org.example.utils.AppealCsvHelper.successResponseForAppealsCsvReport;
+import static org.example.utils.FileHelper.successResponseForAppealsCsvReport;
+import static org.example.utils.FileHelper.successResponseForXlsxReport;
 
 
 @RestController
@@ -223,9 +222,9 @@ public class AppealController {
     @GetMapping("/export/csv")
     @Operation(summary = "Получение списка обращений в формате CSV")
     public ResponseEntity<?> getAppealsAsCsv(
-            @Parameter(name = "offset", example = "1", required = false)
+            @Parameter(name = "offset", example = "1")
             @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
-            @Parameter(name = "size", example = "7", required = false)
+            @Parameter(name = "size", example = "7")
             @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size) {
         log.info("Получение списка обращений в формате CSV");
         try {

@@ -66,4 +66,23 @@ public class FileHelper {
                 .contentLength(file.contentLength())
                 .body(file);
     }
+
+    /**
+     * Метод для формирования успешного ответа.
+     */
+    public static ResponseEntity<byte[]> successResponseForAppealsCsvReport(byte[] file) {
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + getAppealsCsvReportFileName())
+                .contentType(MediaType.parseMediaType("application/csv"))
+                .contentLength(file.length)
+                .body(file);
+    }
+
+    public static ResponseEntity<ByteArrayResource> successResponseForAppealsCsvReport(ByteArrayResource file) {
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + getAppealsCsvReportFileName())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(file.contentLength())
+                .body(file);
+    }
 }

@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.example.utils.FileHelper.XLSX_FILE_EXTENSION;
-import static org.example.utils.AppealCsvHelper.appealsToCsv;
+import static org.example.utils.export.AppealCsvHelper.appealsToCsv;
 import static org.example.utils.FileHelper.CSV_FILE_EXTENSION;
 
 @Service
