@@ -1,9 +1,11 @@
 package org.example.feign;
 
+import org.example.utils.FilePoolType;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +22,6 @@ public interface FileFeignClient {
      * @return ResponseEntity со значением UUID сохраненного файла
      */
     @PostMapping(value = "/file/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<String> saveFile(@RequestPart("file") MultipartFile file);
+    ResponseEntity<String> saveFile(@RequestPart("file") MultipartFile file, @RequestParam FilePoolType fileType);
 
 }
