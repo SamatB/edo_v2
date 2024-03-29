@@ -57,4 +57,10 @@ public interface AppealFeignClient {
      */
     @GetMapping(value="/appeal/export/excel", consumes = "application/octet-stream", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     byte[] downloadAppealsXlsxReport(@RequestParam int offset, @RequestParam int size);
+
+    /**
+     * Метод для выгрузки обращений в формате CSV
+     */
+    @GetMapping(value = "/appeal/export/csv", consumes = "application/octet-stream", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    byte[] downloadAppealsCsvReport(@RequestParam int offset, @RequestParam int size);
 }

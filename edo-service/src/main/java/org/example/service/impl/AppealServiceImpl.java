@@ -34,18 +34,6 @@ public class AppealServiceImpl implements AppealService {
     private final NomenclatureService nomenclatureService;
 
     /**
-     * Метод для получения всех обращений в базе данных
-     */
-    public List<AppealDto> getPaginatedAppeals(int offset, int size) {
-        return appealRepository.findAll(PageRequest.of(offset, size))
-                .getContent()
-                .stream()
-                .map(appealMapper::entityToDto)
-                .collect(Collectors.toList());
-
-    }
-
-    /**
      * Метод для сохранения обращения в базе данных.
      * Если обращение равно null, то выбрасывается исключение IllegalArgumentException.
      * Метод выполняет сохранение обращения используя AppealRepository.
@@ -160,5 +148,13 @@ public class AppealServiceImpl implements AppealService {
                 .map(appealRepository::save)
                 .map(appealMapper::entityToDto)
                 .orElseThrow(() -> new IllegalArgumentException("Ошибка резервирования номера обращения: обращение не должно быть null"));
+    }
+
+    public List<AppealDto> getPaginatedAppeals(int offset, int size) {
+        return appealRepository.findAll(PageRequest.of(offset, size))
+                .getContent()
+                .stream()
+                .map(appealMapper::entityToDto)
+                .collect(Collectors.toList());
     }
 }

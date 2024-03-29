@@ -79,6 +79,7 @@ public class Appeal extends BaseEntity {
             , joinColumns = @JoinColumn(name = "id_appeal")
             , inverseJoinColumns = @JoinColumn(name = "id_employee")
     )
+    @Fetch(FetchMode.JOIN)
     private List<Employee> singers;
     /**
      * Связь один к одному к таблице Employee
@@ -98,6 +99,7 @@ public class Appeal extends BaseEntity {
             , joinColumns = @JoinColumn(name = "id_appeal")
             , inverseJoinColumns = @JoinColumn(name = "id_employee")
     )
+    @Fetch(FetchMode.JOIN)
     private List<Employee> addressee;
     /**
      * Связь с сущностью Номенклатура
@@ -105,6 +107,7 @@ public class Appeal extends BaseEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nomenclature_id", referencedColumnName = "id")
+    @Fetch(FetchMode.JOIN)
     private Nomenclature nomenclature;
 
     /**

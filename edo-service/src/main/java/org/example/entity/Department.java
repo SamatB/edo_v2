@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
@@ -50,6 +52,7 @@ public class Department extends BaseEntity {
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
+    @Fetch(FetchMode.JOIN)
     private Address addressDetails;
 
     /**

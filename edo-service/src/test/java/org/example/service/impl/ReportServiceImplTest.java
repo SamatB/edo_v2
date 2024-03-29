@@ -53,4 +53,28 @@ class ReportServiceImplTest {
         assertTrue(Files.exists(Paths.get(fileName + wrongSuffix + ".xlsx")));
     }
 
+    /**
+     * Тестирует запись в CSV файл
+     * Проверяет существование файла
+     */
+
+    @Test
+    void writeAppealsToCsv_fileExists() {
+        String fileName = OUTPUT_DIR + "test.csv";
+        reportService.writeAppealsToCsv(0, 10, fileName);
+
+        assertTrue(Files.exists(Paths.get(fileName)));
+    }
+
+    /**
+     * Тестирует что название файла заканчивается на .csv
+     */
+    @Test
+    void writeAppealsToCsv_fileHasSuffix() {
+        String fileName = OUTPUT_DIR + "test.csv";
+        String wrongSuffix = ".txt";
+        reportService.writeAppealsToCsv(0, 10,fileName + wrongSuffix);
+
+        assertTrue(Files.exists(Paths.get(fileName + wrongSuffix + ".csv")));
+    }
 }

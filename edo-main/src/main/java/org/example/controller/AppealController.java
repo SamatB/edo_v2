@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.example.utils.FileHelper.*;
+import static org.example.utils.FileHelper.successResponseForAppealsCsvReport;
+import static org.example.utils.FileHelper.successResponseForXlsxReport;
 
 
 @RestController
@@ -208,6 +209,32 @@ public class AppealController {
             }
             log.info("Список обращений получен");
             return successResponseForXlsxReport(file);
+        } catch (Exception e) {
+            log.warn("Ошибка получения списка обращений: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    /**
+     * Метод для получения файла обращений в формате CSV.
+     */
+    @GetMapping("/export/csv")
+    @Operation(summary = "Получение списка обращений в формате CSV")
+    public ResponseEntity<?> getAppealsAsCsv(
+            @Parameter(name = "offset", example = "1")
+            @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
+            @Parameter(name = "size", example = "7")
+            @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size) {
+        log.info("Получение списка обращений в формате CSV");
+        try {
+            byte[] file = appealFeignClient.downloadAppealsCsvReport(offset, size);
+            if (file.length == 0) {
+                log.warn("Ошибка получения списка обращений: список пустой");
+                return ResponseEntity.notFound().build();
+            }
+            log.info("Список обращений получен");
+            return successResponseForAppealsCsvReport(file);
         } catch (Exception e) {
             log.warn("Ошибка получения списка обращений: " + e.getMessage());
             return ResponseEntity.internalServerError().build();
