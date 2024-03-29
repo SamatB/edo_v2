@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 /**
  * Маппер для преобразования между сущностью Resolution и объектом ResolutionDto.
  */
-@Mapper(componentModel = "spring", uses = {QuestionMapper.class})
+@Mapper(componentModel = "spring")
 public interface ResolutionMapper extends AbstractMapper<Resolution, ResolutionDto> {
 
 

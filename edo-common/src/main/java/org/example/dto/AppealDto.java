@@ -62,4 +62,7 @@ public class AppealDto {
 
     @Schema(description = "Регион")
     private RegionDto region;
+
+    @Schema(description = "Список вопросов")
+    private List<QuestionDto> questions;
 }
