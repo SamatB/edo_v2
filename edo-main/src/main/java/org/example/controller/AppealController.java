@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PreDestroy;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.AppealDto;
@@ -16,7 +18,11 @@ import org.example.feign.AppealFeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.example.utils.FileHelper.successResponseForAppealsCsvReport;
+import static org.example.utils.FileHelper.successResponseForXlsxReport;
 
 
 @RestController
@@ -31,11 +37,11 @@ public class AppealController {
 
     /**
      * Возвращает обращение из базы данных.
-     * Если обращение по заданному id не найдено, возвращает ответ со статусом "Not Found".
+     * Если обращение по-заданному id не найдено, возвращает ответ со статусом "Not Found".
      * Метод выполняет поиск обращения с помощью AppealFeignClient.
      *
      * @param id идентификатор вызываемого обращения.
-     * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
+     * @return ответ с Dto объектом обращения в виде ResponseEntity<AppealDto>
      */
     @GetMapping("/{id}")
     @Operation(summary = "Возвращает обращение по идентификатору")
@@ -46,7 +52,7 @@ public class AppealController {
         AppealDto appealDto = appealFeignClient.getAppeal(id);
         countOfRequestsToAppeal.incrementAndGet();
         if (appealDto == null) {
-            log.warn("Ошибка получечния обращения: обращение с id: " + id + " не найдено");
+            log.warn("Ошибка получения обращения: обращение с id: " + id + " не найдено");
             return ResponseEntity.notFound().build();
         }
         log.info("Обращение c номером: " + appealDto.getNumber() + " успешно получено");
@@ -59,8 +65,7 @@ public class AppealController {
      * Метод выполняет сохранение обращения с помощью AppealFeignClient.
      *
      * @param appealDto сохраненный объект DTO обращения.
-     * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
-     *
+     * @return ответ с Dto объектом обращения в виде ResponseEntity<AppealDto>
      */
     @PostMapping
     @Operation(summary = "Сохраняет новое обращение в базу данных")
@@ -79,11 +84,11 @@ public class AppealController {
 
     /**
      * Метод для добавления даты архивации обращения с указанным id.
-     * Если обращение по заданному id не найдено, возвращает ответ со статусом "Not Found".
+     * Если обращение по-заданному id не найдено, возвращает ответ со статусом "Not Found".
      * Метод выполняет сохранение обращения с помощью AppealFeignClient.
      *
      * @param id идентификатор архивируемого обращения.
-     * @return ответ с Dto объектом оборащения в виде ResponseEntity<AppealDto>
+     * @return ответ с Dto объектом обращения в виде ResponseEntity<AppealDto>
      */
     @PatchMapping("/{id}")
     @Operation(summary = "Архивирует обращение")
@@ -158,6 +163,81 @@ public class AppealController {
             }
             log.warn("Ошибка резервирования номера для обращения: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * Метод для получения списка всех обращений.
+     *
+     * @return список обращений в виде ResponseEntity<List<AppealDto>>
+     */
+    @GetMapping("/all")
+    @Operation(summary = "Получение списка обращений")
+    public ResponseEntity<List<AppealDto>> getPaginatedAppeals(
+            @Parameter(name = "offset", example = "1")
+            @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
+            @Parameter(name = "size", example = "7")
+            @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size
+    ) {
+        log.info("Получение списка обращений");
+        List<AppealDto> appealDtos = appealFeignClient.getPaginatedAppeals(offset, size);
+        if (appealDtos.isEmpty()) {
+            log.warn("Ошибка получения списка обращений");
+            return ResponseEntity.noContent().build();
+        }
+        log.info("Список обращений получен");
+        return ResponseEntity.ok(appealDtos);
+    }
+
+    /**
+     * Метод для получения файла обращений в формате XLSX.
+     */
+    @GetMapping("/export/excel")
+    @Operation(summary = "Получение списка обращений в формате XLSX")
+    public ResponseEntity<?> getAllAppealsAsXlsx(
+            @Parameter(name = "offset", example = "1")
+            @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
+            @Parameter(name = "size", example = "7")
+            @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size
+    ) {
+        log.info("Получение списка обращений в формате XLSX");
+        try {
+            byte[] file = appealFeignClient.downloadAppealsXlsxReport(offset, size);
+            if (file.length == 0) {
+                log.warn("Ошибка получения списка обращений: список пустой");
+                return ResponseEntity.notFound().build();
+            }
+            log.info("Список обращений получен");
+            return successResponseForXlsxReport(file);
+        } catch (Exception e) {
+            log.warn("Ошибка получения списка обращений: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    /**
+     * Метод для получения файла обращений в формате CSV.
+     */
+    @GetMapping("/export/csv")
+    @Operation(summary = "Получение списка обращений в формате CSV")
+    public ResponseEntity<?> getAppealsAsCsv(
+            @Parameter(name = "offset", example = "1")
+            @RequestParam(name = "offset", defaultValue = "0", required = false) @Min(0) int offset,
+            @Parameter(name = "size", example = "7")
+            @RequestParam(name = "size", defaultValue = "5", required = false) @Max(25) int size) {
+        log.info("Получение списка обращений в формате CSV");
+        try {
+            byte[] file = appealFeignClient.downloadAppealsCsvReport(offset, size);
+            if (file.length == 0) {
+                log.warn("Ошибка получения списка обращений: список пустой");
+                return ResponseEntity.notFound().build();
+            }
+            log.info("Список обращений получен");
+            return successResponseForAppealsCsvReport(file);
+        } catch (Exception e) {
+            log.warn("Ошибка получения списка обращений: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
     }
 
