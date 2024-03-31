@@ -17,12 +17,13 @@ import java.util.List;
 public interface ResolutionRepository extends JpaRepository<Resolution, Long> {
     /**
      * Метод ищет резолюции связанные с обращением через связанную сущность Question
+     *
      * @param appealIdentity ID обращения
      * @return Список резолюций
      */
     @Query("SELECT resolution FROM Resolution resolution " +
-            "JOIN Question question on resolution.question.id = question.id " +
-            "JOIN Appeal appeal ON question.appeal.id = :appealIdentity")
+            "JOIN resolution.question question" +
+            " JOIN question.appeal appeal WHERE appeal.id = :appealIdentity")
     List<Resolution> findByAppealIdentity(Long appealIdentity);
 
     @Modifying

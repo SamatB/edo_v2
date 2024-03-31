@@ -14,9 +14,9 @@ import java.util.UUID;
  * Репозиторий для работы с сущностью FilePool.
  */
 public interface FilePoolRepository extends JpaRepository<FilePool, Long> {
-
     /**
      * Выбор filePool-ов по дате связанной сущности.
+     *
      * @param date - дата создания обращения.
      */
     @Query("SELECT fp FROM FilePool fp JOIN fp.appeal a WHERE a.creationDate <= :date and fp.removed = false")
@@ -24,6 +24,7 @@ public interface FilePoolRepository extends JpaRepository<FilePool, Long> {
 
     /**
      * Изменение статуса наличия файла в MinIO.
+     *
      * @param uuidList - список UUID из MinIO, которые были удалены.
      */
     @Modifying

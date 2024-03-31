@@ -103,7 +103,8 @@ public class FileStorageServiceImpl implements FileStorageService {
             return ResponseEntity.ok(uuid);
         } catch (MinioException | IOException e) {
             log.error("Ошибка при сохранении файла на сервер MinIO.");
-            e.printStackTrace();
+            e.
+                    printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             log.error("Ошибка при сохранении файла на сервер MinIO.");
