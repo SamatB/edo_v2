@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -87,7 +88,7 @@ public class FileStorageServiceImpl implements FileStorageService {
         createBuketInMinioIfNotExist(bucketName);
         // Сохранение файла в бакет MinIO
         try (InputStream inputStream = (fileType == FilePoolType.MAIN
-                ? ConvertFileToPDF.docToPdf(file)
+                ? ConvertFileToPDF.convertToPDF(file)
                 : ConvertFacsimileToPng.convertToPng(file))) {
             String filename = file.getOriginalFilename();
             if (filename == null) {
@@ -95,8 +96,8 @@ public class FileStorageServiceImpl implements FileStorageService {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
             String contentType = FilePoolType.MAIN.equals(fileType)
-                    ? "application/pdf"
-                    : "image/png";
+                    ? MediaType.APPLICATION_PDF_VALUE
+                    : MediaType.IMAGE_PNG_VALUE;
             String uuid = UUID.randomUUID().toString();
             minioClient.putObject(
                     PutObjectArgs.builder()
