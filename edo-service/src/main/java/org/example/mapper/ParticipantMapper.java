@@ -23,11 +23,6 @@ public interface ParticipantMapper extends AbstractMapper<Participant, Participa
     @Override
     @Mapping(target = "matchingBlock.participants", ignore = true)
     @Mapping(target = "matchingBlock.agreementList", ignore = true)
-    ParticipantDto entityToDto(Participant participant);
-
-    @Override
-    @Mapping(target = "matchingBlock.participants", ignore = true)
-    @Mapping(target = "matchingBlock.agreementList", ignore = true)
     Participant dtoToEntity(ParticipantDto participantDto);
 
 

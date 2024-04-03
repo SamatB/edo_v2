@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 /**
  * Маппер для преобразования между сущностью Tag и объектом TagDto.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {EmployeeMapper.class, AppealMapper.class})
 public interface TagMapper extends AbstractMapper<Tag, TagDto> {
 
 }

@@ -1,7 +1,3 @@
-/**
- * Маппер для преобразования между сущностью AgreementList и объектом AgreementListDto.
- */
-
 package org.example.mapper;
 
 import org.example.dto.AgreementListDto;

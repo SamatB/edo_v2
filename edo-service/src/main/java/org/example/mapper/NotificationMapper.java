@@ -1,9 +1,7 @@
 package org.example.mapper;
 
 import org.example.dto.NotificationDto;
-import org.example.dto.ResolutionDto;
 import org.example.entity.Notification;
-import org.example.entity.Resolution;
 import org.example.mapper.util.AbstractMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
