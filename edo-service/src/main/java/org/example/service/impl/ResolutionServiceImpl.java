@@ -55,6 +55,11 @@ public class ResolutionServiceImpl implements ResolutionService {
         List<Resolution> resolutionsByAppeal =
                 resolutionRepository.findByAppealIdentity(appealIdentity);
 
+        // Если по данному обращению резолюций не найдено возвращаем пустой массив
+        if (resolutionsByAppeal.isEmpty()) {
+            return new byte[0];
+        }
+
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet("Resolutions By Appeal");
 

@@ -31,11 +31,16 @@ public class ResolutionController {
      *
      * @param appealIdentity ID обращения
      * @return файл с резолюциями и статусом ответа ОК,
+     * либо ответ со статусом 4хх,
      * иначе ответ со статусом 500
      */
     @GetMapping("/xslsx/{appealIdentity}")
     public ResponseEntity<byte[]> resolutionsByAppealToXSLSX(@PathVariable("appealIdentity") Long appealIdentity) {
         byte[] bytes = resolutionService.resolutionsByAppealConvertToXSLSX(appealIdentity);
+        if (bytes.length == 0) {
+            log.warn("По данному обращению резолюций не найдено");
+            return ResponseEntity.badRequest().build();
+        }
         try {
             log.info("Загрузка файла резолюций");
             return ResponseEntity.ok()
