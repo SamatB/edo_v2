@@ -30,7 +30,6 @@ public class FilePoolServiceImpl implements FilePoolService {
      * @param filePoolDto объект DTO с новыми данными FilePool, которые требуется сохранить в базе данных.
      * @return объект DTO FilePool.
      */
-
     @Override
     public FilePoolDto saveFilePool(FilePoolDto filePoolDto) {
         FilePool filePool = filePoolMapper.dtoToEntity(filePoolDto);

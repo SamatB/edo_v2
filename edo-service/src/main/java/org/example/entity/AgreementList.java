@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Where;
 
 import java.time.ZonedDateTime;
@@ -74,6 +76,7 @@ public class AgreementList extends BaseEntity {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appeal_id")
+    @Fetch(FetchMode.JOIN)
     private Appeal appeal;
 
 
@@ -83,6 +86,7 @@ public class AgreementList extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator_id")
+    @Fetch(FetchMode.JOIN)
     private Participant initiator;
 
 
@@ -92,6 +96,7 @@ public class AgreementList extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "agreementList")
     @Where(clause = APPROVAL_BLOCK_SIGNERS)
+    @Fetch(FetchMode.JOIN)
     private Set<MatchingBlock> signatory;
 
 
@@ -101,5 +106,6 @@ public class AgreementList extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "agreementList")
     @Where(clause = APPROVAL_BLOCK_PARTICIPANTS)
+    @Fetch(FetchMode.JOIN)
     private Set<MatchingBlock> coordinating;
 }
