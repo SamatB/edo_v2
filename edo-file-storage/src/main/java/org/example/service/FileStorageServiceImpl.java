@@ -87,7 +87,7 @@ public class FileStorageServiceImpl implements FileStorageService {
         // Создание бакета в MinIO, если его не существует.
         createBuketInMinioIfNotExist(bucketName);
         // Сохранение файла в бакет MinIO
-        try (InputStream inputStream = (fileType == FilePoolType.MAIN
+        try (InputStream inputStream = (FilePoolType.MAIN.equals(fileType)
                 ? ConvertFileToPDF.convertToPDF(file)
                 : ConvertFacsimileToPng.convertToPng(file))) {
             String filename = file.getOriginalFilename();
