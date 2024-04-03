@@ -30,5 +30,20 @@ public class EmployeeListener {
             log.error("Ошибка при обработке сообщения из RabbitMQ: " + e.getMessage());
         }
     }
+
+    /**
+     * Получает объект EmailDto с очереди rabbitmq и отправляет emails
+     * на основе переданных данных.
+     * @param emailDto объект EmailDTO с данными для отправки
+     */
+    @RabbitListener(queues = "sendAgreementList")
+    public void sendAgreementListToEmployeeDtoId(EmailDto emailDto) {
+        try {
+            log.info("EmailDto успешно получен из очереди");
+            emailService.sendEmail(emailDto);
+        } catch (Exception e) {
+            log.error("Ошибка при обработке сообщения из RabbitMQ: " + e.getMessage());
+        }
+    }
 }
 

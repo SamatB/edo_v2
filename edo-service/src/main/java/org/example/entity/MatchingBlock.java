@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.example.enums.ApprovalBlockParticipantType;
 import org.example.utils.MatchingBlockType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 
 import java.util.Set;
@@ -42,6 +44,7 @@ public class MatchingBlock extends BaseEntity {
      * Участники согласования
      */
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "matchingBlock")
+    @Fetch(FetchMode.JOIN)
     private Set<Participant> participants;
 
     /**
