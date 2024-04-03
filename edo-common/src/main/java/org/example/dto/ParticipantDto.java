@@ -20,6 +20,9 @@ public class ParticipantDto implements Serializable {
     @Schema(description = "Тип участника согласования")
     private String type;
 
+    @Schema(description = "Статус участника согласования")
+    private String status;
+
     @Schema(description = "Дата создания участника")
     private ZonedDateTime createDate;
 
@@ -36,5 +39,8 @@ public class ParticipantDto implements Serializable {
     private Long number;
 
     @Schema(description = "Сотрудник")
-    private EmployeeDto employeeDto;
+    private EmployeeDto employee;
+
+    @Schema(description = "Блок согласования")
+    private MatchingBlockDto matchingBlock;
 }

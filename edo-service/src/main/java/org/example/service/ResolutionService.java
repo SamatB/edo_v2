@@ -5,6 +5,9 @@ import org.example.dto.ResolutionDto;
 import java.util.List;
 
 public interface ResolutionService {
+
+    byte[] resolutionsByAppealConvertToXSLSX(Long appealIdentity);
+
     ResolutionDto saveResolution(ResolutionDto resolutionDto);
 
     ResolutionDto archiveResolution(Long id);

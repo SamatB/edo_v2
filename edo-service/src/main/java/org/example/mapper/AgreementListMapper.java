@@ -1,7 +1,3 @@
-/**
- * Маппер для преобразования между сущностью Appeal и объектом AppealDto.
- */
-
 package org.example.mapper;
 
 import org.example.dto.AgreementListDto;
