@@ -16,6 +16,9 @@ import lombok.Setter;
 @Schema(description = "Факсимиле")
 public class FacsimileDto {
 
+    @Schema(description = "идентификатор факсимиле")
+    private Long id;
+
     @Schema(description = "Работник, которому принадлежит факсимиле")
     private EmployeeDto employee;
 

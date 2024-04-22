@@ -52,4 +52,7 @@ public class FilePoolDto {
 
     @Schema(description = "Обращение к которому прикреплен файл")
     private AppealDto appeal;
+
+    @Schema(description = "Метка что файл был удален из MinIO")
+    private Boolean removed;
 }

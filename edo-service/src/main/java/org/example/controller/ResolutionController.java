@@ -107,12 +107,12 @@ public class ResolutionController {
     @Operation(summary = "Сохраняет новую резолюцию в базе данных")
     public ResponseEntity<?> saveResolution(
             @Parameter(description = "Объект DTO резолюции", required = true)
-            ResolutionDto resolutionDto) {
+            @RequestBody ResolutionDto resolutionDto) {
         try {
             log.info("Сохранение новой резолюции");
             return ResponseEntity.ok().body(resolutionService.saveResolution(resolutionDto));
         } catch (Exception e) {
-            log.error("Ошибка сохранения резолюции в БД");
+            log.error("Ошибка сохранения резолюции в БД '\n"  + e.getMessage());
             return ResponseEntity.badRequest().body(e);
         }
 

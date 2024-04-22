@@ -11,17 +11,18 @@ import org.mapstruct.Mapping;
  */
 
 @Mapper(componentModel = "spring", uses = {ParticipantMapper.class})
+
 public interface MatchingBlockMapper extends AbstractMapper<MatchingBlock, MatchingBlockDto> {
 
-    /**
-     * Не трогать - упадет при маппинге листа согласования!
-     * Эти 2 метода исправляют проблемы с бесконечной рекурсией при обращении к полям AgreementList и AgreementListDto во время маппинга.
-     */
     @Override
-    @Mapping(target = "agreementList", ignore = true)
+    @Mapping(target = "agreementList.signatory", ignore = true)
+    @Mapping(target = "agreementList.coordinating", ignore = true)
+
     MatchingBlockDto entityToDto(MatchingBlock matchingBlock);
 
     @Override
-    @Mapping(target = "agreementList", ignore = true)
+    @Mapping(target = "agreementList.signatory", ignore = true)
+    @Mapping(target = "agreementList.coordinating", ignore = true)
     MatchingBlock dtoToEntity(MatchingBlockDto matchingBlockDto);
+
 }

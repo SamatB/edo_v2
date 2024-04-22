@@ -8,6 +8,6 @@ import org.mapstruct.Mapper;
 /**
  * Маппер для преобразования между сущностью FilePool и объектом FilePoolDto.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = AppealMapper.class)
 public interface FilePoolMapper extends AbstractMapper<FilePool, FilePoolDto> {
 }

@@ -4,20 +4,21 @@ package org.example.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.enums.StatusType;
 
-
 import java.time.ZonedDateTime;
 import java.util.List;
 
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Schema(description = "Обращение")
 public class AppealDto {
 
@@ -34,7 +35,6 @@ public class AppealDto {
     @Schema(description = "Дата архивирования обращения")
     private ZonedDateTime archivedDate;
 
-    @NotNull
     @Schema(description = "Номер обращения")
     private String number;
 
@@ -60,6 +60,9 @@ public class AppealDto {
     @Schema(description = "Номенклатура")
     private NomenclatureDto nomenclature;
 
-    @Schema(description = "Вопросы")
+    @Schema(description = "Регион")
+    private RegionDto region;
+
+    @Schema(description = "Список вопросов")
     private List<QuestionDto> questions;
 }
