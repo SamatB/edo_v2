@@ -27,4 +27,6 @@ public class FacsimileDto {
 
     @Schema(description = "Метка, указывающая архивирован ли факсимиле")
     private boolean archived;
+
+    private Long id;
 }
