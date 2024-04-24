@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
@@ -23,6 +24,7 @@ import java.time.ZonedDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class TaskForEmployee extends BaseEntity {
 
     /**

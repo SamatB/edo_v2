@@ -12,7 +12,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class LoginHandler implements AuthenticationSuccessHandler {
+public class
+LoginHandler implements AuthenticationSuccessHandler {
 
     private final EmployeeSessionService employeeSessionService;
 
