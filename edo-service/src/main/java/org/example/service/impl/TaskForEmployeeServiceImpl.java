@@ -20,7 +20,6 @@ import org.example.entity.Facsimile;
 import org.example.entity.TaskForEmployee;
 import org.example.mapper.TaskForEmployeeMapper;
 import org.example.repository.FacsimileRepository;
-import org.example.repository.TaskForEmployeeRepository;
 import org.example.service.TaskForEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,8 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 /**
@@ -36,13 +37,14 @@ import java.util.Optional;
 @Service
 public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
-    @Autowired
-    private TaskForEmployeeRepository taskForEmployeeRepository;
-
-    private TaskForEmployeeMapper taskForEmployeeMapper;
+    private final TaskForEmployeeMapper taskForEmployeeMapper;
+    private final FacsimileRepository facsimileRepository;
 
     @Autowired
-    private FacsimileRepository facsimileRepository;
+    public TaskForEmployeeServiceImpl(TaskForEmployeeMapper taskForEmployeeMapper, FacsimileRepository facsimileRepository) {
+        this.taskForEmployeeMapper = taskForEmployeeMapper;
+        this.facsimileRepository = facsimileRepository;
+    }
 
     @Override
     public Document generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) throws FileNotFoundException {
@@ -91,7 +93,7 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         taskDescription.setAlignment(Element.ALIGN_LEFT);
 
         Table table = new Table(2);
-        Paragraph date = new Paragraph(String.valueOf(taskForEmployee.getTaskCreationDate()));
+        Paragraph date = new Paragraph(taskForEmployee.getTaskCreationDate().toString());
         date.setFont(font);
         date.setAlignment(Element.ALIGN_LEFT);
         document.add(date);
