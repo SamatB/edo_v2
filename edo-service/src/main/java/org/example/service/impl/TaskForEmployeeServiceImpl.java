@@ -1,6 +1,5 @@
 package org.example.service.impl;
 
-import com.lowagie.text.*;
 import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
@@ -27,8 +26,6 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 /**
