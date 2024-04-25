@@ -1,5 +1,6 @@
 package org.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -95,6 +96,6 @@ public class TaskForEmployee extends BaseEntity {
     /**
      * Связь с сущностью Facsimile
      */
-    @OneToOne
-    private Facsimile taskCreatorFacsimile;
+
+    private Long taskCreatorFacsimileId;
 }
