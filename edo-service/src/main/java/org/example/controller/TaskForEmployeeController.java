@@ -2,17 +2,23 @@ package org.example.controller;
 
 import com.lowagie.text.Document;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.TaskForEmployeeDto;
 import org.example.service.TaskForEmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 @RestController
 @RequestMapping("/task-for-employee")
@@ -21,17 +27,27 @@ import java.io.FileNotFoundException;
 @Tag(name = "Task for employee")
 public class TaskForEmployeeController {
 
-    private final TaskForEmployeeService taskForEmployeeService;
+    private TaskForEmployeeService taskForEmployeeService;
+
+    @Autowired
+    public TaskForEmployeeController(TaskForEmployeeService taskForEmployeeService) {
+        this.taskForEmployeeService = taskForEmployeeService;
+    }
 
     @PostMapping
-    public ResponseEntity<Document> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto) throws FileNotFoundException {
+    public void createTaskForEmployee(HttpServletResponse response, @RequestBody TaskForEmployeeDto taskForEmployeeDto) {
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+        ZonedDateTime dateTime = ZonedDateTime.from(LocalDate.now());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=taskForEmployeeDto" + dateTime + ".pdf";
+        response.setHeader(headerKey, headerValue);
         try {
-            com.lowagie.text.Document task = taskForEmployeeService.generateTaskForEmployeeIntoPDF(taskForEmployeeDto);
             log.info("Созданный PDF файл задания по резалюции {}", taskForEmployeeDto);
-            return ResponseEntity.ok(task);
-        } catch (FileNotFoundException e) {
+            this.taskForEmployeeService.generateTaskForEmployeeIntoPDF(response, taskForEmployeeDto);
+        } catch (IOException e) {
+            e.printStackTrace();
             log.info("Ошибка в генерации файла");
-            return ResponseEntity.notFound().build();
+            System.out.println(e.getMessage());
         }
     }
 }
