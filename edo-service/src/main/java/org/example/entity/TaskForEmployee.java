@@ -97,5 +97,5 @@ public class TaskForEmployee extends BaseEntity {
      * Связь с сущностью Facsimile
      */
 
-    private Long taskCreatorFacsimileId;
+    private Facsimile taskCreatorFacsimile;
 }

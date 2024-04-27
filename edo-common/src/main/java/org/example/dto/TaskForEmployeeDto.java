@@ -55,5 +55,5 @@ public class TaskForEmployeeDto {
     private ZonedDateTime taskCreationDate;
 
     @Schema(description = "Факсимиле пользователя, создавшего задание")
-    private Long taskCreatorFacsimileId;
+    private FacsimileDto taskCreatorFacsimile;
 }

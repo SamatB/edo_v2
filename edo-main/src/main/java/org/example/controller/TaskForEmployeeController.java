@@ -31,7 +31,7 @@ public class TaskForEmployeeController {
 
     private final TaskForEmployeeClient taskForEmployeeClient;
 
-    @GetMapping
+    @PostMapping
     public void createTaskForEmployee(HttpServletResponse response, @RequestBody TaskForEmployeeDto taskForEmployeeDto) {
         response.setContentType("application/pdf");
         DateFormat dateTime = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");

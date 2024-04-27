@@ -12,6 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "edo-service")
 public interface TaskForEmployeeClient {
 
-    @GetMapping("/task-for-employee")
+    @PostMapping("/task-for-employee")
     void createTaskForEmployee(@RequestParam HttpServletResponse response, @RequestBody TaskForEmployeeDto task);
 }

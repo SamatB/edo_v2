@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.example.dto.TaskForEmployeeDto;
 import org.example.entity.Facsimile;
 import org.example.entity.TaskForEmployee;
+import org.example.mapper.FacsimileMapper;
 import org.example.mapper.TaskForEmployeeMapper;
 import org.example.repository.FacsimileRepository;
 import org.example.service.TaskForEmployeeService;
@@ -38,11 +39,13 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
     private final TaskForEmployeeMapper taskForEmployeeMapper;
     private final FacsimileRepository facsimileRepository;
+    private final FacsimileMapper facsimileMapper;
 
     @Autowired
-    public TaskForEmployeeServiceImpl(TaskForEmployeeMapper taskForEmployeeMapper, FacsimileRepository facsimileRepository) {
+    public TaskForEmployeeServiceImpl(TaskForEmployeeMapper taskForEmployeeMapper, FacsimileRepository facsimileRepository, FacsimileMapper facsimileMapper) {
         this.taskForEmployeeMapper = taskForEmployeeMapper;
         this.facsimileRepository = facsimileRepository;
+        this.facsimileMapper = facsimileMapper;
     }
 
     @Override
@@ -105,14 +108,15 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         date.setAlignment(Element.ALIGN_LEFT);
         document.add(date);
         table.addCell(getCell("(дата)", HorizontalAlignment.LEFT));
-        if (task.getTaskCreatorFacsimileId() != null) {
-            Optional<Facsimile> facsimile = facsimileRepository.findById(taskForEmployee.getTaskCreatorFacsimileId());
-            Paragraph facs = new Paragraph(String.valueOf(facsimile));
+        if (task.getTaskCreatorFacsimile() != null) {
+            Facsimile facsimile = facsimileMapper.dtoToEntity(task.getTaskCreatorFacsimile());
+            Optional<Facsimile> facsimileFromRep = facsimileRepository.findById(facsimile.getId());
+            Paragraph facs = new Paragraph(String.valueOf(facsimileFromRep));
             facs.setFont(font);
             facs.setAlignment(Element.ALIGN_RIGHT);
             document.add(facs);
         } else {
-            taskForEmployee.setTaskCreatorFacsimileId(null);
+            taskForEmployee.setTaskCreatorFacsimile(null);
         }
 
         table.addCell(getCell("(подпись)", HorizontalAlignment.RIGHT));

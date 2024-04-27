@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/task-for-employee")
@@ -37,9 +39,10 @@ public class TaskForEmployeeController {
     @PostMapping
     public void createTaskForEmployee(HttpServletResponse response, @RequestBody TaskForEmployeeDto taskForEmployeeDto) {
         response.setContentType(MediaType.APPLICATION_PDF_VALUE);
-        ZonedDateTime dateTime = ZonedDateTime.from(LocalDate.now());
+        DateFormat dateTime = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
+        String currentDate = dateTime.format(new Date());
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=taskForEmployeeDto" + dateTime + ".pdf";
+        String headerValue = "attachment; filename=taskForEmployeeDto" + currentDate + ".pdf";
         response.setHeader(headerKey, headerValue);
         try {
             log.info("Созданный PDF файл задания по резалюции {}", taskForEmployeeDto);
