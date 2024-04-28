@@ -16,8 +16,8 @@ import java.time.ZonedDateTime;
 @Schema(description = "Задание для сотрудника")
 public class TaskForEmployeeDto {
 
-    @Schema(description = "идентификатор задания")
-    private Long id;
+//    @Schema(description = "идентификатор задания")
+//    private Long id;
 
     @NotNull
     @Schema(description = "Имя пользователя, создавшего задание")
@@ -52,8 +52,8 @@ public class TaskForEmployeeDto {
 
     @NotNull
     @Schema(description = "Дата создания задания")
-    private ZonedDateTime taskCreationDate;
+    private String taskCreationDate;
 
     @Schema(description = "Факсимиле пользователя, создавшего задание")
-    private FacsimileDto taskCreatorFacsimile;
+    private Long taskCreatorFacsimileID;
 }

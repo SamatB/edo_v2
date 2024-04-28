@@ -90,12 +90,11 @@ public class TaskForEmployee extends BaseEntity {
      * Дата создания задания.
      */
     @NotNull
-    @CreationTimestamp
-    private ZonedDateTime taskCreationDate;
+    private String taskCreationDate;
 
     /**
      * Связь с сущностью Facsimile
      */
 
-    private Facsimile taskCreatorFacsimile;
+    private Long taskCreatorFacsimileID;
 }
