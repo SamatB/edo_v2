@@ -35,16 +35,14 @@ public class TaskForEmployeeController {
         this.taskForEmployeeService = taskForEmployeeService;
     }
 
-    @PostMapping
-    @ResponseBody
+    @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto) throws IOException {
         log.info("Creating task for employee: {}", taskForEmployeeDto.getTaskCreatorLastName());
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
         DateFormat dateTime = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
         String currentDate = dateTime.format(new Date());
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=taskForEmployeeDto" + currentDate + ".pdf";
+        String headerValue = "inline; filename=taskForEmployeeDto" + currentDate + ".pdf";
         headers.add(headerKey, headerValue);
         log.info("Создается PDF файл задания по резалюции {}", taskForEmployeeDto.getTaskCreatorFirstName());
         ByteArrayResource bis = taskForEmployeeService.generateTaskForEmployeeIntoPDF(taskForEmployeeDto);
@@ -53,6 +51,7 @@ public class TaskForEmployeeController {
         return ResponseEntity
                 .ok()
                 .header(String.valueOf(headers))
+                .contentType(MediaType.APPLICATION_PDF)
                 .body(bis);
     }
 

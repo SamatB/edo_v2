@@ -11,5 +11,4 @@ import java.io.IOException;
 public interface TaskForEmployeeService {
 
     ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) throws IOException;
-//    void generateTaskForEmployeeIntoPDF(HttpServletResponse response, TaskForEmployeeDto task) throws IOException;
 }
