@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FacsimileRepository extends JpaRepository<Facsimile, Long> {
@@ -25,5 +26,8 @@ public interface FacsimileRepository extends JpaRepository<Facsimile, Long> {
     @Modifying
     @Query("UPDATE Facsimile f SET f.archived = NOT f.archived WHERE f.id = :id")
     void toggleArchivedStatus(@Param("id") Long id);
+
+    @Query("SELECT f FROM Facsimile f JOIN Employee e ON f.employee.id=e.id WHERE e.id=:id")
+    Facsimile findByEmployeeId(Long id);
 
 }

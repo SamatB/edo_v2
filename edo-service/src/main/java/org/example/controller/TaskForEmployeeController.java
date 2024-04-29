@@ -1,22 +1,18 @@
 package org.example.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.TaskForEmployeeDto;
 import org.example.service.TaskForEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,16 +50,4 @@ public class TaskForEmployeeController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(bis);
     }
-
-//    @PostMapping
-//    public void convertTaskForEmployeeIntoPDF(HttpServletResponse response, @RequestBody TaskForEmployeeDto taskForEmployeeDto) throws IOException {
-//        response.setContentType("application/pdf");
-//        DateFormat dateTime = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
-//        String currentDate = dateTime.format(new Date());
-//        String headerKey = "Content-Disposition";
-//        String headerValue = "attachment; filename=taskForEmployeeDto" + currentDate + ".pdf";
-//        response.setHeader(headerKey, headerValue);
-//        log.info("Созданный PDF файл задания по резалюции {}", taskForEmployeeDto);
-//        taskForEmployeeService.generateTaskForEmployeeIntoPDF(response, taskForEmployeeDto);
-//    }
 }

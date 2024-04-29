@@ -1,9 +1,9 @@
 package org.example.service.impl;
 
-import com.lowagie.text.*;
 import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
@@ -14,15 +14,22 @@ import com.lowagie.text.Table;
 import com.lowagie.text.alignment.HorizontalAlignment;
 import com.lowagie.text.pdf.PdfWriter;
 import org.example.dto.TaskForEmployeeDto;
+import org.example.entity.Employee;
+import org.example.entity.Facsimile;
+import org.example.mapper.FacsimileMapper;
+import org.example.repository.EmployeeRepository;
+import org.example.repository.FacsimileRepository;
 import org.example.service.TaskForEmployeeService;
 import org.example.utils.exception.EmptyValueException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.*;
+import java.security.Principal;
 
 /**
  * Сервис для формирования PDF файла заполненного бланка задания для сотрудника.
@@ -31,6 +38,17 @@ import java.io.*;
 public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
     private static final Logger log = LoggerFactory.getLogger(TaskForEmployeeServiceImpl.class);
+    private final FacsimileMapper facsimileMapper;
+    private final FacsimileRepository facsimileRepository;
+    private final EmployeeRepository employeeRepository;
+
+
+    @Autowired
+    public TaskForEmployeeServiceImpl(FacsimileMapper facsimileMapper, FacsimileRepository facsimileRepository, EmployeeRepository employeeRepository) {
+        this.facsimileMapper = facsimileMapper;
+        this.facsimileRepository = facsimileRepository;
+        this.employeeRepository = employeeRepository;
+    }
 
     @Override
     public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) throws IOException {
@@ -55,8 +73,12 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             } else {
                 destination.addCell(getCell(task.getTaskCreatorFirstName(), HorizontalAlignment.LEFT));
             }
-
-            destination.addCell(getCell(task.getTaskCreatorLastName(), HorizontalAlignment.LEFT));
+            if (task.getTaskCreatorLastName().isEmpty()) {
+                log.error("Task creator last name is empty");
+                throw new EmptyValueException("Last name cannot be empty");
+            } else {
+                destination.addCell(getCell(task.getTaskCreatorLastName(), HorizontalAlignment.LEFT));
+            }
             destination.addCell(getCell(task.getTaskCreatorMiddleName(), HorizontalAlignment.LEFT));
             Chunk fio = new Chunk("                   (Ф.И.О)                   ");
             fio.setUnderline(0.3f, 14f);
@@ -67,8 +89,18 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             Chunk contactDates = new Chunk("       (контактные данные)         ");
             contactDates.setUnderline(0.3f, 12f);
             destination.addCell(getCell(contactDates, HorizontalAlignment.CENTER));
-            destination.addCell(getCell(task.getExecutorFirstName(), HorizontalAlignment.LEFT));
-            destination.addCell(getCell(task.getExecutorLastName(), HorizontalAlignment.LEFT));
+            if (task.getExecutorFirstName().isEmpty()) {
+                log.error("Task executor first name is empty");
+                throw new EmptyValueException("Task executor's first name cannot be empty");
+            } else {
+                destination.addCell(getCell(task.getExecutorFirstName(), HorizontalAlignment.LEFT));
+            }
+            if (task.getExecutorLastName().isEmpty()) {
+                log.error("Task executor's last name is empty");
+                throw new EmptyValueException("Task executor's last name cannot be empty");
+            } else {
+                destination.addCell(getCell(task.getExecutorLastName(), HorizontalAlignment.LEFT));
+            }
             destination.addCell(getCell(task.getExecutorMiddleName(), HorizontalAlignment.LEFT));
             Chunk executorFIO = new Chunk("        (Ф.И.О исполнителя)         ");
             executorFIO.setUnderline(0.3f, 12f);
@@ -90,6 +122,9 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             document.add(taskDescription);
             document.add(new Paragraph("\n\n"));
 
+            Facsimile facsimile = facsimileMapper.dtoToEntity(task.getTaskCreatorFacsimile());
+
+
             Table dateAndFacsimile = new Table(2, 2);
             dateAndFacsimile.setBorder(Rectangle.NO_BORDER);
             dateAndFacsimile.setWidth(100);
@@ -103,7 +138,7 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             signUnderline.setUnderline(0.3f, 12f);
             dateAndFacsimile.addCell(getCell(signUnderline, HorizontalAlignment.CENTER));
             document.add(dateAndFacsimile);
-        } catch (com.lowagie.text.DocumentException e) {
+        } catch (DocumentException e) {
             log.info("Error occurred: {0}", e);
         }
         document.close();
@@ -124,5 +159,9 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         cell.setHorizontalAlignment(alignment);
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
+    }
+
+    private Employee getAuthenticatedUSer(Principal principal) {
+        return employeeRepository.findByUsername(principal.getName());
     }
 }
