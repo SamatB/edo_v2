@@ -57,9 +57,6 @@ public class TaskForEmployeeDto {
     @Schema(description = "Факсимиле пользователя, создавшего задание")
     private Long taskCreatorFacsimileID;
 
-    @Schema(description = "Факсимиле пользователя, создавшего задание")
-    private FacsimileDto taskCreatorFacsimile;
-
     public String setTaskCreatorFirstName(String taskCreatorFirstName) {
         this.taskCreatorFirstName = taskCreatorFirstName;
         return taskCreatorFirstName;

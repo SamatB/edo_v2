@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,14 +30,16 @@ public class TaskForEmployeeController {
     private final TaskForEmployeeClient taskForEmployeeClient;
 
     @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto) throws IOException {
+    public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto, @RequestHeader("Authorization") String authToken) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         DateFormat dateTime = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
         String currentDate = dateTime.format(new Date());
         String headerKey = "Content-Disposition";
         String headerValue = "inline; filename=taskForEmployeeDto" + currentDate + ".pdf";
         headers.add(headerKey, headerValue);
-        ByteArrayResource bis = taskForEmployeeClient.convertTaskForEmployeeIntoPDF(taskForEmployeeDto);
+        log.info("AUTHTOKEN MEDER");
+        log.info(authToken);
+        ByteArrayResource bis = taskForEmployeeClient.convertTaskForEmployeeIntoPDF(taskForEmployeeDto, authToken);
 
         return ResponseEntity
                 .ok()

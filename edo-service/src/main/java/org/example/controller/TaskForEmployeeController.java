@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,7 +33,7 @@ public class TaskForEmployeeController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto) throws IOException {
+    public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto, @RequestHeader("Authorization") String authToken) throws IOException {
         log.info("Creating task for employee: {}", taskForEmployeeDto.getTaskCreatorLastName());
         HttpHeaders headers = new HttpHeaders();
         DateFormat dateTime = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
@@ -41,8 +42,8 @@ public class TaskForEmployeeController {
         String headerValue = "inline; filename=taskForEmployeeDto" + currentDate + ".pdf";
         headers.add(headerKey, headerValue);
         log.info("Создается PDF файл задания по резалюции {}", taskForEmployeeDto.getTaskCreatorFirstName());
-        ByteArrayResource bis = taskForEmployeeService.generateTaskForEmployeeIntoPDF(taskForEmployeeDto);
-        log.info("Созданн PDF файл задания по резалюции {}", taskForEmployeeDto);
+        ByteArrayResource bis = taskForEmployeeService.generateTaskForEmployeeIntoPDF(taskForEmployeeDto, authToken);
+        log.info("Создан PDF файл задания по резалюции {}", taskForEmployeeDto);
 
         return ResponseEntity
                 .ok()
