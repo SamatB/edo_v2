@@ -7,6 +7,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
+import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
@@ -25,8 +26,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.security.Principal;
@@ -52,6 +56,8 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
     @Override
     public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) throws IOException {
+        Employee authenticatedUser = getAuthenticatedUSer();
+
         Document document = new Document(PageSize.A4, 85.0394F, 50, 50, 50);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -71,15 +77,15 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
                 log.error("Task creator first name is empty");
                 throw new EmptyValueException("First name cannot be empty");
             } else {
-                destination.addCell(getCell(task.getTaskCreatorFirstName(), HorizontalAlignment.LEFT));
+                destination.addCell(getCell(task.setTaskCreatorFirstName(authenticatedUser.getFirstName()), HorizontalAlignment.LEFT));
             }
             if (task.getTaskCreatorLastName().isEmpty()) {
                 log.error("Task creator last name is empty");
                 throw new EmptyValueException("Last name cannot be empty");
             } else {
-                destination.addCell(getCell(task.getTaskCreatorLastName(), HorizontalAlignment.LEFT));
+                destination.addCell(getCell(task.setTaskCreatorLastName(authenticatedUser.getLastName()), HorizontalAlignment.LEFT));
             }
-            destination.addCell(getCell(task.getTaskCreatorMiddleName(), HorizontalAlignment.LEFT));
+            destination.addCell(getCell(task.setTaskCreatorMiddleName(authenticatedUser.getMiddleName()), HorizontalAlignment.LEFT));
             Chunk fio = new Chunk("                   (Ф.И.О)                   ");
             fio.setUnderline(0.3f, 14f);
             fio.setFont(FontFactory.getFont(FontFactory.HELVETICA, 12));
@@ -123,6 +129,7 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             document.add(new Paragraph("\n\n"));
 
             Facsimile facsimile = facsimileMapper.dtoToEntity(task.getTaskCreatorFacsimile());
+               facsimileRepository.findByEmployeeId(authenticatedUser.getId());
 
 
             Table dateAndFacsimile = new Table(2, 2);
@@ -130,7 +137,11 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             dateAndFacsimile.setWidth(100);
             dateAndFacsimile.setHorizontalAlignment(HorizontalAlignment.CENTER);
             dateAndFacsimile.addCell(getCell(task.getTaskCreationDate(), HorizontalAlignment.CENTER));
-            dateAndFacsimile.addCell(getCell(String.valueOf(task.getTaskCreatorFacsimileID()), HorizontalAlignment.CENTER));
+
+
+            if (task.getTaskCreatorFacsimile() == null) {
+                dateAndFacsimile.addCell(getCell(facsimile.toString(), HorizontalAlignment.CENTER));
+            }
             Chunk dateUnderline = new Chunk("              (дата)              ");
             dateUnderline.setUnderline(0.3f, 12f);
             dateAndFacsimile.addCell(getCell(dateUnderline, HorizontalAlignment.CENTER));
@@ -153,6 +164,14 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         return cell;
     }
 
+    private static Cell getCell(Image image, HorizontalAlignment alignment) {
+        Cell cell = new Cell();
+        cell.add(image);
+        cell.setHorizontalAlignment(alignment);
+        cell.setBorder(Rectangle.NO_BORDER);
+        return cell;
+    }
+
     private static Cell getCell(Chunk chunk, HorizontalAlignment alignment) {
         Cell cell = new Cell();
         cell.add(new Paragraph(chunk));
@@ -161,7 +180,10 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         return cell;
     }
 
-    private Employee getAuthenticatedUSer(Principal principal) {
-        return employeeRepository.findByUsername(principal.getName());
+    private Employee getAuthenticatedUSer() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        log.info("Authenticated user: {}", username);
+        return employeeRepository.findByUsername(username);
     }
 }

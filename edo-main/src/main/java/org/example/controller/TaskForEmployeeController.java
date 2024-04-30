@@ -3,6 +3,7 @@ package org.example.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dto.EmployeeDto;
 import org.example.dto.TaskForEmployeeDto;
 import org.example.feign.TaskForEmployeeClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,4 +44,5 @@ public class TaskForEmployeeController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(bis);
     }
+
 }
