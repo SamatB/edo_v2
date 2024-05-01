@@ -1,7 +1,7 @@
-package org.example.utils.exception.handler;
+package org.example.util.exception.handler;
 
-import org.example.utils.exception.EmptyValueException;
-import org.example.utils.exception.exception_response.ExceptionResponse;
+import org.example.util.exception.EmptyValueException;
+import org.example.util.exception.exception_response.ExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

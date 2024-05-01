@@ -1,4 +1,4 @@
-package org.example.utils.exception.exception_response;
+package org.example.util.exception.exception_response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

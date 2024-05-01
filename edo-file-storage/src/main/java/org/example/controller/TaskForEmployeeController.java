@@ -1,11 +1,9 @@
 package org.example.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.TaskForEmployeeDto;
-import org.example.repository.FacsimileRepository;
 import org.example.service.TaskForEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -14,8 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -31,12 +27,12 @@ import java.util.Date;
 public class TaskForEmployeeController {
 
     private TaskForEmployeeService taskForEmployeeService;
-    private FacsimileRepository facsimileRepository;
+
 
     @Autowired
-    public TaskForEmployeeController(TaskForEmployeeService taskForEmployeeService, FacsimileRepository facsimileRepository) {
+    public TaskForEmployeeController(TaskForEmployeeService taskForEmployeeService) {
         this.taskForEmployeeService = taskForEmployeeService;
-        this.facsimileRepository = facsimileRepository;
+
     }
 
     @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)

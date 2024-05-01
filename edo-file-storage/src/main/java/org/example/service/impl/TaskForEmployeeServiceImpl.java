@@ -1,7 +1,5 @@
 package org.example.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
@@ -15,18 +13,11 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.alignment.HorizontalAlignment;
-import com.lowagie.text.pdf.PdfOCG;
 import com.lowagie.text.pdf.PdfWriter;
-import jakarta.servlet.http.HttpServletRequest;
 import org.example.dto.TaskForEmployeeDto;
-import org.example.entity.Employee;
-import org.example.entity.Facsimile;
-import org.example.mapper.FacsimileMapper;
-import org.example.repository.EmployeeRepository;
-import org.example.repository.FacsimileRepository;
 
 import org.example.service.TaskForEmployeeService;
-import org.example.utils.exception.EmptyValueException;
+import org.example.util.exception.EmptyValueException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +27,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.security.Principal;
-import java.util.Base64;
 
 /**
  * Сервис для формирования PDF файла заполненного бланка задания для сотрудника.
@@ -50,16 +38,7 @@ import java.util.Base64;
 public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
     private static final Logger log = LoggerFactory.getLogger(TaskForEmployeeServiceImpl.class);
-    private final FacsimileMapper facsimileMapper;
-    private final FacsimileRepository facsimileRepository;
-    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    public TaskForEmployeeServiceImpl(FacsimileMapper facsimileMapper, FacsimileRepository facsimileRepository, EmployeeRepository employeeRepository) {
-        this.facsimileMapper = facsimileMapper;
-        this.facsimileRepository = facsimileRepository;
-        this.employeeRepository = employeeRepository;
-    }
 
     @Override
     public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) throws IOException {
@@ -175,8 +154,7 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
     @Override
     public String getFacsimileFileUUID() {
-        Facsimile facsimile = null;
-        return facsimileRepository.getReferenceById(String.valueOf(facsimile.getFilePool().getStorageFileId())).toString();
+        return null;
     }
 
     private static Cell getCell(String text, HorizontalAlignment alignment) {

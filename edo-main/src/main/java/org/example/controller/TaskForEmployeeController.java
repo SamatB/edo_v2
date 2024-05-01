@@ -18,6 +18,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -45,7 +46,7 @@ public class TaskForEmployeeController {
     public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto, HttpServletRequest request) throws IOException {
         EmployeeDto employeeDto = keycloakService.getEmployeeFromSessionUsername(request);
         log.info("employeeDto: {}", employeeDto);
-        taskForEmployeeDto.setTaskCreatorFirstName(employeeDto.getFirstName());
+//        taskForEmployeeDto.setTaskCreatorFirstName(employeeDto.getUsername());
         HttpHeaders headers = new HttpHeaders();
         DateFormat dateTime = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
         String currentDate = dateTime.format(new Date());

@@ -1,4 +1,4 @@
-package org.example.utils.exception;
+package org.example.util.exception;
 
 public class EmptyValueException extends RuntimeException {
 
