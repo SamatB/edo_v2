@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface FacsimileRepository extends JpaRepository<Facsimile, Long> {
@@ -30,4 +29,6 @@ public interface FacsimileRepository extends JpaRepository<Facsimile, Long> {
     @Query("SELECT f FROM Facsimile f JOIN Employee e ON f.employee.id=e.id WHERE e.id=:id")
     Facsimile findByEmployeeId(Long id);
 
+    @Query("SELECT f FROM Facsimile f JOIN FilePool fp ON f.filePool.storageFileId=fp.storageFileId WHERE fp.storageFileId=:id")
+    Facsimile getReferenceById(String id);
 }

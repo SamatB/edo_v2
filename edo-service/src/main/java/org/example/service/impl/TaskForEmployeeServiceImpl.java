@@ -17,11 +17,14 @@ import com.lowagie.text.Table;
 import com.lowagie.text.alignment.HorizontalAlignment;
 import com.lowagie.text.pdf.PdfOCG;
 import com.lowagie.text.pdf.PdfWriter;
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.dto.TaskForEmployeeDto;
 import org.example.entity.Employee;
+import org.example.entity.Facsimile;
 import org.example.mapper.FacsimileMapper;
 import org.example.repository.EmployeeRepository;
 import org.example.repository.FacsimileRepository;
+
 import org.example.service.TaskForEmployeeService;
 import org.example.utils.exception.EmptyValueException;
 import org.slf4j.Logger;
@@ -29,10 +32,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.security.Principal;
 import java.util.Base64;
@@ -48,7 +54,6 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
     private final FacsimileRepository facsimileRepository;
     private final EmployeeRepository employeeRepository;
 
-
     @Autowired
     public TaskForEmployeeServiceImpl(FacsimileMapper facsimileMapper, FacsimileRepository facsimileRepository, EmployeeRepository employeeRepository) {
         this.facsimileMapper = facsimileMapper;
@@ -57,11 +62,10 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
     }
 
     @Override
-    public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task, String authToken) throws IOException {
+    public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) throws IOException {
 
-        log.info("Meder {}", extractUsername(authToken));
-        System.out.println(employeeRepository.findByExternalId(extractUsername(authToken)));
-        Employee employee = employeeRepository.findByExternalId(extractUsername(authToken));
+//        log.info("Meder {}", keycloakService.getEmployeeFromSessionUsername(request));
+//        Employee employee = employeeRepository.findByExternalId();
 
         Document document = new Document(PageSize.A4, 85.0394F, 50, 50, 50);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -82,7 +86,7 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
                 log.error("Task creator first name is empty");
                 throw new EmptyValueException("First name cannot be empty");
             } else {
-                destination.addCell(getCell(task.setTaskCreatorFirstName(employee.getFirstName()), HorizontalAlignment.LEFT));
+                destination.addCell(getCell(task.getTaskCreatorFirstName(), HorizontalAlignment.LEFT));
             }
             if (task.getTaskCreatorLastName().isEmpty()) {
                 log.error("Task creator last name is empty");
@@ -92,7 +96,7 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             }
             destination.addCell(getCell(task.getTaskCreatorMiddleName(), HorizontalAlignment.LEFT));
             Chunk fio = new Chunk("                   (Ф.И.О)                   ");
-            fio.setUnderline(0.3f, 14f);
+            fio.setUnderline(0.3f, 12f);
             fio.setFont(FontFactory.getFont(FontFactory.HELVETICA, 12));
             destination.addCell(getCell(fio, HorizontalAlignment.CENTER));
             destination.addCell(getCell(task.getTaskCreatorEmail(), HorizontalAlignment.LEFT));
@@ -147,6 +151,9 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             dateUnderline.setUnderline(0.3f, 12f);
             dateAndFacsimile.addCell(getCell(dateUnderline, HorizontalAlignment.CENTER));
 
+//            Facsimile facsimile = facsimileMapper.dtoToEntity(task.getFacsimile());
+//            Facsimile storageUUID = facsimileRepository.getReferenceById(String.valueOf(facsimile.getFilePool().getStorageFileId()));
+
             Chunk signUnderline = new Chunk("             (подпись)             ");
             signUnderline.setUnderline(0.3f, 12f);
             dateAndFacsimile.addCell(getCell(signUnderline, HorizontalAlignment.CENTER));
@@ -157,6 +164,19 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         }
         document.close();
         return new ByteArrayResource(baos.toByteArray());
+    }
+
+    @Override
+    public BufferedImage getFacsimileImageFromMinIO(Resource resource) throws IOException {
+        InputStream is = resource.getInputStream();
+        ByteArrayInputStream bais = new ByteArrayInputStream(is.readAllBytes());
+        return ImageIO.read(bais);
+    }
+
+    @Override
+    public String getFacsimileFileUUID() {
+        Facsimile facsimile = null;
+        return facsimileRepository.getReferenceById(String.valueOf(facsimile.getFilePool().getStorageFileId())).toString();
     }
 
     private static Cell getCell(String text, HorizontalAlignment alignment) {
@@ -182,26 +202,27 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         return cell;
     }
 
-    public static String extractUsername(String token) {
-        // Разделить токен на три части по точкам
-        String[] parts = token.split("\\.");
 
-        if (parts.length != 3) {
-            throw new IllegalArgumentException("Invalid JWT token format");
-        }
-
-        // Декодировать и десериализовать вторую часть (Payload) из Base64 в JSON
-        String payload = new String(Base64.getDecoder().decode(parts[1]));
-
-        // Извлечь имя пользователя из JSON
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode payloadJson = mapper.readTree(payload);
-            return payloadJson.has("sub") ? payloadJson.get("sub").asText() : null;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to extract username from JWT token", e);
-        }
-    }
+//    public static String extractUsername(String token) {
+//        // Разделить токен на три части по точкам
+//        String[] parts = token.split("\\.");
+//
+//        if (parts.length != 3) {
+//            throw new IllegalArgumentException("Invalid JWT token format");
+//        }
+//
+//        // Декодировать и десериализовать вторую часть (Payload) из Base64 в JSON
+//        String payload = new String(Base64.getDecoder().decode(parts[1]));
+//
+//        // Извлечь имя пользователя из JSON
+//        try {
+//            ObjectMapper mapper = new ObjectMapper();
+//            JsonNode payloadJson = mapper.readTree(payload);
+//            return payloadJson.has("sub") ? payloadJson.get("sub").asText() : null;
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to extract username from JWT token", e);
+//        }
+//    }
 
 //    private static String extractUsername(String token) {
 //        // JWT токен состоит из трех частей, разделенных точками

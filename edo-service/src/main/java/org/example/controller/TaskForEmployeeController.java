@@ -1,19 +1,24 @@
 package org.example.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.TaskForEmployeeDto;
+import org.example.repository.FacsimileRepository;
 import org.example.service.TaskForEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,14 +31,17 @@ import java.util.Date;
 public class TaskForEmployeeController {
 
     private TaskForEmployeeService taskForEmployeeService;
+    private FacsimileRepository facsimileRepository;
 
     @Autowired
-    public TaskForEmployeeController(TaskForEmployeeService taskForEmployeeService) {
+    public TaskForEmployeeController(TaskForEmployeeService taskForEmployeeService, FacsimileRepository facsimileRepository) {
         this.taskForEmployeeService = taskForEmployeeService;
+        this.facsimileRepository = facsimileRepository;
     }
 
     @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto, @RequestHeader("Authorization") String authToken) throws IOException {
+    public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto) throws IOException {
+
         log.info("Creating task for employee: {}", taskForEmployeeDto.getTaskCreatorLastName());
         HttpHeaders headers = new HttpHeaders();
         DateFormat dateTime = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
@@ -42,7 +50,7 @@ public class TaskForEmployeeController {
         String headerValue = "inline; filename=taskForEmployeeDto" + currentDate + ".pdf";
         headers.add(headerKey, headerValue);
         log.info("Создается PDF файл задания по резалюции {}", taskForEmployeeDto.getTaskCreatorFirstName());
-        ByteArrayResource bis = taskForEmployeeService.generateTaskForEmployeeIntoPDF(taskForEmployeeDto, authToken);
+        ByteArrayResource bis = taskForEmployeeService.generateTaskForEmployeeIntoPDF(taskForEmployeeDto);
         log.info("Создан PDF файл задания по резалюции {}", taskForEmployeeDto);
 
         return ResponseEntity
@@ -50,5 +58,15 @@ public class TaskForEmployeeController {
                 .header(String.valueOf(headers))
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(bis);
+    }
+
+    @GetMapping("/get-facsimile")
+    public BufferedImage downloadFacsimileImage(Resource resource) throws IOException {
+        return taskForEmployeeService.getFacsimileImageFromMinIO(resource);
+    }
+
+    @GetMapping("/get-UUID")
+    public String getFacsimileUUID() {
+        return taskForEmployeeService.getFacsimileFileUUID();
     }
 }

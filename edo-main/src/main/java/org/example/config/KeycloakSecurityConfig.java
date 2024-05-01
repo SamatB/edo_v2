@@ -1,5 +1,7 @@
 package org.example.config;
 
+import org.example.service.KeycloakService;
+import org.example.service.impl.KeycloakServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -60,5 +62,10 @@ public class KeycloakSecurityConfig {
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .build();
+    }
+
+    @Bean
+    public KeycloakService keycloakService() {
+        return new KeycloakServiceImpl();
     }
 }
