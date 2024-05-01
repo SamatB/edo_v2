@@ -33,6 +33,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     public EmployeeDto getEmployeeFromSessionUsername(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
+            log.info("Outside if - getEmployeeFromSessionUsername");
             // Проверяем, есть ли KeycloakPrincipal в сессии
             KeycloakPrincipal<KeycloakSecurityContext> keycloakPrincipal =
                     (KeycloakPrincipal<KeycloakSecurityContext>) session
