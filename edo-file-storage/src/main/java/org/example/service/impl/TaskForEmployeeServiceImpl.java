@@ -20,7 +20,6 @@ import org.example.service.TaskForEmployeeService;
 import org.example.util.exception.EmptyValueException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 
 import org.springframework.core.io.Resource;
@@ -77,12 +76,12 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             Chunk fio = new Chunk("                   (Ф.И.О)                   ");
             fio.setUnderline(0.3f, 12f);
             fio.setFont(FontFactory.getFont(FontFactory.HELVETICA, 12));
-            destination.addCell(getCell(fio, HorizontalAlignment.CENTER));
+            destination.addCell(getCell(fio));
             destination.addCell(getCell(task.getTaskCreatorEmail(), HorizontalAlignment.LEFT));
             destination.addCell(getCell(task.getTaskCreatorPhoneNumber(), HorizontalAlignment.LEFT));
             Chunk contactDates = new Chunk("       (контактные данные)         ");
             contactDates.setUnderline(0.3f, 12f);
-            destination.addCell(getCell(contactDates, HorizontalAlignment.CENTER));
+            destination.addCell(getCell(contactDates));
             if (task.getExecutorFirstName().isEmpty()) {
                 log.error("Task executor first name is empty");
                 throw new EmptyValueException("Task executor's first name cannot be empty");
@@ -98,7 +97,7 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             destination.addCell(getCell(task.getExecutorMiddleName(), HorizontalAlignment.LEFT));
             Chunk executorFIO = new Chunk("        (Ф.И.О исполнителя)         ");
             executorFIO.setUnderline(0.3f, 12f);
-            destination.addCell(getCell(executorFIO, HorizontalAlignment.CENTER));
+            destination.addCell(getCell(executorFIO));
             document.add(destination);
 
             document.add(new Paragraph("\n"));
@@ -124,18 +123,18 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             Image facs = Image.getInstance("img.png");
             facs.scaleAbsolute(100, 80);
 
-            dateAndFacsimile.addCell(getCell(facs, HorizontalAlignment.CENTER));
+            dateAndFacsimile.addCell(getCell(facs));
 
             Chunk dateUnderline = new Chunk("              (дата)              ");
             dateUnderline.setUnderline(0.3f, 12f);
-            dateAndFacsimile.addCell(getCell(dateUnderline, HorizontalAlignment.CENTER));
+            dateAndFacsimile.addCell(getCell(dateUnderline));
 
 //            Facsimile facsimile = facsimileMapper.dtoToEntity(task.getFacsimile());
 //            Facsimile storageUUID = facsimileRepository.getReferenceById(String.valueOf(facsimile.getFilePool().getStorageFileId()));
 
             Chunk signUnderline = new Chunk("             (подпись)             ");
             signUnderline.setUnderline(0.3f, 12f);
-            dateAndFacsimile.addCell(getCell(signUnderline, HorizontalAlignment.CENTER));
+            dateAndFacsimile.addCell(getCell(signUnderline));
 
             document.add(dateAndFacsimile);
         } catch (DocumentException e) {
@@ -164,18 +163,18 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
     }
-    private static Cell getCell(Image image, HorizontalAlignment alignment) {
+    private static Cell getCell(Image image) {
         Cell cell = new Cell();
         cell.add(image);
-        cell.setHorizontalAlignment(alignment);
+        cell.setHorizontalAlignment(HorizontalAlignment.CENTER);
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
     }
 
-    private static Cell getCell(Chunk chunk, HorizontalAlignment alignment) {
+    private static Cell getCell(Chunk chunk) {
         Cell cell = new Cell();
         cell.add(new Paragraph(chunk));
-        cell.setHorizontalAlignment(alignment);
+        cell.setHorizontalAlignment(HorizontalAlignment.CENTER);
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
     }

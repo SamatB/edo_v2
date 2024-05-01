@@ -10,18 +10,13 @@ import org.example.feign.FileFeignClient;
 import org.example.feign.TaskForEmployeeClient;
 import org.example.service.KeycloakService;
 import org.example.service.impl.FileServiceImpl;
-import org.example.service.impl.KeycloakServiceImpl;
 import org.example.utils.FilePoolType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -43,7 +38,7 @@ public class TaskForEmployeeController {
 
 
     @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto, HttpServletRequest request) throws IOException {
+    public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto, HttpServletRequest request) {
         EmployeeDto employeeDto = keycloakService.getEmployeeFromSessionUsername(request);
         log.info("employeeDto: {}", employeeDto);
 //        taskForEmployeeDto.setTaskCreatorFirstName(employeeDto.getUsername());
