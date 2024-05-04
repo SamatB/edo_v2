@@ -30,8 +30,6 @@ import org.springframework.core.io.ByteArrayResource;
 
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-//import org.springframework.mock.web.MockMultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
