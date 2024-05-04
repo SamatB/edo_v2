@@ -13,9 +13,15 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.alignment.HorizontalAlignment;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfOCG;
 import com.lowagie.text.pdf.PdfWriter;
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.tomcat.util.http.fileupload.FileItem;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.example.dto.TaskForEmployeeDto;
 
+import org.example.service.FileStorageService;
 import org.example.service.TaskForEmployeeService;
 import org.example.util.exception.EmptyValueException;
 import org.slf4j.Logger;
@@ -24,11 +30,15 @@ import org.springframework.core.io.ByteArrayResource;
 
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+//import org.springframework.mock.web.MockMultipartFile;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
 
 /**
  * Сервис для формирования PDF файла заполненного бланка задания для сотрудника.
@@ -37,6 +47,8 @@ import java.io.*;
 public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
     private static final Logger log = LoggerFactory.getLogger(TaskForEmployeeServiceImpl.class);
+    private String uuid;
+    private FileStorageService fileStorageService;
 
 
     @Override
@@ -44,9 +56,11 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
 //        log.info("Meder {}", keycloakService.getEmployeeFromSessionUsername(request));
 //        Employee employee = employeeRepository.findByExternalId();
-
+//        task.setFacsimile(get);
         Document document = new Document(PageSize.A4, 85.0394F, 50, 50, 50);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        this.uuid = task.getUuid();
 
         PdfWriter.getInstance(document, baos);
 
@@ -73,13 +87,12 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
                 destination.addCell(getCell(task.getTaskCreatorLastName(), HorizontalAlignment.LEFT));
             }
             destination.addCell(getCell(task.getTaskCreatorMiddleName(), HorizontalAlignment.LEFT));
-            Chunk fio = new Chunk("                   (Ф.И.О)                   ");
+            Chunk fio = new Chunk("                     (Ф.И.О)                    ");
             fio.setUnderline(0.3f, 12f);
-            fio.setFont(FontFactory.getFont(FontFactory.HELVETICA, 12));
             destination.addCell(getCell(fio));
             destination.addCell(getCell(task.getTaskCreatorEmail(), HorizontalAlignment.LEFT));
             destination.addCell(getCell(task.getTaskCreatorPhoneNumber(), HorizontalAlignment.LEFT));
-            Chunk contactDates = new Chunk("       (контактные данные)         ");
+            Chunk contactDates = new Chunk("        (контактные данные)          ");
             contactDates.setUnderline(0.3f, 12f);
             destination.addCell(getCell(contactDates));
             if (task.getExecutorFirstName().isEmpty()) {
@@ -95,7 +108,7 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
                 destination.addCell(getCell(task.getExecutorLastName(), HorizontalAlignment.LEFT));
             }
             destination.addCell(getCell(task.getExecutorMiddleName(), HorizontalAlignment.LEFT));
-            Chunk executorFIO = new Chunk("        (Ф.И.О исполнителя)         ");
+            Chunk executorFIO = new Chunk("         (Ф.И.О исполнителя)          ");
             executorFIO.setUnderline(0.3f, 12f);
             destination.addCell(getCell(executorFIO));
             document.add(destination);
@@ -120,17 +133,25 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             dateAndFacsimile.setWidth(100);
             dateAndFacsimile.setHorizontalAlignment(HorizontalAlignment.CENTER);
             dateAndFacsimile.addCell(getCell(task.getTaskCreationDate(), HorizontalAlignment.CENTER));
-            Image facs = Image.getInstance("img.png");
+            Image facs = Image.getInstance("sign.png");
             facs.scaleAbsolute(100, 80);
 
-            dateAndFacsimile.addCell(getCell(facs));
+            float xDir = document.getPageSize().getWidth() / 2;
+            float yDir = document.getPageSize().getHeight() / 2;
+            facs.setAbsolutePosition(xDir + 85, yDir - 220);
+
+
+            if (!task.getUuid().isEmpty()) {
+//                dateAndFacsimile.addCell(getCell("", HorizontalAlignment.CENTER));
+                dateAndFacsimile.addCell(getCell(getFacsimileImageFromMinIO()));
+            } else {
+                dateAndFacsimile.addCell(getCell("", HorizontalAlignment.CENTER));
+                document.add(facs);
+            }
 
             Chunk dateUnderline = new Chunk("              (дата)              ");
             dateUnderline.setUnderline(0.3f, 12f);
             dateAndFacsimile.addCell(getCell(dateUnderline));
-
-//            Facsimile facsimile = facsimileMapper.dtoToEntity(task.getFacsimile());
-//            Facsimile storageUUID = facsimileRepository.getReferenceById(String.valueOf(facsimile.getFilePool().getStorageFileId()));
 
             Chunk signUnderline = new Chunk("             (подпись)             ");
             signUnderline.setUnderline(0.3f, 12f);
@@ -144,16 +165,13 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         return new ByteArrayResource(baos.toByteArray());
     }
 
-    @Override
-    public BufferedImage getFacsimileImageFromMinIO(Resource resource) throws IOException {
-        InputStream is = resource.getInputStream();
-        ByteArrayInputStream bais = new ByteArrayInputStream(is.readAllBytes());
-        return ImageIO.read(bais);
+    private java.awt.Image getFacsimileImageFromMinIO() throws IOException {
+        Resource resource = fileStorageService.getFile(getFacsimileFileUUID()).getBody();
+        return new ImageIcon(resource.getInputStream().readAllBytes()).getImage();
     }
 
-    @Override
     public String getFacsimileFileUUID() {
-        return null;
+        return uuid;
     }
 
     private static Cell getCell(String text, HorizontalAlignment alignment) {
@@ -163,6 +181,15 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
     }
+
+    private static Cell getCell(java.awt.Image image) {
+        Cell cell = new Cell();
+        cell.add((Element) image);
+        cell.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        cell.setBorder(Rectangle.NO_BORDER);
+        return cell;
+    }
+
     private static Cell getCell(Image image) {
         Cell cell = new Cell();
         cell.add(image);
@@ -178,71 +205,5 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
     }
-
-
-//    public static String extractUsername(String token) {
-//        // Разделить токен на три части по точкам
-//        String[] parts = token.split("\\.");
-//
-//        if (parts.length != 3) {
-//            throw new IllegalArgumentException("Invalid JWT token format");
-//        }
-//
-//        // Декодировать и десериализовать вторую часть (Payload) из Base64 в JSON
-//        String payload = new String(Base64.getDecoder().decode(parts[1]));
-//
-//        // Извлечь имя пользователя из JSON
-//        try {
-//            ObjectMapper mapper = new ObjectMapper();
-//            JsonNode payloadJson = mapper.readTree(payload);
-//            return payloadJson.has("sub") ? payloadJson.get("sub").asText() : null;
-//        } catch (Exception e) {
-//            throw new RuntimeException("Failed to extract username from JWT token", e);
-//        }
-//    }
-
-//    private static String extractUsername(String token) {
-//        // JWT токен состоит из трех частей, разделенных точками
-//        String[] parts = token.split("\\.");
-//
-//        // Проверяем, что у нас есть три части
-//        if (parts.length != 3) {
-//            throw new IllegalArgumentException("Invalid JWT token format");
-//        }
-//
-//        // Декодируем и извлекаем полезную нагрузку (Payload), которая находится во второй части токена
-//        String payload = parts[1];
-//        byte[] decodedBytes = Base64.getDecoder().decode(payload);
-//        String decodedPayload = new String(decodedBytes);
-//
-//        // Преобразуем полезную нагрузку из JSON в объект и извлекаем имя пользователя (или другую нужную информацию)
-//
-//        return extractUsernameFromJson(decodedPayload);
-//    }
-//
-//    private static String extractUsernameFromJson(String payloadJson) {
-//        // В этом примере предполагается, что полезная нагрузка (Payload) в формате JSON имеет поле "sub" с именем пользователя
-//        // Здесь можно использовать любую библиотеку для работы с JSON, например, org.json.JSONObject
-//        // Для простоты мы используем простую обработку строк
-//
-//        // Удаляем кавычки из JSON строки
-//        String cleanJson = payloadJson.replaceAll("\"", "");
-//
-//        // Ищем значение поля "sub" (предполагается, что это имя пользователя)
-//        int subIndex = cleanJson.indexOf("sub:");
-//        if (subIndex != -1) {
-//            // Находим конец значения
-//            int endIndex = cleanJson.indexOf(",", subIndex);
-//            if (endIndex == -1) {
-//                endIndex = cleanJson.length();
-//            }
-//
-//            // Извлекаем значение поля "sub"
-//            String subFieldValue = cleanJson.substring(subIndex + 4, endIndex);
-//            return subFieldValue.trim();
-//        }
-//
-//        return null; // Возвращаем null, если не удалось извлечь имя пользователя
-//    }
 
 }

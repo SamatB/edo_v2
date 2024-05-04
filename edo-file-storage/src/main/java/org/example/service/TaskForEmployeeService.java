@@ -14,7 +14,4 @@ public interface TaskForEmployeeService {
 
     ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) throws IOException;
 
-    BufferedImage getFacsimileImageFromMinIO(Resource resource) throws IOException;
-
-    String getFacsimileFileUUID();
 }

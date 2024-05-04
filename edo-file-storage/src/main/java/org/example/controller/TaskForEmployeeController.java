@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.TaskForEmployeeDto;
+import org.example.service.FileStorageService;
 import org.example.service.TaskForEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -27,7 +28,6 @@ import java.util.Date;
 public class TaskForEmployeeController {
 
     private TaskForEmployeeService taskForEmployeeService;
-
 
     @Autowired
     public TaskForEmployeeController(TaskForEmployeeService taskForEmployeeService) {
@@ -56,13 +56,4 @@ public class TaskForEmployeeController {
                 .body(bis);
     }
 
-    @GetMapping("/get-facsimile")
-    public BufferedImage downloadFacsimileImage(Resource resource) throws IOException {
-        return taskForEmployeeService.getFacsimileImageFromMinIO(resource);
-    }
-
-    @GetMapping("/get-UUID")
-    public String getFacsimileUUID() {
-        return taskForEmployeeService.getFacsimileFileUUID();
-    }
 }

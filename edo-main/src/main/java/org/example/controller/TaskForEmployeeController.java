@@ -59,14 +59,14 @@ public class TaskForEmployeeController {
                 .body(bis);
     }
 
-    @GetMapping("/get/{uuid}")
-    public BufferedImage getFacsimileImage(@PathVariable String uuid, @RequestParam FilePoolType filetype) {
-        uuid = taskForEmployeeClient.getFacsimileUUID();
-        if (filetype == FilePoolType.FACSIMILE) {
-            ResponseEntity<Resource> file = fileFeignClient.getFile(uuid);
-            return taskForEmployeeClient.getFile(file.getBody());
-        }
-        return null;
-    }
+//    @GetMapping("/get/{uuid}")
+//    public BufferedImage getFacsimileImage(@PathVariable String uuid, @RequestParam FilePoolType filetype) {
+//        uuid = taskForEmployeeClient.getFacsimileUUID();
+//        if (filetype == FilePoolType.FACSIMILE) {
+//            ResponseEntity<Resource> file = fileFeignClient.getFile(uuid);
+//            return taskForEmployeeClient.getFile(file.getBody());
+//        }
+//        return null;
+//    }
 
 }

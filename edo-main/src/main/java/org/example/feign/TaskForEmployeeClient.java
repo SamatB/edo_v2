@@ -15,10 +15,10 @@ public interface TaskForEmployeeClient {
     @PostMapping(value = "/task-for-employee", produces = MediaType.APPLICATION_PDF_VALUE)
     ByteArrayResource convertTaskForEmployeeIntoPDF(@RequestBody TaskForEmployeeDto task);
 
-    @GetMapping("/task-for-employee/get-facsimile")
-    BufferedImage getFile(Resource resource);
-
-    @GetMapping("/task-for-employee/get-UUID")
-    String getFacsimileUUID();
+//    @GetMapping("/task-for-employee/get-facsimile")
+//    BufferedImage getFile(Resource resource);
+//
+//    @GetMapping("/task-for-employee/get-UUID")
+//    String getFacsimileUUID();
 
 }

@@ -51,11 +51,9 @@ public class TaskForEmployeeDto {
     @Schema(description = "Дата создания задания")
     private String taskCreationDate;
 
-    @Schema(description = "Факсимиле пользователя, создавшего задание")
-    private Long taskCreatorFacsimileID;
-
-    @ToString.Exclude
-    private FacsimileDto facsimile;
+    @Schema(description = "UUID файла-факсимиле пользователя, создавшего задание")
+//    @ToString.Exclude
+    private String uuid;
 
     public String setTaskCreatorFirstName(String taskCreatorFirstName) {
         this.taskCreatorFirstName = taskCreatorFirstName;

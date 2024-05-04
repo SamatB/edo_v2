@@ -26,9 +26,4 @@ public interface FacsimileRepository extends JpaRepository<Facsimile, Long> {
     @Query("UPDATE Facsimile f SET f.archived = NOT f.archived WHERE f.id = :id")
     void toggleArchivedStatus(@Param("id") Long id);
 
-    @Query("SELECT f FROM Facsimile f JOIN Employee e ON f.employee.id=e.id WHERE e.id=:id")
-    Facsimile findByEmployeeId(Long id);
-
-    @Query("SELECT f FROM Facsimile f JOIN FilePool fp ON f.filePool.storageFileId=fp.storageFileId WHERE fp.storageFileId=:id")
-    Facsimile getReferenceById(String id);
 }
