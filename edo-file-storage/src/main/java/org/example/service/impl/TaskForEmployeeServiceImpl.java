@@ -140,7 +140,6 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             float yDir = document.getPageSize().getHeight() / 2;
             facs.setAbsolutePosition(xDir + 85, yDir - 220);
 
-
             if (!task.getUuid().isEmpty()) {
 //                dateAndFacsimile.addCell(getCell("", HorizontalAlignment.CENTER));
                 dateAndFacsimile.addCell(getCell(getFacsimileImageFromMinIO()));
