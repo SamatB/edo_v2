@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -51,12 +52,12 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
     @Override
     public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) throws IOException {
-
-//        log.info("Meder {}", keycloakService.getEmployeeFromSessionUsername(request));
-//        Employee employee = employeeRepository.findByExternalId();
-//        task.setFacsimile(get);
         Document document = new Document(PageSize.A4, 85.0394F, 50, 50, 50);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        ResponseEntity<Resource> response = fileStorageService.getFile(task.getUuid());
+        InputStream inputStream = response.getBody().getInputStream();
+        inputStream.readAllBytes();
 
         this.uuid = task.getUuid();
 
@@ -110,14 +111,12 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             executorFIO.setUnderline(0.3f, 12f);
             destination.addCell(getCell(executorFIO));
             document.add(destination);
-
             document.add(new Paragraph("\n"));
 
             Paragraph taskParagraph = new Paragraph("Задание для сотрудника");
             taskParagraph.setFont(font);
             taskParagraph.setAlignment(Element.ALIGN_CENTER);
             document.add(taskParagraph);
-
             document.add(new Paragraph("\n"));
 
             Paragraph taskDescription = new Paragraph(task.getTaskDescription());

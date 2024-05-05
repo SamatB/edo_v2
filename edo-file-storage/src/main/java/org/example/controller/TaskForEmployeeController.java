@@ -28,6 +28,7 @@ import java.util.Date;
 public class TaskForEmployeeController {
 
     private TaskForEmployeeService taskForEmployeeService;
+    private FileStorageService fileStorageService;
 
     @Autowired
     public TaskForEmployeeController(TaskForEmployeeService taskForEmployeeService) {
@@ -45,6 +46,7 @@ public class TaskForEmployeeController {
         String headerKey = "Content-Disposition";
         String headerValue = "inline; filename=taskForEmployeeDto" + currentDate + ".pdf";
         headers.add(headerKey, headerValue);
+
         log.info("Создается PDF файл задания по резалюции {}", taskForEmployeeDto.getTaskCreatorFirstName());
         ByteArrayResource bis = taskForEmployeeService.generateTaskForEmployeeIntoPDF(taskForEmployeeDto);
         log.info("Создан PDF файл задания по резалюции {}", taskForEmployeeDto);
