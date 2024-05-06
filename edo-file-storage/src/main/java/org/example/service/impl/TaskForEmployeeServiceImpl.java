@@ -205,5 +205,4 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
     }
-
 }
