@@ -4,11 +4,14 @@ import io.minio.*;
 import io.minio.errors.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.compress.utils.IOUtils;
+import org.example.util.ConvertFacsimileToPng;
 import org.example.util.ConvertFileToPDF;
+import org.example.utils.FilePoolType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -75,7 +78,7 @@ public class FileStorageServiceImpl implements FileStorageService {
      * либо ответ с HTTP статусом 500 в случае ошибки
      */
     @Override
-    public ResponseEntity<String> saveFile(MultipartFile file) {
+    public ResponseEntity<String> saveFile(MultipartFile file, FilePoolType fileType) {
         // Проверка на null для параметра file
         if (file == null) {
             log.error("Ошибка при сохранении файла: file не может быть null");
@@ -84,30 +87,34 @@ public class FileStorageServiceImpl implements FileStorageService {
         // Создание бакета в MinIO, если его не существует.
         createBuketInMinioIfNotExist(bucketName);
         // Сохранение файла в бакет MinIO
-        try (InputStream inputStream = ConvertFileToPDF.docToPdf(file)) {
+        try (InputStream inputStream = (FilePoolType.MAIN.equals(fileType)
+                ? ConvertFileToPDF.convertToPDF(file)
+                : ConvertFacsimileToPng.convertToPng(file))) {
             String filename = file.getOriginalFilename();
             if (filename == null) {
                 log.error("Ошибка при сохранении файла: имя файла не может быть null");
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
+            String contentType = FilePoolType.MAIN.equals(fileType)
+                    ? MediaType.APPLICATION_PDF_VALUE
+                    : MediaType.IMAGE_PNG_VALUE;
             String uuid = UUID.randomUUID().toString();
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
                             .object(uuid)
-                            .stream(inputStream, file.getSize(), -1)
-                            .contentType(file.getContentType())
+                            .stream(inputStream, inputStream.available(), -1)
+                            .contentType(contentType)
                             .build()
             );
             log.info("Файл успешно сохранен на сервер MinIO в бакет с именем " + bucketName + ". UUID сохранённого файла: " + uuid);
             return ResponseEntity.ok(uuid);
         } catch (MinioException | IOException e) {
-            log.error("Ошибка при сохранении файла на сервер MinIO.");
-            e.
-                    printStackTrace();
+            log.error("Ошибка при сохранении файла на сервер MinIO: {}", e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            log.error("Ошибка при сохранении файла на сервер MinIO.");
+            log.error("Ошибка при сохранении файла на сервер MinIO: {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }

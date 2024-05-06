@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.example.service.FileStorageService;
+import org.example.utils.FilePoolType;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,10 +49,12 @@ public class FileController {
     })
     @PostMapping("/save")
     public ResponseEntity<String> saveFile(@ApiParam(value = "Загружаемый файл", required = true)
-                                           @RequestPart("file") MultipartFile file) {
+                                           @RequestPart("file") MultipartFile file,
+                                           @ApiParam(name = "fileType", value = "Тип файла: MAIN, FACSIMILE", example = "MAIN", required = true)
+                                           @RequestParam("fileType") FilePoolType fileType) {
         log.info("Выполняется сохранение файла на сервер MinIO...");
         try {
-            ResponseEntity<String> responseEntity = fileStorageService.saveFile(file);
+            ResponseEntity<String> responseEntity = fileStorageService.saveFile(file, fileType);
             log.info("Файл успешно сохранен на сервер MinIO.");
             return responseEntity;
         } catch (Exception e) {

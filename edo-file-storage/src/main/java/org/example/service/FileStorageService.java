@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.example.utils.FilePoolType;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,7 @@ public interface FileStorageService {
      * @return ответ с UUID сохраненного файла в случае успешного сохранения,
      * либо ответ с HTTP статусом 500 в случае ошибки
      */
-    ResponseEntity<String> saveFile(MultipartFile file);
+    ResponseEntity<String> saveFile(MultipartFile file, FilePoolType fileType);
 
     /**
      * Метод для создания бакета (контейнера) в MinIO, если его не существует.
