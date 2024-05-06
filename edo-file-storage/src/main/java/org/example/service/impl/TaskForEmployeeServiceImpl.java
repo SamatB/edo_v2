@@ -47,7 +47,7 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
 
     @Override
-    public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) throws IOException {
+    public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) {
         Document document = new Document(PageSize.A4, 85.0394F, 50, 50, 50);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -66,14 +66,14 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             destination.setWidth(40);
             destination.setHorizontalAlignment(HorizontalAlignment.RIGHT);
             if (task.getTaskCreatorFirstName().isEmpty()) {
-                log.error("Task creator first name is empty");
-                throw new EmptyValueException("First name cannot be empty");
+                log.warn("Имя создающего задания лица не может быть пустым");
+                throw new EmptyValueException("Не указано имя создающего задания лица");
             } else {
                 destination.addCell(getCell(task.getTaskCreatorFirstName(), HorizontalAlignment.LEFT));
             }
             if (task.getTaskCreatorLastName().isEmpty()) {
-                log.error("Task creator last name is empty");
-                throw new EmptyValueException("Last name cannot be empty");
+                log.warn("Фамилия создающего задания лица не может быть пустой");
+                throw new EmptyValueException("Не указана фамилия создающего задания лица");
             } else {
                 destination.addCell(getCell(task.getTaskCreatorLastName(), HorizontalAlignment.LEFT));
             }
@@ -87,14 +87,14 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             contactDates.setUnderline(0.3f, 12f);
             destination.addCell(getCell(contactDates));
             if (task.getExecutorFirstName().isEmpty()) {
-                log.error("Task executor first name is empty");
-                throw new EmptyValueException("Task executor's first name cannot be empty");
+                log.warn("Имя исполнителя задания не может быть пустым");
+                throw new EmptyValueException("Не указано имя исполнителя задания");
             } else {
                 destination.addCell(getCell(task.getExecutorFirstName(), HorizontalAlignment.LEFT));
             }
             if (task.getExecutorLastName().isEmpty()) {
-                log.error("Task executor's last name is empty");
-                throw new EmptyValueException("Task executor's last name cannot be empty");
+                log.warn("Фамилия исполнителя задания не может быть пустой");
+                throw new EmptyValueException("Не указана фамилия исполнителя задания");
             } else {
                 destination.addCell(getCell(task.getExecutorLastName(), HorizontalAlignment.LEFT));
             }
@@ -127,10 +127,13 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             float yDir = document.getPageSize().getHeight() / 2;
 
             Image facsimile = Image.getInstance(getFacsimileImageFromMinIO());
-            facsimile.setAbsolutePosition(xDir + 85, yDir - 220);
+            facsimile.setAbsolutePosition(xDir + 85, yDir - 230);
             if (!task.getUuid().isEmpty()) {
                 dateAndFacsimile.addCell(getCell("", HorizontalAlignment.CENTER));
                 document.add(facsimile);
+            } else {
+                log.warn("Введите UUID файла");
+                throw new EmptyValueException("Не предоставлен ключ UUID файла");
             }
 
             Chunk dateUnderline = new Chunk("              (дата)              ");
@@ -142,8 +145,9 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             dateAndFacsimile.addCell(getCell(signUnderline));
 
             document.add(dateAndFacsimile);
-        } catch (DocumentException e) {
-            log.info("Error occurred: {0}", e);
+        } catch (DocumentException | IOException e) {
+            log.warn("Ошибка в : {0}", e);
+            System.out.println(e.getMessage());
         }
         document.close();
         return new ByteArrayResource(baos.toByteArray());
@@ -152,7 +156,8 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
     private Image getFacsimileImageFromMinIO() throws IOException {
         Resource resource = null;
         if (fileStorageService.getFile(getFacsimileFileUUID()).hasBody()) {
-            resource = fileStorageService.getFile(getFacsimileFileUUID()).getBody();}
+            resource = fileStorageService.getFile(getFacsimileFileUUID()).getBody();
+        }
         assert resource != null;
         return Image.getInstance(resource.getInputStream().readAllBytes());
     }

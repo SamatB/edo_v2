@@ -32,6 +32,4 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "OR LOWER(REPLACE(fio_nominative, 'ё', 'e')) LIKE LOWER(CONCAT('%', :changedName, '%'))",
         nativeQuery = true)
     List<Employee> findEmployeeSearchByText(@Param("changedName") String changedName);
-
-    Employee findByExternalId(String externalId);
 }
