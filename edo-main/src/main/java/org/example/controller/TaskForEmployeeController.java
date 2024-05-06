@@ -1,25 +1,22 @@
 package org.example.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.EmployeeDto;
 import org.example.dto.TaskForEmployeeDto;
-import org.example.feign.FileFeignClient;
-import org.example.feign.TaskForEmployeeClient;
+import org.example.feign.TaskForEmployeeFeignClient;
 import org.example.service.KeycloakService;
-import org.example.service.impl.FileServiceImpl;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+/**
+ * Контроллер для работы с TaskForEmployeeDto - задание по резалюции сотруднику.
+ */
 @RestController
 @RequestMapping("/task-for-employee")
 @RequiredArgsConstructor
@@ -27,17 +24,25 @@ import java.util.Date;
 @Tag(name = "Task for employee")
 public class TaskForEmployeeController {
 
-    private final TaskForEmployeeClient taskForEmployeeClient;
+    private final TaskForEmployeeFeignClient taskForEmployeeFeignClient;
     private final KeycloakService keycloakService;
 
-
+    /**
+     * Данный метод принимает на вход TaskForEmployeeDto и обрабатывается единственным методом TaskForEmployeeFeignClient,
+     * в теле ответа отправляется созданный PDF файл формата А4
+     *
+     * @param taskForEmployeeDto - запрос, который нужно обратотать.
+     * @return - ответ, который содержит созданный PDF файл в виде ByteArrayResource в обертке ResponseEntity,
+     * созданный файл открывестя в браузере.
+     */
     @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Отправляет сформированный PDF файл задания формата А4")
     public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto, HttpServletRequest request) {
         EmployeeDto employeeDto = keycloakService.getEmployeeFromSessionUsername(request);
         log.info("employeeDto: {}", employeeDto);
 
         log.info("Запущен процесс создания задания по резолюции в формате PDF");
-        ByteArrayResource bis = taskForEmployeeClient.convertTaskForEmployeeIntoPDF(taskForEmployeeDto);
+        ByteArrayResource bis = taskForEmployeeFeignClient.convertTaskForEmployeeIntoPDF(taskForEmployeeDto);
         log.info("Файл задания по резолюции в формате PDF успешно создан");
 
         return ResponseEntity

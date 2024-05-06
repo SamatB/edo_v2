@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * Данный класс перехватытвает и обрабатывает классы-exception, которые вызваны в его теле
+ * с аннотацией @ExceptionHandler
+ */
 @RestControllerAdvice
 public class GeneralExceptionHandler {
 

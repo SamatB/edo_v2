@@ -17,6 +17,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Контроллер, который отвечает за обработку запроса на формирование задания по резалюции в PDF формате
+ * и получение его ответом обратно.
+ */
 @RestController
 @RequestMapping("/task-for-employee")
 @RequiredArgsConstructor
@@ -32,6 +36,14 @@ public class TaskForEmployeeController {
 
     }
 
+    /**
+     * Данный метод принимает на вход TaskForEmployeeDto,
+     * в теле ответа отправляется созданный PDF файл формата А4
+     *
+     * @param taskForEmployeeDto - запрос, который обратаывается в методе generateTaskForEmployeeIntoPDF().
+     * @return - ответ, который содержит созданный PDF файл в виде ByteArrayResource в обертке ResponseEntity,
+     * созданный файл открывестя в браузере
+     */
     @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto) {
         try {

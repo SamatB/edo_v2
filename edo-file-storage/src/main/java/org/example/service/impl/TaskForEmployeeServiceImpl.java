@@ -45,60 +45,72 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         this.fileStorageService = fileStorageService;
     }
 
-
+    /**
+     * Данный метод принимает на вход TaskForEmployeeDto,
+     * создает документ формата PDF размера А4,
+     * расставляет указанные поля
+     * в теле ответа отправляется созданный PDF файл формата А4
+     *
+     * @param taskForEmployeeDto - входящие данные.
+     * @return - ответ, который содержит созданный PDF файл в виде ByteArrayResource
+     */
     @Override
-    public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) {
+    public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto taskForEmployeeDto) {
+        //Открытие документа
         Document document = new Document(PageSize.A4, 85.0394F, 50, 50, 50);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        this.uuid = task.getUuid();
+        //входящий UUID передается в переменную класса, чтобы его далее можно было использовать в методе getFacsimileFileUUID()
+        this.uuid = taskForEmployeeDto.getUuid();
 
+        //Образование документа в PDF
         PdfWriter.getInstance(document, baos);
-
         document.open();
+
         try {
             Font font = FontFactory.getFont(FontFactory.TIMES_ROMAN);
             font.setColor(Color.BLACK);
             font.setSize(14);
 
+            //Блок адресант-адресат
             Table destination = new Table(1);
             destination.setBorder(Rectangle.NO_BORDER);
             destination.setWidth(40);
             destination.setHorizontalAlignment(HorizontalAlignment.RIGHT);
-            if (task.getTaskCreatorFirstName().isEmpty()) {
+            if (taskForEmployeeDto.getTaskCreatorFirstName().isEmpty()) {
                 log.warn("Имя создающего задания лица не может быть пустым");
                 throw new EmptyValueException("Не указано имя создающего задания лица");
             } else {
-                destination.addCell(getCell(task.getTaskCreatorFirstName(), HorizontalAlignment.LEFT));
+                destination.addCell(getCell(taskForEmployeeDto.getTaskCreatorFirstName(), HorizontalAlignment.LEFT));
             }
-            if (task.getTaskCreatorLastName().isEmpty()) {
+            if (taskForEmployeeDto.getTaskCreatorLastName().isEmpty()) {
                 log.warn("Фамилия создающего задания лица не может быть пустой");
                 throw new EmptyValueException("Не указана фамилия создающего задания лица");
             } else {
-                destination.addCell(getCell(task.getTaskCreatorLastName(), HorizontalAlignment.LEFT));
+                destination.addCell(getCell(taskForEmployeeDto.getTaskCreatorLastName(), HorizontalAlignment.LEFT));
             }
-            destination.addCell(getCell(task.getTaskCreatorMiddleName(), HorizontalAlignment.LEFT));
+            destination.addCell(getCell(taskForEmployeeDto.getTaskCreatorMiddleName(), HorizontalAlignment.LEFT));
             Chunk fio = new Chunk("                     (Ф.И.О)                    ");
             fio.setUnderline(0.3f, 12f);
             destination.addCell(getCell(fio));
-            destination.addCell(getCell(task.getTaskCreatorEmail(), HorizontalAlignment.LEFT));
-            destination.addCell(getCell(task.getTaskCreatorPhoneNumber(), HorizontalAlignment.LEFT));
+            destination.addCell(getCell(taskForEmployeeDto.getTaskCreatorEmail(), HorizontalAlignment.LEFT));
+            destination.addCell(getCell(taskForEmployeeDto.getTaskCreatorPhoneNumber(), HorizontalAlignment.LEFT));
             Chunk contactDates = new Chunk("        (контактные данные)          ");
             contactDates.setUnderline(0.3f, 12f);
             destination.addCell(getCell(contactDates));
-            if (task.getExecutorFirstName().isEmpty()) {
+            if (taskForEmployeeDto.getExecutorFirstName().isEmpty()) {
                 log.warn("Имя исполнителя задания не может быть пустым");
                 throw new EmptyValueException("Не указано имя исполнителя задания");
             } else {
-                destination.addCell(getCell(task.getExecutorFirstName(), HorizontalAlignment.LEFT));
+                destination.addCell(getCell(taskForEmployeeDto.getExecutorFirstName(), HorizontalAlignment.LEFT));
             }
-            if (task.getExecutorLastName().isEmpty()) {
+            if (taskForEmployeeDto.getExecutorLastName().isEmpty()) {
                 log.warn("Фамилия исполнителя задания не может быть пустой");
                 throw new EmptyValueException("Не указана фамилия исполнителя задания");
             } else {
-                destination.addCell(getCell(task.getExecutorLastName(), HorizontalAlignment.LEFT));
+                destination.addCell(getCell(taskForEmployeeDto.getExecutorLastName(), HorizontalAlignment.LEFT));
             }
-            destination.addCell(getCell(task.getExecutorMiddleName(), HorizontalAlignment.LEFT));
+            destination.addCell(getCell(taskForEmployeeDto.getExecutorMiddleName(), HorizontalAlignment.LEFT));
             Chunk executorFIO = new Chunk("         (Ф.И.О исполнителя)          ");
             executorFIO.setUnderline(0.3f, 12f);
             destination.addCell(getCell(executorFIO));
@@ -111,24 +123,27 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             document.add(taskParagraph);
             document.add(new Paragraph("\n"));
 
-            Paragraph taskDescription = new Paragraph(task.getTaskDescription());
+            //Блок описания (текста) задания
+            Paragraph taskDescription = new Paragraph(taskForEmployeeDto.getTaskDescription());
             taskDescription.setFont(font);
             taskDescription.setAlignment(Element.ALIGN_LEFT);
             document.add(taskDescription);
             document.add(new Paragraph("\n\n"));
 
+            //Блок (дата) и (подпись)
             Table dateAndFacsimile = new Table(2, 2);
             dateAndFacsimile.setBorder(Rectangle.NO_BORDER);
             dateAndFacsimile.setWidth(100);
             dateAndFacsimile.setHorizontalAlignment(HorizontalAlignment.CENTER);
-            dateAndFacsimile.addCell(getCell(task.getTaskCreationDate(), HorizontalAlignment.CENTER));
+            dateAndFacsimile.addCell(getCell(taskForEmployeeDto.getTaskCreationDate(), HorizontalAlignment.CENTER));
 
             float xDir = document.getPageSize().getWidth() / 2;
             float yDir = document.getPageSize().getHeight() / 2;
 
+            //Факсимиле-изображение
             Image facsimile = Image.getInstance(getFacsimileImageFromMinIO());
             facsimile.setAbsolutePosition(xDir + 85, yDir - 230);
-            if (!task.getUuid().isEmpty()) {
+            if (!taskForEmployeeDto.getUuid().isEmpty()) {
                 dateAndFacsimile.addCell(getCell("", HorizontalAlignment.CENTER));
                 document.add(facsimile);
             } else {
@@ -147,8 +162,8 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             document.add(dateAndFacsimile);
         } catch (DocumentException | IOException e) {
             log.warn("Ошибка в : {0}", e);
-            System.out.println(e.getMessage());
         }
+        //Закрытие документа - формирование pdf
         document.close();
         return new ByteArrayResource(baos.toByteArray());
     }
@@ -162,10 +177,16 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         return Image.getInstance(resource.getInputStream().readAllBytes());
     }
 
+    /**
+     * Метод возвращает переданный UUID.
+     */
     public String getFacsimileFileUUID() {
         return uuid;
     }
 
+    /**
+     * Метот для формирования строк блока адресант-адресат.
+     */
     private static Cell getCell(String text, HorizontalAlignment alignment) {
         Cell cell = new Cell();
         cell.add(new Paragraph(text));
@@ -174,6 +195,9 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         return cell;
     }
 
+    /**
+     * Метот для формирования элементов блока (дата) и (подпись).
+     */
     private static Cell getCell(Chunk chunk) {
         Cell cell = new Cell();
         cell.add(new Paragraph(chunk));
