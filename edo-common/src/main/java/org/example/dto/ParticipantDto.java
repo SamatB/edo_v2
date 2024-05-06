@@ -10,12 +10,13 @@ import java.time.ZonedDateTime;
  * DTO для сущности Participant
  */
 @Data
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "DTO для сущности Participant")
 public class ParticipantDto implements Serializable {
+
+    @Schema(description = "Идентификатор участника согласования")
+    private Long id;
 
     @Schema(description = "Тип участника согласования")
     private String type;
@@ -41,6 +42,6 @@ public class ParticipantDto implements Serializable {
     @Schema(description = "Сотрудник")
     private EmployeeDto employee;
 
-    @Schema(description = "Блок согласования")
+    @Schema(description = "Блок участников согласования")
     private MatchingBlockDto matchingBlock;
 }

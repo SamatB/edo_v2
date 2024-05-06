@@ -74,7 +74,6 @@ public class Resolution extends BaseEntity {
     /**
      * Исполнитель(и) резолюции (связь с сущностью Employee).
      */
-    @NotNull
     @OneToMany
     @JoinTable(
             name = "resolution_executor",

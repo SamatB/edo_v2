@@ -5,6 +5,7 @@ import org.example.dto.FilePoolDto;
 import org.example.feign.FileFeignClient;
 import org.example.feign.FilePoolFeignClient;
 import org.example.service.impl.FileServiceImpl;
+import org.example.utils.FileHelper;
 import org.example.utils.FilePoolType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,16 +46,16 @@ class FileServiceImplTest {
      */
     @Test
     @DisplayName("Should return null when response status code is not 2xx")
-    void saveFileWhenResponseIsNotSuccessful() throws IOException {
+    void saveFileWhenResponseIsNotSuccessful() {
         MultipartFile multipartFile = mock(MultipartFile.class);
         ResponseEntity<String> response = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        when(fileFeignClient.saveFile(multipartFile)).thenReturn(response);
+        when(fileFeignClient.saveFile(multipartFile, FilePoolType.MAIN)).thenReturn(response);
 
         ResponseEntity<String> result = fileService.saveFile(multipartFile, FilePoolType.MAIN);
 
         assertNull(result);
-        verify(fileFeignClient, times(1)).saveFile(multipartFile);
+        verify(fileFeignClient, times(1)).saveFile(multipartFile, FilePoolType.MAIN);
         verify(filePoolFeignClient, never()).saveFile(any(FilePoolDto.class));
     }
 
@@ -67,11 +68,11 @@ class FileServiceImplTest {
         MultipartFile multipartFile = mock(MultipartFile.class);
 
         ResponseEntity<String> responseEntity = new ResponseEntity<>("12345678-1234-1234-1234-1234567890ab", HttpStatus.OK);
-        when(fileFeignClient.saveFile(multipartFile)).thenReturn(responseEntity);
+        when(fileFeignClient.saveFile(multipartFile, FilePoolType.MAIN)).thenReturn(responseEntity);
 
         ResponseEntity<String> response = fileService.saveFile(multipartFile, FilePoolType.MAIN);
 
-        verify(fileFeignClient, times(1)).saveFile(multipartFile);
+        verify(fileFeignClient, times(1)).saveFile(multipartFile, FilePoolType.MAIN);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("12345678-1234-1234-1234-1234567890ab", response.getBody());
 
@@ -90,11 +91,11 @@ class FileServiceImplTest {
         when(multipartFile.getSize()).thenReturn(1024L);
 
         ResponseEntity<String> responseEntity = new ResponseEntity<>("12345678-1234-1234-1234-1234567890ab", HttpStatus.OK);
-        when(fileFeignClient.saveFile(multipartFile)).thenReturn(responseEntity);
+        when(fileFeignClient.saveFile(multipartFile, FilePoolType.MAIN)).thenReturn(responseEntity);
 
         ResponseEntity<String> response = fileService.saveFile(multipartFile, FilePoolType.MAIN);
 
-        verify(fileFeignClient, times(1)).saveFile(multipartFile);
+        verify(fileFeignClient, times(1)).saveFile(multipartFile, FilePoolType.MAIN);
 
         verify(filePoolFeignClient, times(1)).saveFile(
                 ArgumentMatchers.argThat(dto ->
@@ -122,16 +123,16 @@ class FileServiceImplTest {
     @DisplayName("Should throw an IllegalArgumentException when an invalid image file is provided")
     void getConvertedBufferedImageWhenInvalidImageFileIsProvidedThenThrowIllegalArgumentException() {
         MultipartFile multipartFile = mock(MultipartFile.class);
-        when(multipartFile.getContentType()).thenReturn("imege/txt");
+        when(multipartFile.getContentType()).thenReturn("image/txt");
 
 
         assertThrows(IllegalArgumentException.class, () -> {
-            fileService.getConvertedBufferedImage(multipartFile);
+            FileHelper.getConvertedBufferedImage(multipartFile);
         });
     }
     /**
      * Начало тестов на валидацию с реальными изображениями.
-     * Тест что оба нужных для тестов изображения на месте.
+     * Тест, что оба нужных для тестов изображения на месте.
      */
     @Test
     @DisplayName("Show that test images exist.")
@@ -163,7 +164,7 @@ class FileServiceImplTest {
         BufferedImage expected = ImageIO.read(validMultipartFile.getInputStream());
 
         // Вызываем тестируемый метод
-        BufferedImage real = fileService.getConvertedBufferedImage(validMultipartFile);
+        BufferedImage real = FileHelper.getConvertedBufferedImage(validMultipartFile);
 
         // Проверяем результат
         assertAll(() -> {
@@ -174,7 +175,7 @@ class FileServiceImplTest {
     }
 
     /**
-     * тест метода валидации изображений. Валидное изображение ((100x100 px.) , image/jpg) должно пройти
+     * Тест метода валидации изображений. Валидное изображение ((100x100 px.), image/jpg) должно пройти
      * невалидное соответственно нет. Если одно из условий не выполнено тест падает.
      */
     @Test

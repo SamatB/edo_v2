@@ -5,6 +5,6 @@ import org.example.entity.Deadline;
 import org.example.mapper.util.AbstractMapper;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",uses = ResolutionMapper.class)
 public interface DeadlineMapper extends AbstractMapper<Deadline, DeadlineDto> {
 }

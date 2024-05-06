@@ -124,4 +124,5 @@ public class Appeal extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "appeal")
     @Fetch(FetchMode.JOIN)
     private List<Question> questions;
+
 }

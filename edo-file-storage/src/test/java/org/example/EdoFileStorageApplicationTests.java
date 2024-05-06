@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.controller.FileController;
 import org.example.service.FileStorageService;
+import org.example.utils.FilePoolType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,9 +51,9 @@ public class EdoFileStorageApplicationTests {
         // Создаем тестовый файл
         MultipartFile file = new MockMultipartFile("testFile.txt", "Hello, World!".getBytes());
         // Устанавливаем поведение заглушки
-        when(FileStorageService.saveFile(file)).thenReturn(ResponseEntity.ok("file-uuid"));
+        when(FileStorageService.saveFile(file, FilePoolType.MAIN)).thenReturn(ResponseEntity.ok("file-uuid"));
         // Вызываем метод контроллера
-        ResponseEntity<String> response = controller.saveFile(file);
+        ResponseEntity<String> response = controller.saveFile(file, FilePoolType.MAIN);
         // Проверяем, что полученный ответ содержит ожидаемый UUID и статус 200 OK
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("file-uuid", response.getBody());
@@ -70,9 +71,9 @@ public class EdoFileStorageApplicationTests {
         // Создаем тестовый файл
         MultipartFile file = new MockMultipartFile("testFile.txt", "Hello, World!".getBytes());
         // Устанавливаем поведение заглушки
-        when(fileStorageService.saveFile(file)).thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+        when(fileStorageService.saveFile(file, FilePoolType.MAIN)).thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
         // Вызываем метод контроллера
-        ResponseEntity<String> response = controller.saveFile(file);
+        ResponseEntity<String> response = controller.saveFile(file, FilePoolType.MAIN);
         // Проверяем, что полученный ответ имеет статус 500 Internal Server Error
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }

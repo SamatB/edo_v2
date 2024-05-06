@@ -24,4 +24,6 @@ public interface ParticipantMapper extends AbstractMapper<Participant, Participa
     @Mapping(target = "matchingBlock.participants", ignore = true)
     @Mapping(target = "matchingBlock.agreementList", ignore = true)
     Participant dtoToEntity(ParticipantDto participantDto);
+
+
 }

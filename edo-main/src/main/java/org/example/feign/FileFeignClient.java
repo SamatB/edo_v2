@@ -21,4 +21,5 @@ public interface FileFeignClient {
      */
     @PostMapping(value = "/file/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<String> saveFile(@RequestPart("file") MultipartFile file);
+
 }

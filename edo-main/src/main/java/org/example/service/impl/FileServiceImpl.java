@@ -7,15 +7,14 @@ import org.example.dto.FilePoolDto;
 import org.example.feign.FileFeignClient;
 import org.example.feign.FilePoolFeignClient;
 import org.example.service.FileService;
+import org.example.utils.FileHelper;
 import org.example.utils.FilePoolType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Set;
@@ -44,7 +43,7 @@ public class FileServiceImpl implements FileService {
             }
         // в случае успешного прохождения проверок сохраняем файл в хранилище и БД
         log.info("Передача файла для сохранения в базу данных...");
-        ResponseEntity<String> response = fileFeignClient.saveFile(multipartFile);
+        ResponseEntity<String> response = fileFeignClient.saveFile(multipartFile, fileType);
         if (!response.getStatusCode().is2xxSuccessful()) {
             return null;
         }
@@ -71,28 +70,10 @@ public class FileServiceImpl implements FileService {
      */
     public boolean validateFacsimileFile(MultipartFile multipartFile) {
         if (facsimileExtension.contains(multipartFile.getContentType().toLowerCase(Locale.ROOT))) {
-            BufferedImage bufferedImage = getConvertedBufferedImage(multipartFile);
+            BufferedImage bufferedImage = FileHelper.getConvertedBufferedImage(multipartFile);
             return (bufferedImage.getHeight() <= 100) && (bufferedImage.getWidth() <= 100);
         }
         return false;
-    }
-
-    /**
-     * @param multipartFile - файл, конвертируемый в BufferedImage
-     * @return BufferedImage - класс-реализация интерфейса Image для работы с изображениями
-     */
-    public BufferedImage getConvertedBufferedImage(MultipartFile multipartFile) {
-        try {
-            if (multipartFile == null || multipartFile.isEmpty()) {
-                throw new IllegalArgumentException("MultipartFile is null or empty");
-            }
-            if (!multipartFile.getContentType().startsWith("image/")) {
-                throw new IllegalArgumentException("Invalid image file type");
-            }
-            return ImageIO.read(multipartFile.getInputStream());
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading image file", e);
-        }
     }
 }
 
