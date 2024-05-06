@@ -29,7 +29,6 @@ public class TaskForEmployeeController {
     @Autowired
     public TaskForEmployeeController(TaskForEmployeeService taskForEmployeeService) {
         this.taskForEmployeeService = taskForEmployeeService;
-
     }
 
     @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)
