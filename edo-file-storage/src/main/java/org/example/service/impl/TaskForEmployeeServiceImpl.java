@@ -13,12 +13,7 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.alignment.HorizontalAlignment;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfOCG;
 import com.lowagie.text.pdf.PdfWriter;
-import org.apache.commons.compress.utils.IOUtils;
-import org.apache.tomcat.util.http.fileupload.FileItem;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.example.dto.TaskForEmployeeDto;
 
 import org.example.service.FileStorageService;
@@ -26,18 +21,14 @@ import org.example.service.TaskForEmployeeService;
 import org.example.util.exception.EmptyValueException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 
 import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
 
 /**
  * Сервис для формирования PDF файла заполненного бланка задания для сотрудника.
@@ -47,17 +38,18 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
     private static final Logger log = LoggerFactory.getLogger(TaskForEmployeeServiceImpl.class);
     private String uuid;
-    private FileStorageService fileStorageService;
+    private final FileStorageService fileStorageService;
+
+    @Autowired
+    public TaskForEmployeeServiceImpl(FileStorageService fileStorageService) {
+        this.fileStorageService = fileStorageService;
+    }
 
 
     @Override
     public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto task) throws IOException {
         Document document = new Document(PageSize.A4, 85.0394F, 50, 50, 50);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        ResponseEntity<Resource> response = fileStorageService.getFile(task.getUuid());
-        InputStream inputStream = response.getBody().getInputStream();
-        inputStream.readAllBytes();
 
         this.uuid = task.getUuid();
 
@@ -130,19 +122,15 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             dateAndFacsimile.setWidth(100);
             dateAndFacsimile.setHorizontalAlignment(HorizontalAlignment.CENTER);
             dateAndFacsimile.addCell(getCell(task.getTaskCreationDate(), HorizontalAlignment.CENTER));
-            Image facs = Image.getInstance("sign.png");
-            facs.scaleAbsolute(100, 80);
 
             float xDir = document.getPageSize().getWidth() / 2;
             float yDir = document.getPageSize().getHeight() / 2;
-            facs.setAbsolutePosition(xDir + 85, yDir - 220);
 
+            Image facsimile = Image.getInstance(getFacsimileImageFromMinIO());
+            facsimile.setAbsolutePosition(xDir + 85, yDir - 220);
             if (!task.getUuid().isEmpty()) {
-//                dateAndFacsimile.addCell(getCell("", HorizontalAlignment.CENTER));
-                dateAndFacsimile.addCell(getCell(getFacsimileImageFromMinIO()));
-            } else {
                 dateAndFacsimile.addCell(getCell("", HorizontalAlignment.CENTER));
-                document.add(facs);
+                document.add(facsimile);
             }
 
             Chunk dateUnderline = new Chunk("              (дата)              ");
@@ -161,9 +149,12 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         return new ByteArrayResource(baos.toByteArray());
     }
 
-    private java.awt.Image getFacsimileImageFromMinIO() throws IOException {
-        Resource resource = fileStorageService.getFile(getFacsimileFileUUID()).getBody();
-        return new ImageIcon(resource.getInputStream().readAllBytes()).getImage();
+    private Image getFacsimileImageFromMinIO() throws IOException {
+        Resource resource = null;
+        if (fileStorageService.getFile(getFacsimileFileUUID()).hasBody()) {
+            resource = fileStorageService.getFile(getFacsimileFileUUID()).getBody();}
+        assert resource != null;
+        return Image.getInstance(resource.getInputStream().readAllBytes());
     }
 
     public String getFacsimileFileUUID() {
@@ -174,22 +165,6 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
         Cell cell = new Cell();
         cell.add(new Paragraph(text));
         cell.setHorizontalAlignment(alignment);
-        cell.setBorder(Rectangle.NO_BORDER);
-        return cell;
-    }
-
-    private static Cell getCell(java.awt.Image image) {
-        Cell cell = new Cell();
-        cell.add((Element) image);
-        cell.setHorizontalAlignment(HorizontalAlignment.CENTER);
-        cell.setBorder(Rectangle.NO_BORDER);
-        return cell;
-    }
-
-    private static Cell getCell(Image image) {
-        Cell cell = new Cell();
-        cell.add(image);
-        cell.setHorizontalAlignment(HorizontalAlignment.CENTER);
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
     }
