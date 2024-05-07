@@ -98,4 +98,10 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getEmployeeSearchByText(name));
     }
 
+    @GetMapping("/{username}")
+    public ResponseEntity<EmployeeDto> getEmployeeByUsername(@PathVariable(name = "username", required = true) String name) {
+
+        return ResponseEntity.ok(employeeService.getEmployeeByUsername(name));
+    }
+
 }

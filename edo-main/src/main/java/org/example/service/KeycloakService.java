@@ -4,5 +4,5 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.example.dto.EmployeeDto;
 
 public interface KeycloakService {
-    EmployeeDto getEmployeeFromSessionUsername(HttpServletRequest request);
+    EmployeeDto getEmployeeFromSessionUsername();
 }

@@ -2,7 +2,6 @@ package org.example.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.EmployeeDto;
@@ -37,10 +36,12 @@ public class TaskForEmployeeController {
      */
     @PostMapping(produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Отправляет сформированный PDF файл задания формата А4")
-    public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto, HttpServletRequest request) {
-        EmployeeDto employeeDto = keycloakService.getEmployeeFromSessionUsername(request);
+    public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto) {
+        EmployeeDto employeeDto = keycloakService.getEmployeeFromSessionUsername();
         log.info("employeeDto: {}", employeeDto);
-
+        taskForEmployeeDto.setTaskCreatorFirstName(employeeDto.getFirstName());
+        taskForEmployeeDto.setTaskCreatorLastName(employeeDto.getLastName());
+        taskForEmployeeDto.setTaskCreatorMiddleName(employeeDto.getMiddleName());
         log.info("Запущен процесс создания задания по резолюции в формате PDF");
         ByteArrayResource bis = taskForEmployeeFeignClient.convertTaskForEmployeeIntoPDF(taskForEmployeeDto);
         log.info("Файл задания по резолюции в формате PDF успешно создан");

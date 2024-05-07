@@ -57,7 +57,7 @@ class KeycloakServiceTest {
         when(idToken.getPreferredUsername()).thenReturn(username);
         when(employeeFeignClient.getByUsername(username)).thenReturn(employeeDto);
 
-        EmployeeDto result = keycloakService.getEmployeeFromSessionUsername(request);
+        EmployeeDto result = keycloakService.getEmployeeFromSessionUsername();
 
         assertEquals(employeeDto, result);
         verify(employeeFeignClient, times(1)).getByUsername(username);

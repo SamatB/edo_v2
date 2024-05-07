@@ -14,36 +14,41 @@ import org.example.service.KeycloakService;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.representations.IDToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
-@NoArgsConstructor(force = true)
+@Service
 public class KeycloakServiceImpl implements KeycloakService {
 
     private final EmployeeFeignClient employeeFeignClient;
+
     /**
      * Метод для получения работника по username из сессии Keycloak
      *
-     * @param request - запрос.
      * @return объект DTO работника.
      */
     @Override
-    public EmployeeDto getEmployeeFromSessionUsername(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            // Проверяем, есть ли KeycloakPrincipal в сессии
-            KeycloakPrincipal<KeycloakSecurityContext> keycloakPrincipal =
-                    (KeycloakPrincipal<KeycloakSecurityContext>) session
-                            .getAttribute(KeycloakSecurityContext.class.getName());
-            if (keycloakPrincipal != null) {
+    public EmployeeDto getEmployeeFromSessionUsername() {
+        // Проверяем, есть ли KeycloakPrincipal в сессии
+        var keycloakPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (keycloakPrincipal != null) {
+            var username = "";
+            if (keycloakPrincipal instanceof KeycloakPrincipal) {
                 // Получаем access token из KeycloakPrincipal
-                IDToken idToken = keycloakPrincipal.getKeycloakSecurityContext().getIdToken();
+                IDToken idToken =  ((KeycloakPrincipal<KeycloakSecurityContext>) keycloakPrincipal)
+                        .getKeycloakSecurityContext().getIdToken();
 
                 // Получаем username из access token
-                String username = idToken.getPreferredUsername();
-
-                // Получение Employee по username
-                return employeeFeignClient.getByUsername(username);
+                username = idToken.getPreferredUsername();
+            } else if(keycloakPrincipal instanceof Jwt) {
+                username = ((Jwt) keycloakPrincipal).getClaim("preferred_username");
             }
+
+            // Получение Employee по username
+            return employeeFeignClient.getByUsername(username);
         }
 
         // Если сессия Keycloak отсутствует или KeycloakPrincipal отсутствует в сессии, возвращаем null

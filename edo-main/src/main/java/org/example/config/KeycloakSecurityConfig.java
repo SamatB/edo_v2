@@ -63,9 +63,4 @@ public class KeycloakSecurityConfig {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .build();
     }
-
-    @Bean
-    public KeycloakService keycloakService() {
-        return new KeycloakServiceImpl();
-    }
 }
