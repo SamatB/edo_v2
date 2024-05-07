@@ -38,7 +38,7 @@ public class TaskForEmployeeController {
     @Operation(summary = "Отправляет сформированный PDF файл задания формата А4")
     public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto) {
         EmployeeDto employeeDto = keycloakService.getEmployeeFromSessionUsername();
-        log.info("employeeDto: {}", employeeDto);
+        log.info("employeeDto: {}", employeeDto.getFirstName());
         taskForEmployeeDto.setTaskCreatorFirstName(employeeDto.getFirstName());
         taskForEmployeeDto.setTaskCreatorLastName(employeeDto.getLastName());
         taskForEmployeeDto.setTaskCreatorMiddleName(employeeDto.getMiddleName());
