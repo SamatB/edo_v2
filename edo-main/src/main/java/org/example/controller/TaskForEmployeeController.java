@@ -28,6 +28,7 @@ public class TaskForEmployeeController {
 
     /**
      * Данный метод принимает на вход TaskForEmployeeDto и обрабатывается единственным методом TaskForEmployeeFeignClient,
+     * в поля "Ф.И.О создающего задание" и "контактные данные" передаются данные текущего пользователя из метода getEmployeeFromSessionUsername()
      * в теле ответа отправляется созданный PDF файл формата А4
      *
      * @param taskForEmployeeDto - запрос, который нужно обратотать.
@@ -38,10 +39,12 @@ public class TaskForEmployeeController {
     @Operation(summary = "Отправляет сформированный PDF файл задания формата А4")
     public ResponseEntity<ByteArrayResource> createTaskForEmployee(@RequestBody TaskForEmployeeDto taskForEmployeeDto) {
         EmployeeDto employeeDto = keycloakService.getEmployeeFromSessionUsername();
-        log.info("employeeDto: {}", employeeDto.getFirstName());
+        log.info("employeeDto: {}", employeeDto);
         taskForEmployeeDto.setTaskCreatorFirstName(employeeDto.getFirstName());
         taskForEmployeeDto.setTaskCreatorLastName(employeeDto.getLastName());
         taskForEmployeeDto.setTaskCreatorMiddleName(employeeDto.getMiddleName());
+        taskForEmployeeDto.setTaskCreatorEmail(employeeDto.getEmail());
+        taskForEmployeeDto.setTaskCreatorPhoneNumber(employeeDto.getPhone());
         log.info("Запущен процесс создания задания по резолюции в формате PDF");
         ByteArrayResource bis = taskForEmployeeFeignClient.convertTaskForEmployeeIntoPDF(taskForEmployeeDto);
         log.info("Файл задания по резолюции в формате PDF успешно создан");

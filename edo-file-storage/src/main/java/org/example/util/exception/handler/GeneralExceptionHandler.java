@@ -19,5 +19,4 @@ public class GeneralExceptionHandler {
     public ExceptionResponse emptyValueHandle(EmptyValueException e) {
         return new ExceptionResponse(HttpStatus.BAD_REQUEST, e.getClass().getName(), e.getMessage());
     }
-
 }

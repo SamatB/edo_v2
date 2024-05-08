@@ -4,17 +4,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.ZonedDateTime;
-
+/**
+ * Данный класс описывает задание для сотрудника, он не хранится в БД,
+ * создается, затем отправляется в теле ответа клиенту.
+ * Методы setter были специально созданы так, чтобы возвращался тип String
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Задание для сотрудника")
 public class TaskForEmployeeDto {
-
-//    @Schema(description = "идентификатор задания")
-//    private Long id;
 
     @NotNull
     @Schema(description = "Имя пользователя, создавшего задание")
@@ -52,7 +52,6 @@ public class TaskForEmployeeDto {
     private String taskCreationDate;
 
     @Schema(description = "UUID файла-факсимиле пользователя, создавшего задание")
-//    @ToString.Exclude
     private String uuid;
 
     public String setTaskCreatorFirstName(String taskCreatorFirstName) {

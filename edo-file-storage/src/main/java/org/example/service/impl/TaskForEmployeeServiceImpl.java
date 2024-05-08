@@ -141,9 +141,9 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             float yDir = document.getPageSize().getHeight() / 2;
 
             //Факсимиле-изображение
-            Image facsimile = Image.getInstance(getFacsimileImageFromMinIO());
-            facsimile.setAbsolutePosition(xDir + 85, yDir - 230);
             if (!taskForEmployeeDto.getUuid().isEmpty()) {
+                Image facsimile = Image.getInstance(getFacsimileImageFromMinIO());
+                facsimile.setAbsolutePosition(xDir + 85, yDir - 230);
                 dateAndFacsimile.addCell(getCell("", HorizontalAlignment.CENTER));
                 document.add(facsimile);
             } else {
