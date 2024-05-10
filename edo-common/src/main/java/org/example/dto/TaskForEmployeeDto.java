@@ -54,4 +54,5 @@ public class TaskForEmployeeDto {
     @Schema(description = "UUID файла-факсимиле пользователя, создавшего задание")
     @NotNull
     private String uuid;
+
 }
