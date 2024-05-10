@@ -53,29 +53,4 @@ public class TaskForEmployeeDto {
 
     @Schema(description = "UUID файла-факсимиле пользователя, создавшего задание")
     private String uuid;
-
-    public String setTaskCreatorFirstName(String taskCreatorFirstName) {
-        this.taskCreatorFirstName = taskCreatorFirstName;
-        return taskCreatorFirstName;
-    }
-
-    public String setTaskCreatorLastName(String taskCreatorLastName) {
-        this.taskCreatorLastName = taskCreatorLastName;
-        return taskCreatorLastName;
-    }
-
-    public String setTaskCreatorMiddleName(String taskCreatorMiddleName) {
-        this.taskCreatorMiddleName = taskCreatorMiddleName;
-        return taskCreatorMiddleName;
-    }
-
-    public String setTaskCreatorEmail(String taskCreatorEmail) {
-        this.taskCreatorEmail = taskCreatorEmail;
-        return taskCreatorEmail;
-    }
-
-    public String setTaskCreatorPhoneNumber(String taskCreatorPhoneNumber) {
-        this.taskCreatorPhoneNumber = taskCreatorPhoneNumber;
-        return taskCreatorPhoneNumber;
-    }
 }

@@ -14,16 +14,13 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.alignment.HorizontalAlignment;
 import com.lowagie.text.pdf.PdfWriter;
+import lombok.extern.log4j.Log4j2;
 import org.example.dto.TaskForEmployeeDto;
-
 import org.example.service.FileStorageService;
 import org.example.service.TaskForEmployeeService;
 import org.example.util.exception.EmptyValueException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +31,9 @@ import java.io.*;
  * Сервис для формирования PDF файла заполненного бланка задания для сотрудника.
  */
 @Service
+@Log4j2
 public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
 
-    private static final Logger log = LoggerFactory.getLogger(TaskForEmployeeServiceImpl.class);
     private String uuid;
     private final FileStorageService fileStorageService;
 
@@ -56,8 +53,12 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
      */
     @Override
     public ByteArrayResource generateTaskForEmployeeIntoPDF(TaskForEmployeeDto taskForEmployeeDto) {
+        //отступ (размер левого поля) слева в переводе на 2,5-3 см
+        float marginLeft = 85.0394F;
+        //Отступ (размер остальных полей) с остальных сторон в переводе на 1,5 см
+        float marginRightTopBottom = 50;
         //Открытие документа
-        Document document = new Document(PageSize.A4, 85.0394F, 50, 50, 50);
+        Document document = new Document(PageSize.A4, marginLeft, marginRightTopBottom, marginRightTopBottom, marginRightTopBottom);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         //входящий UUID передается в переменную класса, чтобы его далее можно было использовать в методе getFacsimileFileUUID()
@@ -71,11 +72,12 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             Font font = FontFactory.getFont(FontFactory.TIMES_ROMAN);
             font.setColor(Color.BLACK);
             font.setSize(14);
-
+            //Ширина блока адресант-адресат
+            float addresseeBlockWidth = 40;
             //Блок адресант-адресат
             Table destination = new Table(1);
             destination.setBorder(Rectangle.NO_BORDER);
-            destination.setWidth(40);
+            destination.setWidth(addresseeBlockWidth);
             destination.setHorizontalAlignment(HorizontalAlignment.RIGHT);
             if (taskForEmployeeDto.getTaskCreatorFirstName().isEmpty()) {
                 log.warn("Имя создающего задания лица не может быть пустым");
@@ -90,13 +92,19 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
                 destination.addCell(getCell(taskForEmployeeDto.getTaskCreatorLastName(), HorizontalAlignment.LEFT));
             }
             destination.addCell(getCell(taskForEmployeeDto.getTaskCreatorMiddleName(), HorizontalAlignment.LEFT));
+
+            //Толщина линии
+            float lineThickness = 0.3f;
+            //Позиция линии по вертикали
+            float yDirPosition = 12f;
+
             Chunk fio = new Chunk("                     (Ф.И.О)                    ");
-            fio.setUnderline(0.3f, 12f);
+            fio.setUnderline(lineThickness, yDirPosition);
             destination.addCell(getCell(fio));
             destination.addCell(getCell(taskForEmployeeDto.getTaskCreatorEmail(), HorizontalAlignment.LEFT));
             destination.addCell(getCell(taskForEmployeeDto.getTaskCreatorPhoneNumber(), HorizontalAlignment.LEFT));
             Chunk contactDates = new Chunk("        (контактные данные)          ");
-            contactDates.setUnderline(0.3f, 12f);
+            contactDates.setUnderline(lineThickness, yDirPosition);
             destination.addCell(getCell(contactDates));
             if (taskForEmployeeDto.getExecutorFirstName().isEmpty()) {
                 log.warn("Имя исполнителя задания не может быть пустым");
@@ -112,7 +120,7 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             }
             destination.addCell(getCell(taskForEmployeeDto.getExecutorMiddleName(), HorizontalAlignment.LEFT));
             Chunk executorFIO = new Chunk("         (Ф.И.О исполнителя)          ");
-            executorFIO.setUnderline(0.3f, 12f);
+            executorFIO.setUnderline(lineThickness, yDirPosition);
             destination.addCell(getCell(executorFIO));
             document.add(destination);
             document.add(new Paragraph("\n"));
@@ -137,13 +145,15 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             dateAndFacsimile.setHorizontalAlignment(HorizontalAlignment.CENTER);
             dateAndFacsimile.addCell(getCell(taskForEmployeeDto.getTaskCreationDate(), HorizontalAlignment.CENTER));
 
-            float xDir = document.getPageSize().getWidth() / 2;
-            float yDir = document.getPageSize().getHeight() / 2;
+            //Позиция факсимиле-изображение по горизонтали над линией подписи
+            float xDir = document.getPageSize().getWidth() / 2 + 85;
+            //Позиция факсимиле-изображение по вертикали над линией подписи
+            float yDir = document.getPageSize().getHeight() / 2 - 230;
 
             //Факсимиле-изображение
             if (!taskForEmployeeDto.getUuid().isEmpty()) {
                 Image facsimile = Image.getInstance(getFacsimileImageFromMinIO());
-                facsimile.setAbsolutePosition(xDir + 85, yDir - 230);
+                facsimile.setAbsolutePosition(xDir, yDir);
                 dateAndFacsimile.addCell(getCell("", HorizontalAlignment.CENTER));
                 document.add(facsimile);
             } else {
@@ -152,11 +162,11 @@ public class TaskForEmployeeServiceImpl implements TaskForEmployeeService {
             }
 
             Chunk dateUnderline = new Chunk("              (дата)              ");
-            dateUnderline.setUnderline(0.3f, 12f);
+            dateUnderline.setUnderline(lineThickness, yDirPosition);
             dateAndFacsimile.addCell(getCell(dateUnderline));
 
             Chunk signUnderline = new Chunk("             (подпись)             ");
-            signUnderline.setUnderline(0.3f, 12f);
+            signUnderline.setUnderline(lineThickness, yDirPosition);
             dateAndFacsimile.addCell(getCell(signUnderline));
 
             document.add(dateAndFacsimile);
