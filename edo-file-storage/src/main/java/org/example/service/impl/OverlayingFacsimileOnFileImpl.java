@@ -32,6 +32,7 @@ public class OverlayingFacsimileOnFileImpl implements OverlayingFacsimileOnFileS
         this.fileStorageService = fileStorageService;
     }
 
+
     /**
      * Метод для преобразования модифицированного pdf MAIN файла в MultipartFile
      */
