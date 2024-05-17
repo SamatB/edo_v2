@@ -5,6 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @FeignClient(name = "edo-service", path = "/facsimile")
 public interface FacsimileFeignClient {
@@ -38,4 +39,10 @@ public interface FacsimileFeignClient {
      */
     @GetMapping("/paged")
     List<FacsimileDto> getPaginatedFacsimiles(@RequestParam int page, @RequestParam int pageSize);
+
+    /**
+     * Получение UUID факсимиле файла из базы данных по id Employee.
+     */
+    @GetMapping("/uuid/{id}")
+    UUID getUUIDFacsimileByUserId(@PathVariable Long id);
 }

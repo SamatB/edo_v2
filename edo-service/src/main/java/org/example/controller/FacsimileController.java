@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Контроллер для работы с сущностью Facsimile.
@@ -64,6 +65,15 @@ public class FacsimileController {
             log.error("Ошибка удаления факсимиле: " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    /**
+     * Получение UUID факсимиле файла из БД по id авторизованного Employee.
+     */
+    @GetMapping("/uuid/{id}")
+    @Operation(summary = "Получает UUID факсимиле-излбражения (файла) из базы данных")
+    public UUID getFacsimile(@PathVariable Long id) {
+        return facsimileService.getFacsimileUUIDByUserID(id);
     }
 
     /**

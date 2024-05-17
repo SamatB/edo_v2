@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface FacsimileRepository extends JpaRepository<Facsimile, Long> {
@@ -25,5 +26,11 @@ public interface FacsimileRepository extends JpaRepository<Facsimile, Long> {
     @Modifying
     @Query("UPDATE Facsimile f SET f.archived = NOT f.archived WHERE f.id = :id")
     void toggleArchivedStatus(@Param("id") Long id);
+
+    /**
+     * Получение UUID факсимиле файла по id авторизованного Employee.
+     */
+    @Query("SELECT f.filePool.storageFileId FROM Facsimile f WHERE f.employee.id=:userID")
+    UUID getUUIDByFacsimileUserId(Long userID);
 
 }
