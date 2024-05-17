@@ -32,7 +32,6 @@ public class TaskForEmployeeController {
         log.info("Запущен процесс создания задания по резолюции в формате PDF");
         ByteArrayResource bis = taskForEmployeeService.convertTaskForEmployeeIntoPDF(taskForEmployeeDto);
         log.info("Файл задания по резолюции в формате PDF успешно создан");
-
         return ResponseEntity
                 .ok()
                 .body(bis);
